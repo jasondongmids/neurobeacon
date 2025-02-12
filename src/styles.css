@@ -1,0 +1,450 @@
+/* ====== Global Styles ====== */
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    background-color: #F5F5F5;
+}
+
+/* ====== Header Styles ====== */
+.header {
+    background-color: #2E86C1;
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    position: relative;
+}
+
+.header-logo {
+    height: 150px;
+}
+
+.header-title {
+    font-size: 40px;
+    margin: 0;
+    text-align: center;
+}
+
+/* ====== Navigation Bar (Hamburger Menu) ====== */
+.nav-container {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    cursor: pointer;
+    font-size: 50px;
+    color:white;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 50px;
+    right: 10px;
+    background: white;
+    border: 2px solid #2E86C1;
+    border-radius: 5px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+}
+
+.dropdown-menu button {
+    background: none;
+    border: none;
+    padding: 10px;
+    font-size: 30px;
+    cursor: pointer;
+    text-align: left;
+}
+
+.dropdown-menu button:hover {
+    background-color: #D6EAF8;
+}
+
+/* ====== Main Container Layout ====== */
+.main-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    height: 750px;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+/* ====== Side Panels (Stats & Hints) ====== */
+.panel {
+    background-color: #F5F5F5;
+    width: 20%;
+    padding: 20px;
+    border: 2px solid #4D4D4D;
+    border-radius: 5px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 18px;
+    color: #2E2E2E;  /* ✅ Ensures dark font color */
+}
+/* Fix text color at the bottom of panels */
+.panel p {
+    font-size: 24px;
+    color: #2E2E2E !important;  /* ✅ Forces dark text color */
+    font-weight: bold;
+    text-align: center;
+}
+
+.stats-image {
+    width: 100%;
+    max-width: 500px;
+    margin-top: 10px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* ====== Game Area ====== */
+.game-area {
+    background-color: #D6EAF8;
+    flex-grow: 1;
+    padding: 100px;
+    text-align: center;
+    font-size: 20px;
+    border: 2px solid #4D4D4D;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+/* ====== Hints/Feedback Panel & Buttons ====== */
+.hint-list {
+    list-style: none;
+    padding: 10px;
+    text-align: left;
+    font-size: 24px;
+    line-height: 1.5;
+}
+
+.hint-list li {
+    margin-bottom: 8px;
+}
+
+.bottom-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    width: 100%;
+    padding: 10px;
+    background-color: #F5F5F5;
+    border-top: 2px solid #4D4D4D;
+}
+
+.nav-btn {
+    background-color: #2E86C1;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+/* ====== Footer & Controls ====== */
+.footer {
+    background-color: #2E86C1;
+    padding: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top: 6px solid #4D4D4D;
+    width: 100%;
+    height: 100px;
+    position: relative;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+/* ====== Footer Buttons ====== */
+.btn {
+    padding: 12px 40px;
+    font-size: 30px;
+    border: 4px solid #4D4D4D;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 0 30px;
+}
+
+.reset, .next {
+    background-color: #F39C12;
+    color: white;
+}
+
+.submit {
+    background-color: #F39C12;
+    color: white;
+}
+
+/* ===== Welcome Page Styling ===== */
+.welcome-container {
+    text-align: center;
+    padding: 200px;
+    background-color: #2E86C1;
+    height: 100%;
+}
+
+/* ===== Logo ===== */
+.welcome-logo {
+    width: 250px;
+    margin-bottom: 20px;
+}
+
+/* ===== Headings & Text ===== */
+h1 {
+    font-size: 40px;
+    color: white;
+}
+
+p {
+    font-size: 20px;
+    color: white;
+}
+
+/* ✅ Make Username White */
+.welcome-username {
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* ===== Input Fields ===== */
+.input-field {
+    font-size: 18px;
+    padding: 10px;
+    margin: 10px;
+    border: 2px solid #2E86C1;
+    border-radius: 5px;
+    width: 250px;
+    text-align: center;
+}
+
+/* ===== Centering Login & Register Buttons ===== */
+.button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+}
+
+/* ===== Primary Buttons (Login, Register, Reset Password) ===== */
+.auth-btn {
+    background-color: #F39C12;
+    color: white;
+    font-size: 18px;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px;
+}
+
+.auth-btn:hover {
+    background-color: #D68910;
+}
+
+/* ===== Secondary Buttons (Back to Login, Forgot Password) ===== */
+.auth-btn.secondary {
+    background-color: transparent;
+    color: white;
+    text-decoration: underline;
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+.auth-btn.secondary:hover {
+    color: #F39C12;
+}
+
+/* ===== Message Display (Errors, Notifications) ===== */
+.message {
+    color: yellow;
+    font-size: 18px;
+}
+
+/* ===== Login & Registration Options ===== */
+.auth-options {
+    margin-top: 15px;
+}
+
+.auth-options button {
+    background: none;
+    border: none;
+    color: white;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.auth-options button:hover {
+    color: #F39C12;
+}
+
+/* ===== Logout Button (Dashboard) ===== */
+.logout-btn {
+    background-color: #F39C12;
+    color: white;
+    font-size: 18px;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px;
+}
+
+.logout-btn:hover {
+    background-color: #D68910;
+}
+
+/* ✅ Remember Me Checkbox */
+.remember-me {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    color: white;
+    font-size: 16px;
+}
+
+.remember-me input {
+    margin-right: 8px;
+    width: 16px;
+    height: 16px;
+}
+
+/* ✅ Redirect Warning Message */
+.message {
+    color: yellow;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* ====== Stats Page Styling ====== */
+.stats-container {
+    background-color: #2E86C1;
+    text-align: center;
+    padding: 50px;
+}
+
+.stats-chart {
+    width: 60%;
+    margin: 20px 0;
+    border-radius: 8px;
+    border: 2px solid #4D4D4D;
+}
+
+.back-btn {
+    background-color: #2E86C1;
+    color: white;
+    font-size: 18px;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.back-btn:hover {
+    background-color: #1F618D;
+}
+
+/* ====== Responsive Design Adjustments ====== */
+@media screen and (max-width: 1024px) {
+    .main-container {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .panel {
+        width: 100%;
+        height: auto;
+        margin-bottom: 10px;
+    }
+
+    .game-area {
+        padding: 50px;
+    }
+
+    .controls {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+/* ====== Dashboard Page Styles ====== */
+.dashboard-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    padding: 20px;
+}
+
+/* Panel Styling */
+.panel {
+    background-color: #F5F5F5;
+    width: 30%;
+    padding: 20px;
+    border: 2px solid #4D4D4D;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Center Panel (Progress Graph) */
+.center-panel {
+    width: 40%;
+    text-align: center;
+}
+
+.stats-image {
+    width: 90%;
+    border-radius: 8px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Profile Picture */
+.profile-pic {
+    width: 100px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+/* Settings & Preferences */
+.right-panel label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.logout-btn {
+    margin-top: 20px;
+    background-color: #D32F2F;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.logout-btn:hover {
+    background-color: #B71C1C;
+}
