@@ -15,8 +15,8 @@ const Header = () => {
             {menuOpen && (
                 <div className="dropdown-menu">
                     <button onClick={() => navigate("/")}>🏠 Home</button>
-                    <button onClick={() => navigate("/GamePage")}>🎮 Game</button>
-                    <button onClick={() => navigate("/Dashboard")}>📊 Dashboard</button> {/* ✅ Updated */}
+                    <button onClick={() => navigate("/game")}>🎮 Game</button>
+                    <button onClick={() => navigate("/dashboard")}>📊 Dashboard</button> {/* ✅ Updated */}
                 </div>
             )}
         </div>
