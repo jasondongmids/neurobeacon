@@ -34,7 +34,7 @@ const WelcomePage = () => {
     const handleRegister = () => {
         const response = registerUser(inputUsername, inputPassword);
         if (response === "Registered successfully!") {
-            navigate("/game");
+            navigate("/GamePage");
         } else {
             setMessage(response);
         }
