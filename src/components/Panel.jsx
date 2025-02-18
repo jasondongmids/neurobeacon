@@ -1,5 +1,6 @@
 import React from "react";
 import "../styles.css";
+import progressImg from "../assets/progress.png"
 
 const Panel = ({ title, position }) => {
     return (
@@ -8,7 +9,7 @@ const Panel = ({ title, position }) => {
             {position === "left" ? (
                 <>
                                     <img 
-                        src={require("../assets/progress.png")} 
+                        src={progressImg} 
                         alt="User Progress Chart" 
                         className="stats-image"
                     />

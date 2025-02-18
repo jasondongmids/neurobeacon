@@ -22,21 +22,66 @@ const WelcomePage = () => {
         }
     }, [location]);
 
-    const handleLogin = () => {
-        const response = loginUser(inputUsername, inputPassword);
-        if (response === "Login successful!") {
-            navigate("/game");
-        } else {
-            setMessage(response);
+    // const handleLogin = () => {
+    //     const response = loginUser(inputUsername, inputPassword);
+    //     if (response === "Login successful!") {
+    //         navigate("/game");
+    //     } else {
+    //         setMessage(response);
+    //     }
+    // };
+
+
+    const handleLogin = async () => {
+        try {     // ✅ If user already logged in and skip login screen
+            const currentUser = await getCurrentUser().catch(() => null);
+            if (currentUser) {
+                console.log("User already signed in", currentUser);
+                navigate("/game");
+                return;
+            }
+
+            // New Login
+            const response = await signIn({
+                username: inputUsername,
+                password: inputPassword,
+            });
+            console.log("Sign in response:", response);
+
+            if (response.nextStep === "DONE") {
+                navigate("/game");
+            } else {
+                setMessage("Login successful, but additional steps are required");
+            }
+        } catch (error) {
+            console.error("Sign in error:", error);
+            setMessage(error.message || "Failed to log in. Please try again.")
         }
     };
 
-    const handleRegister = () => {
-        const response = registerUser(inputUsername, inputPassword);
-        if (response === "Registered successfully!") {
-            navigate("/GamePage");
-        } else {
-            setMessage(response);
+    // const handleRegister = () => {
+    //     const response = registerUser(inputUsername, inputPassword);
+    //     if (response === "Registered successfully!") {
+    //         navigate("/game");
+    //     } else {
+    //         setMessage(response);
+    //     }
+    // };
+
+    const handleRegister = async () => {
+        try {
+            const response = await signUp({
+                username: inputUsername,
+                password: inputPassword,
+                option: {
+                    autoConfirm: true,
+                }
+            });
+            console.log("Sign up successful:", response);
+            setMessage("Registered successfully! Please check your email to verify your account")
+        } catch (error) {
+            console.error("Sign up error:", error);
+            setMessage(error.message || "An error occurred during registration.");
         }
     };
 
