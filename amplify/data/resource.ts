@@ -1,17 +1,55 @@
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
 
-/*== STEP 1 ===============================================================
-The section below creates a Todo database table with a "content" field. Try
-adding a new "isDone" field as a boolean. The authorization rule below
-specifies that any unauthenticated user can "create", "read", "update", 
-and "delete" any "Todo" records.
-=========================================================================*/
 const schema = a.schema({
   Todo: a
     .model({
       content: a.string(),
     })
     .authorization((allow) => [allow.guest()]),
+
+  // Define UserStateHx
+  UserStateHx: a.customType({
+      user_stat: a.string().required(),
+      stat: a.string().required(),
+      current_streak: a.integer(),
+      total_questions: a.integer(),
+      state: a.integer(),
+      prev_is_slow: a.integer(),
+      prev_is_correct: a.integer(),
+      elapsed_time_total: a.integer(),
+      timestamp_created: a.datetime()
+    }),  
+
+  addUserState: a
+    .mutation()
+    .arguments({
+      type: a.string().required(),
+      current_streak: a.integer(),
+    })
+    .returns(a.ref("UserStateHx")) // how to return an array .returns([a.ref("UserStateHx")])
+    .authorization(allow => [allow.authenticated()])
+    .handler(
+      a.handler.custom({
+        dataSource: "UserStateHxTable",
+        entry: "./addUserState.js", // linked with resolver file in AWS AppSync API
+      })
+    ),
+
+  getUserState: a
+    .query()
+    .arguments({
+      type: a.string().required(),
+      // user_stat: a.string().required(),
+      limit: a.integer(),
+    })
+    .returns(a.ref("UserStateHx").array())
+    .authorization(allow => [allow.authenticated()])
+    .handler(
+      a.handler.custom({
+        dataSource: "UserStateHxTable",
+        entry: "./getUserState.js"
+      })
+    ),    
 });
 
 export type Schema = ClientSchema<typeof schema>;
@@ -19,7 +57,7 @@ export type Schema = ClientSchema<typeof schema>;
 export const data = defineData({
   schema,
   authorizationModes: {
-    defaultAuthorizationMode: 'iam',
+    defaultAuthorizationMode: 'userPool',
   },
 });
 

@@ -4,6 +4,7 @@ import { UserProvider } from "./context/UserContext";
 import WelcomePage from "./components/WelcomePage";
 import GamePage from "./components/GamePage";
 import Dashboard from "./components/Dashboard";
+import TestPage from "./components/TestPage";
 
 function App() {
     return (
@@ -13,6 +14,7 @@ function App() {
                     <Route path="/" element={<WelcomePage />} />
                     <Route path="/game" element={<GamePage />} />
                     <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/test" element={<TestPage />} />
                 </Routes>
             </Router>
         </UserProvider>
