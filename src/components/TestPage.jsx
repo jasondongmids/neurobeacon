@@ -6,60 +6,16 @@ import Panel from "./Panel";
 // import GameArea from "./GameArea";
 import Footer from "./Footer";
 import "../styles.css";
-import { generateClient } from "aws-amplify/data";
 import { post } from "aws-amplify/api"
+import UserStateContext from "../context/UserStateContext"
 
 // How is everything related?
 // Step 1: amplify/resource.ts: define schema customType for external ddb data model. This is used for type checking for the mutations/queries for returns(a.ref()) 
 // Step 2: amplify/backend.ts: define external data model. Definition adds a data source to AppSync GraphQL API to application. AppSync > select API > Data Sources
 // Step 3: amplify/resource.ts: define query and mutation functions for AppSync. 
-// Step 4: amplify/data/*.js: these are the custom resolver; graphQL queries which AppSync uses to query ddb. AppSync > select API > Functions
-// Step 5: currently in test.tsx: further define how we want to mutate/query using resolver via javascript functions
-
-// NOTE: 
-// The idea will be to put these functions into a separate file such as /amplify/data/query.ts 
-// which you can then import into your component/page. Unsure if one .ts for all functions or one .ts for
-// each data model.
-
-const client = generateClient();
-
-async function addUserState(event, inputValue) {
-    event.preventDefault();
-
-    try {
-        const { data, errors } = await client.mutations.addUserState({
-            type: inputValue,
-            current_streak: 1
-        });
-
-        if (errors) {
-            console.error('Error from GraphQL mutation:', errors);
-        } else {
-            console.log('User state added successfully!', data);
-        }
-    } catch (error) {
-        console.error('Error adding user state:', error);
-    }
-};
-
-async function getUserState(event, setUserState, queryType, queryLimit) {
-    event.preventDefault();
-    try {
-        const { data, errors }= await client.queries.getUserState({
-            type: queryType,
-            limit: parseInt(queryLimit)
-        });
-
-        if (errors) {
-            console.error('Error from GraphQL mutation:', errors);
-        } else {
-            console.log('User query successful', data);
-            setUserState(data)
-        }
-    } catch (error) {
-        console.error('Error querying user state:', error)
-    }
-};
+// Step 4: amplify/data/*.js: these are the custom resolver graphQL queries which AppSync uses to query ddb. AppSync > select API > Functions
+// Step 5: Customized functions using graphQL API are located in context/UserStateContext.jsx (Entity/ReturnTypeName.jsx)
+// Step 6: load those functions by importing the context and wrap them around another function if additional changes are needed (see handleAddUserState)
 
 // Test model api
 async function sendModelRequest(event, modelInput, setModelPrediction) {
@@ -90,13 +46,22 @@ async function sendModelRequest(event, modelInput, setModelPrediction) {
 
 const TestPage = () => {
     const { username } = useContext(UserContext);
-
     const [inputValue, setInputValue] = useState('');
-    const [userState, setUserState] = useState(null);
     const [queryType, setQueryType] = useState('');
     const [queryLimit, setQueryLimit] = useState('');
     const [modelInput, setModelInput] = useState('');
     const [modelPrediction, setModelPrediction] = useState('');
+    const { userState, addUserState, getUserState } = useContext(UserStateContext)
+
+    const handleAddUserState = (event, stateType) => {
+        event.preventDefault()
+        addUserState(stateType)
+    }
+
+    const handleGetUserState = (event, stateType, queryLimit) => {
+        event.preventDefault()
+        getUserState(stateType, queryLimit)
+    }
 
     return (
         <div className="game-page">
@@ -106,7 +71,7 @@ const TestPage = () => {
             <div className="main-container">
                 <Panel title="Stats/Instructions Panel" position="left" />
                 <div className="flex flex-col items-center p-4 space-y-4">
-                    <form onSubmit={(e) => addUserState(e, inputValue)} className="flex space-x-2">
+                    <form onSubmit={(e) => handleAddUserState(e, inputValue)} className="flex space-x-2">
                         <select
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
@@ -122,7 +87,7 @@ const TestPage = () => {
                         </button>
                     </form>
 
-                    <form onSubmit={(e) => getUserState(e, setUserState, queryType, queryLimit)} className="flex space-x-2">
+                    <form onSubmit={(e) => handleGetUserState(e, queryType, queryLimit)} className="flex space-x-2">
                         <select
                             value={queryType}
                             onChange={(e) => setQueryType(e.target.value)}
@@ -144,7 +109,7 @@ const TestPage = () => {
                         </button>
                     </form>
 
-                    {userState && Object.keys(userState).length > 0 ? (
+                    {userState != "" ? (
                         <pre>{JSON.stringify(userState, null, 2)}</pre>
                     ) : (
                         <p style={{color: "black"}}>No user state available</p>
@@ -164,7 +129,7 @@ const TestPage = () => {
                         </button>
                     </form>
 
-                    {modelPrediction != '' ? (
+                    {modelPrediction != "" ? (
                         <pre>Prediction: {JSON.stringify(modelPrediction, null, 2)}</pre>
                     ) : (
                         <p style={{color: "black"}}>No prediction available</p>

@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import { Amplify } from "aws-amplify";
 import { parseAmplifyConfig } from "aws-amplify/utils"
 import outputs from "../amplify_outputs.json"
+import { generateClient } from "aws-amplify/data"
 
 const amplifyConfig = parseAmplifyConfig(outputs);
 
@@ -23,9 +24,11 @@ Amplify.configure({
   }
 })
 
-// Amplify.configure(outputs);
+// ✅ Generate data client once upon initialization
+export const dataClient = generateClient()
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
 root.render(
   <React.StrictMode>
     <App />

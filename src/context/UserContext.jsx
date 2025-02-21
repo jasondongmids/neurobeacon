@@ -30,13 +30,6 @@ export const UserProvider = ({ children }) => {
     }, [username, rememberMe]);
 
     // ✅ Register a new user
-    // const registerUser = (newUsername, newPassword) => {
-    //     if (users[newUsername]) return "User already exists!";
-    //     setUsers(prevUsers => ({ ...prevUsers, [newUsername]: newPassword }));
-    //     setUsername(newUsername);
-    //     return "Registered successfully!";
-    // };
-
     const registerUser = async (newUsername, newPassword) => {
         try {
             const response = await signUp({
@@ -55,15 +48,6 @@ export const UserProvider = ({ children }) => {
     }
 
     // ✅ Log in an existing user
-    // const loginUser = (loginUsername, loginPassword) => {
-    //     if (users[loginUsername] === loginPassword) {
-    //         setUsername(loginUsername);
-    //         return "Login successful!";
-    //     } else {
-    //         return "Invalid credentials.";
-    //     }
-    // };
-
     const loginUser = async (loginUsername, loginPassword) => {
         try {
             await signOut() // ensure signout while testing
