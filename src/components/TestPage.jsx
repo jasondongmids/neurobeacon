@@ -7,6 +7,7 @@ import Panel from "./Panel";
 import Footer from "./Footer";
 import "../styles.css";
 import { generateClient } from "aws-amplify/data";
+import { post } from "aws-amplify/api"
 
 // How is everything related?
 // Step 1: amplify/resource.ts: define schema customType for external ddb data model. This is used for type checking for the mutations/queries for returns(a.ref()) 
@@ -60,6 +61,31 @@ async function getUserState(event, setUserState, queryType, queryLimit) {
     }
 };
 
+// Test model api
+async function sendModelRequest(event) {
+    event.preventDefault();
+
+    try {
+        const invokeModel = post({
+            apiName: "neurobeaconModel",
+            path: "https://wko6ofylnd.execute-api.us-east-1.amazonaws.com/test",
+            region: "us-east-1",
+            options: {
+                body: {
+                    data: [1.0, 1.23263889, 1.24328859, 0.875, 0.78, 0.84130453, 1.0 , 0.90024824]
+                }
+            }
+        });
+
+        const { body } = await invokeModel.response;
+        const response = await body.json();
+
+        console.log("Post call succeeded:", response);
+    } catch (error) {
+        console.log("Post call failed:", JSON.parse(error.response))
+    }
+}
+
 
 const TestPage = () => {
     const { username } = useContext(UserContext);
@@ -68,6 +94,8 @@ const TestPage = () => {
     const [userState, setUserState] = useState(null);
     const [queryType, setQueryType] = useState('');
     const [queryLimit, setQueryLimit] = useState('');
+    const [modelInput, setModelInput] = useState('');
+    const [modelPrediction, setModelPrediction] = useState('');
 
     return (
         <div className="game-page">
@@ -119,6 +147,24 @@ const TestPage = () => {
                         <pre>{JSON.stringify(userState, null, 2)}</pre>
                     ) : (
                         <p style={{color: "black"}}>No user state available</p>
+                    )}
+
+                    <form onSubmit={(e) => sendModelRequest(e)} className="flex space-x-2">
+                        <input
+                            type="text"
+                            value={modelInput}
+                            onChange={(e) => setModelInput(e.target.value)}
+                            placeholder="Example array: [1., 1.23263889, 1.24328859, 0.875, 0.78, 0.84130453, 1. , 0.90024824]"
+                        />
+                        <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">
+                        Invoke Model
+                        </button>
+                    </form>
+
+                    {modelPrediction != '' ? (
+                        <pre>{JSON.stringify(modelPrediction, null, 2)}</pre>
+                    ) : (
+                        <p style={{color: "black"}}>No prediction available</p>
                     )}
                 </div>
                 <Panel title="Hints/Feedback Panel" position="right" />

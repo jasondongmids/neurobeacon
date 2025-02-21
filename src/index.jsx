@@ -4,9 +4,26 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { Amplify } from "aws-amplify";
+import { parseAmplifyConfig } from "aws-amplify/utils"
 import outputs from "../amplify_outputs.json"
 
-Amplify.configure(outputs);
+const amplifyConfig = parseAmplifyConfig(outputs);
+
+Amplify.configure({
+  ...amplifyConfig,
+  API: {
+    ...amplifyConfig.API,
+    REST: {
+      ...amplifyConfig.API?.REST,
+      neurobeaconModel: {
+        endpoint: "https://wko6ofylnd.execute-api.us-east-1.amazonaws.com/test",
+        region: "us-east-1"
+      }
+    }
+  }
+})
+
+// Amplify.configure(outputs);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
