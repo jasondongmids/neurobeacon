@@ -62,25 +62,26 @@ async function getUserState(event, setUserState, queryType, queryLimit) {
 };
 
 // Test model api
-async function sendModelRequest(event) {
+async function sendModelRequest(event, modelInput, setModelPrediction) {
     event.preventDefault();
 
     try {
         const invokeModel = post({
             apiName: "neurobeaconModel",
-            path: "https://wko6ofylnd.execute-api.us-east-1.amazonaws.com/test",
+            path: "test/neurobeaconModel",
             region: "us-east-1",
             options: {
                 body: {
-                    data: [1.0, 1.23263889, 1.24328859, 0.875, 0.78, 0.84130453, 1.0 , 0.90024824]
+                    data: JSON.parse(modelInput)
                 }
             }
         });
 
         const { body } = await invokeModel.response;
         const response = await body.json();
-
+        const prediction = response.body
         console.log("Post call succeeded:", response);
+        setModelPrediction(prediction)
     } catch (error) {
         console.log("Post call failed:", JSON.parse(error.response))
     }
@@ -148,13 +149,15 @@ const TestPage = () => {
                     ) : (
                         <p style={{color: "black"}}>No user state available</p>
                     )}
-
-                    <form onSubmit={(e) => sendModelRequest(e)} className="flex space-x-2">
+                    <p style={{color: "black"}}>
+                        Example State: [1, 1.23263889, 1.24328859, 0.875, 0.78, 0.84130453, 1 , 0.90024824]
+                    </p>
+                    <form onSubmit={(e) => sendModelRequest(e, modelInput, setModelPrediction)} className="flex space-x-2">
                         <input
                             type="text"
                             value={modelInput}
                             onChange={(e) => setModelInput(e.target.value)}
-                            placeholder="Example array: [1., 1.23263889, 1.24328859, 0.875, 0.78, 0.84130453, 1. , 0.90024824]"
+                            placeholder="Example array: [1, 1.23263889, 1.24328859, 0.875, 0.78, 0.84130453, 1, 0.90024824]"
                         />
                         <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">
                         Invoke Model
@@ -162,7 +165,7 @@ const TestPage = () => {
                     </form>
 
                     {modelPrediction != '' ? (
-                        <pre>{JSON.stringify(modelPrediction, null, 2)}</pre>
+                        <pre>Prediction: {JSON.stringify(modelPrediction, null, 2)}</pre>
                     ) : (
                         <p style={{color: "black"}}>No prediction available</p>
                     )}

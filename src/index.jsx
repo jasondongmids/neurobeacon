@@ -16,7 +16,7 @@ Amplify.configure({
     REST: {
       ...amplifyConfig.API?.REST,
       neurobeaconModel: {
-        endpoint: "https://wko6ofylnd.execute-api.us-east-1.amazonaws.com/test",
+        endpoint: "https://wko6ofylnd.execute-api.us-east-1.amazonaws.com/",
         region: "us-east-1"
       }
     }
