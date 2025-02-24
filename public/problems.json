@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "scenario_text": "You have _f1_ cups of flour. A cake recipe requires _f2_ cups. How much flour is left?",
+    "operation": "-",
+    "difficulty": "easy",
+    "first_val_possibilities": [2, 4, 8, 10],
+    "second_val_possibilities": [2, 4, 8, 10]
+  },
+  {
+    "id": 2,
+    "scenario_text": "You need _f1_ gallons of paint. You already have _f2_ gallons. How much more do you need?",
+    "operation": "+",
+    "difficulty": "easy",
+    "first_val_possibilities": [2, 4, 8, 10],
+    "second_val_possibilities": [2, 4, 8, 10]
+  },
+  {
+    "id": 3,
+    "scenario_text": "A car needs _f1_ liters of fuel. It already has _f2_ liters. How much more fuel is required?",
+    "operation": "+",
+    "difficulty": "easy",
+    "first_val_possibilities": [2, 4, 8, 10],
+    "second_val_possibilities": [2, 4, 8, 10]
+  },
+  {
+    "id": 4,
+    "scenario_text": "A plumber uses _f1_ meters of pipe. He had _f2_ meters before. How much is left?",
+    "operation": "-",
+    "difficulty": "easy",
+    "first_val_possibilities": [2, 4, 8, 10],
+    "second_val_possibilities": [2, 4, 8, 10]
+  },
+  {
+    "id": 5,
+    "scenario_text": "You mixed _f1_ liters of juice, but spilled _f2_ liters. How much juice is left?",
+    "operation": "-",
+    "difficulty": "easy",
+    "first_val_possibilities": [2, 4, 8, 10],
+    "second_val_possibilities": [2, 4, 8, 10]
+  }
+]

@@ -1,0 +1,92 @@
+[
+    {
+      "id": 1,
+      "scenario_text": "You have _f1_ cups of flour. A cake recipe requires _f2_ cups. How much flour is left?",
+      "operation": "-",
+      "type": "fraction",
+      "difficulty": "easy",
+      "first_val_possibilities": [2, 4, 8, 10],
+      "second_val_possibilities": [2, 4, 8, 10]
+    },
+    {
+      "id": 2,
+      "scenario_text": "You need _f1_ gallons of paint. You already have _f2_ gallons. How much more do you need?",
+      "operation": "+",
+      "type": "fraction",
+      "difficulty": "easy",
+      "first_val_possibilities": [2, 4, 8, 10],
+      "second_val_possibilities": [2, 4, 8, 10]
+    },
+    {
+      "id": 3,
+      "scenario_text": "A car needs _f1_ liters of fuel. It already has _f2_ liters. How much more fuel is required?",
+      "operation": "+",
+      "type": "fraction",
+      "difficulty": "easy",
+      "first_val_possibilities": [2, 4, 8, 10],
+      "second_val_possibilities": [2, 4, 8, 10]
+    },
+    {
+      "id": 4,
+      "scenario_text": "A plumber uses _f1_ meters of pipe. He had _f2_ meters before. How much is left?",
+      "operation": "-",
+      "type": "fraction",
+      "difficulty": "easy",
+      "first_val_possibilities": [2, 4, 8, 10],
+      "second_val_possibilities": [2, 4, 8, 10]
+    },
+    {
+      "id": 5,
+      "scenario_text": "You mixed _f1_ liters of juice, but spilled _f2_ liters. How much juice is left?",
+      "operation": "-",
+      "type": "fraction",
+      "difficulty": "easy",
+      "first_val_possibilities": [2, 4, 8, 10],
+      "second_val_possibilities": [2, 4, 8, 10]
+    },
+    {
+      "id": 6,
+      "scenario_text": "A shop sells apples for $_val1_ each. How much will _val2_ apples cost?",
+      "operation": "*",
+      "type": "whole-number",
+      "difficulty": "easy",
+      "first_val_possibilities": [2, 3, 4, 5, 6],
+      "second_val_possibilities": [2, 3, 4, 5, 6]
+    },
+    {
+      "id": 7,
+      "scenario_text": "You have $_val1_ sweets to share between _val2_ friends. How many sweets will each friend get?",
+      "operation": "/",
+      "type": "whole-number",
+      "difficulty": "easy",
+      "first_val_possibilities": [10, 12, 15, 20, 24],
+      "second_val_possibilities": [2, 3, 4, 5, 6]
+    },
+    {
+      "id": 8,
+      "scenario_text": "You have $_val1_ red balloons and $_val2_ blue balloons. How many balloons do you have in total?",
+      "operation": "+",
+      "type": "whole-number",
+      "difficulty": "easy",
+      "first_val_possibilities": [5, 10, 15, 20],
+      "second_val_possibilities": [5, 10, 15, 20]
+    },
+    {
+      "id": 9,
+      "scenario_text": "If you have $_val1_ pencils and give away _val2_ pencils, how many pencils are left?",
+      "operation": "-",
+      "type": "whole-number",
+      "difficulty": "easy",
+      "first_val_possibilities": [20, 25, 30, 35],
+      "second_val_possibilities": [5, 10, 15]
+    },
+    {
+      "id": 10,
+      "scenario_text": "There are $_val1_ rows of chairs with _val2_ chairs in each row. How many chairs are there in total?",
+      "operation": "*",
+      "type": "whole-number",
+      "difficulty": "medium",
+      "first_val_possibilities": [5, 7, 8, 9],
+      "second_val_possibilities": [6, 7, 8, 9]
+    }
+  ]
