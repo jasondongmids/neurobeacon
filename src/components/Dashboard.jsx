@@ -15,11 +15,19 @@ const DashboardPage = () => {
         navigate("/"); // ✅ Redirect to Welcome Page
     };
 
+    // ✅ Handles game selection
+    const handleGameSelection = () => {
+        const selectedGame = document.querySelector('input[name="game"]:checked')?.value;
+        if (selectedGame) navigate(`/game/${selectedGame}`);
+    };
+
     return (
         <div className="dashboard-page">
             <Header />
             <NavBar /> {/* ✅ Keeps Hamburger Menu */}
             <div className="dashboard-container">
+                
+                {/* ✅ Profile Section */}
                 <div className="panel profile">
                     <h2>🧑‍💼 {username || "Your Profile"}</h2>
                     <img
@@ -33,6 +41,7 @@ const DashboardPage = () => {
                     <p><strong>Achievements:</strong> 🏅 Brain Trainer Level 3</p>
                 </div>
 
+                {/* ✅ Progress Overview */}
                 <div className="panel progress">
                     <h2>📊 Progress Overview</h2>
                     <img
@@ -43,13 +52,29 @@ const DashboardPage = () => {
                     <p>You're improving! Keep pushing forward to increase your streak! 🚀</p>
                 </div>
 
+                {/* ✅ Game Selection Panel */}
+                <div className="panel progress">
+                    <h2>Select a Game to Play</h2>
+                    <label><input type="radio" name="game" value="math" /> 🧮 Math</label>
+                    <label><input type="radio" name="game" value="trivia" /> ❓ Trivia</label>
+                    <label><input type="radio" name="game" value="reaction" /> ⚡ Reaction</label>
+                    <label><input type="radio" name="game" value="memory" /> 🧠 Memory</label>
+                    <label><input type="radio" name="game" value="sudoku" /> 🔢 Sudoku</label>  {/* ✅ Sudoku Added! */}
+                    <button onClick={handleGameSelection} disabled={!document.querySelector('input[name="game"]:checked')}>
+                        Play Now!
+                    </button>
+
+                </div>
+
+                {/* ✅ Settings Panel */}
                 <div className="panel settings">
                     <h2>⚙️ Settings & Preferences</h2>
                     <label><input type="checkbox" checked /> Enable Hints</label>
                     <label><input type="checkbox" /> Sound Effects</label>
                     <label><input type="checkbox" /> Dark Mode</label>
-                    <button className="logout-btn" onClick={handleLogout}>Logout</button>  {/* ✅ Fully Functional Logout */}
+                    <button className="logout-btn" onClick={handleLogout}>Logout</button>  
                 </div>
+
             </div>
         </div>
     );
