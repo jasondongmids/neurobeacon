@@ -70,55 +70,173 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: stretch;
-    height: 750px;
-    margin-bottom: 10px;
-    padding: 10px;
+    height: calc(100vh - 150px); /* Adjusted to fit below the header */
+    margin-bottom: 0px;
+    padding: 0px;
 }
 
 /* ====== Side Panels (Stats & Hints) ====== */
+/* ====== Collapsible Panels ====== */
+
+/* Ensure panels maintain their look */
 .panel {
-    background-color: #F5F5F5;
-    width: 20%;
-    padding: 20px;
-    border: 2px solid #4D4D4D;
-    border-radius: 5px;
-    height: 100%;
+    width: 25%; /* Adjusted for better spacing */
+    height: 100%; /* Stretch from header to footer */
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 18px;
-    color: #2E2E2E;  /* ✅ Ensures dark font color */
+    justify-content: flex-start; /* Ensures top alignment */
+    overflow: hidden; /* Prevents unnecessary scrolling */
+    padding: 0px;
+    margin: 0px;
 }
-/* Fix text color at the bottom of panels */
 .panel p {
-    font-size: 24px;
-    color: #2E2E2E !important;  /* ✅ Forces dark text color */
-    font-weight: bold;
-    text-align: center;
+    color:black;
 }
 
-.stats-image {
+/* Panel Header (Title + Toggle Button) */
+.panel-header {
+    margin: 0px;
+    padding: 15px;
     width: 100%;
-    max-width: 500px;
-    margin-top: 10px;
-    border-radius: 5px;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #2E86C1;
+    font-size: 28px;
+    font-weight: bold;
+    color: white;
+    border-bottom: 2px solid #4D4D4D;
+    cursor: pointer;
+}
+/* ✅ Make Sure No Gaps at the Top */
+.no-gap {
+    margin-top: 0 !important;
 }
 
-/* ====== Game Area ====== */
-.game-area {
-    background-color: #D6EAF8;
-    flex-grow: 1;
-    padding: 100px;
-    text-align: center;
-    font-size: 20px;
-    border: 2px solid #4D4D4D;
-    border-radius: 10px;
+/* Toggle Button */
+.toggle-btn {
+    background: none;
+    border: none;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #2E86C1;
+}
+
+/* Hide content when panel is collapsed */
+/* ====== Collapsible Panels (Improved) ====== */
+
+/* Adjust closed panel size for better usability */
+.panel.closed {
+    width: 40px;  /* Keep the bar visible */
+    min-width: 40px;
+    height: 100%;
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: #2E86C1;
+}
+
+/* ✅ Fix Collapsed Panel Header */
+.panel.closed .panel-header {
+    background-color: #F39C12;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 22px;
+    color: white;
+    text-align: center;
+}
+
+/* Add vertical text to collapsed panel for readability */
+.panel.closed h2 {
+    background-color: #F39C12;;
+    writing-mode: vertical-rl; /* Rotates text vertically */
+    transform: rotate(180deg); /* Keeps text readable */
+
+    font-size: 24px;
+    white-space: nowrap;
+    text-align: center;
+    color:white;
+
+}
+
+/* Toggle Button - Adjusts its position in collapsed mode */
+.panel.closed .toggle-btn {
+    font-size: 30px;
+    position: absolute;
+    width:10%;
+    top: 10px;
+    right: 10px;
+}
+
+/* Ensures a smooth transition */
+/* Ensure content inside the panel hides smoothly */
+.panel.closed img,
+.panel.closed p,
+.panel.closed ul,
+.panel.closed .bottom-buttons {
+    display: none;
+}
+/* ====== Session Stats Panel ====== */
+.session-stats {
+    flex-grow: 1;  /* Ensures it takes up full space */
+    display: flex;
+    width:105%;
+    flex-direction: column;
+    font-size: 40px;
+    color: #333;
+    text-align: left;
+    justify-content: top;
+    align-items: left;
+
+
+}
+
+.session-stats p {
+    margin: 10px 0;
+    font-size: 25px;
+    font-weight: bold;
+}
+/* === GAME LAYOUT FIXES === */
+.game-layout {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100vh; /* Full height */
+    justify-content: space-between;
+}
+
+
+
+/* Center game area properly */
+.game-area-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh; /* Ensures it stays vertically aligned */
+}
+
+/* Prevent duplicate rendering */
+.left-panel, .right-panel {
+    display: flex;
+    flex-direction: column;
+    width: 20%;
+}
+
+
+/* ====== Game Area ====== */
+.game-area {
+    flex-grow: 1;
+    width: 80%;
     height: 100%;
+    background-color: #D6EAF8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #4D4D4D;
+    border-radius: 10px;
 }
 
 /* ====== Hints/Feedback Panel & Buttons ====== */
@@ -126,8 +244,8 @@ body {
     list-style: none;
     padding: 10px;
     text-align: left;
-    font-size: 24px;
-    line-height: 1.5;
+    font-size: 20px;
+    line-height: 1.25;
 }
 
 .hint-list li {
@@ -157,15 +275,17 @@ body {
 /* ====== Footer & Controls ====== */
 .footer {
     background-color: #2E86C1;
-    padding: 80px;
+    padding: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
     border-top: 6px solid #4D4D4D;
     width: 100%;
-    height: 100px;
-    position: relative;
+    position: fixed;
+    bottom: 0;
+    height: 80px;
 }
+
 
 .controls {
     display: flex;
@@ -448,3 +568,232 @@ p {
 .logout-btn:hover {
     background-color: #B71C1C;
 }
+.game-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.fraction-game {
+  background-color: white;
+  border-radius: 12px;
+  padding-bottom: 100px;
+  padding-top: 50px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Align to the top */
+  align-items: center;
+}
+
+.fraction-game .scenario-text {
+  background-color: #f3f3f3;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  font-size: 30px;
+  line-height: 1.6;
+  border: 1px solid #ddd;
+  text-align: center;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  color: black; /* Ensure it stays black */
+  font-weight: 600;
+  max-width: 90%;
+  width: 90%;
+  height: auto;
+  box-shadow: none;
+}
+
+.fraction-game .fraction-inputs {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.fraction-game input[type="number"] {
+  width: auto;
+  height: 60px;
+  padding: 12px;
+  font-size: 28px;
+  text-align: center;
+  border: 2px solid #999;
+  border-radius: 6px;
+  background-color: #ffffff;
+  transition: all 0.2s ease-in-out;
+}
+
+.fraction-game input[type="number"]:focus {
+  outline: none;
+  border-color: #007bff;
+  background-color: #fefefe;
+}
+
+.fraction-game span {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.fraction-feedback p {
+  font-size: 28px;
+  margin-top: 12px;
+  color: #333;
+}
+
+.feedback.success {
+  color: green;
+  font-weight: bold;
+}
+
+.feedback.error {
+  color: red;
+  font-weight: bold;
+}
+
+.feedback-info {
+  font-size: 24px;
+  color: #555;
+  margin-top: 5px;
+}
+
+.multiple-choice-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two equal columns */
+    gap: 16px; /* Space between columns */
+    margin-bottom: 16px;
+  }
+  
+  .multiple-choice-options label {
+    display: flex;
+    align-items: center;
+    font-size: 24px;
+    background-color: #f9f9f9;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+  
+  .multiple-choice-options input[type="radio"] {
+    margin-right: 12px;
+    transform: scale(1.5);
+    cursor: pointer;
+  }
+  
+  .multiple-choice-options label:hover {
+    background-color: #f1f1f1;
+    border-color: #bbb;
+  }
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Dim the background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background: #007bff;
+    padding: 20px 30px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+    font-family: Arial, sans-serif;
+    width: 90%;
+    max-width: 400px;
+  }
+  
+  .modal-content h2,
+  .modal-content p {
+    color: white;
+    font-weight: bold;
+    margin: 8px 0;
+  }
+  
+  .modal-content button {
+    margin: 10px;
+    padding: 8px 16px;
+    background-color: #f39c12;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 26px;
+  }
+  
+  .modal-content button:hover {
+    background-color: #d68910;
+  }
+  
+  .sudoku-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.sudoku-grid {
+    display: grid;
+    grid-template-columns: repeat(9, 40px);
+    grid-gap: 2px;
+    border: 2px solid black;
+}
+
+.sudoku-row {
+    display: contents;
+}
+
+.sudoku-cell {
+    width: 40px;
+    height: 40px;
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.sudoku-cell.selected {
+    background-color: lightblue;
+}
+
+.number-selection {
+    margin-top: 15px;
+}
+
+.number-selection button {
+    width: 40px;
+    height: 40px;
+    margin: 5px;
+    font-size: 18px;
+    cursor: pointer;
+}
+.sudoku-rules {
+    padding: 10px;
+    font-size: 16px;
+    line-height: 1.5;
+    list-style: none;
+}
+
+.sudoku-rules li {
+    margin-bottom: 5px;
+}
+
+ 
