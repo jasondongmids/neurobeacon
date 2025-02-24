@@ -26,7 +26,7 @@ const WelcomePage = () => {
         const response = await loginUser(inputUsername, inputPassword);
         console.log("Response:", response)
         if (response === "DONE") {
-            navigate("/game");
+            navigate("/dashboard");
         } else {
             setMessage(response);
         }
