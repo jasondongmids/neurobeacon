@@ -1,73 +1,47 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import UserContext from "../context/UserContext";
 import Header from "./Header";
 import NavBar from "./NavBar"; 
 import "../styles.css";
-import progressChart from "../assets/progress.png";
-import profilePlaceholder from "../assets/profile-placeholder.png";
-
 
 const DashboardPage = () => {
     const { username, setUsername } = useContext(UserContext);
     const navigate = useNavigate();
 
+    // ✅ Track selected game with state
+    const [selectedGame, setSelectedGame] = useState("");
+
     const handleLogout = () => {
-        localStorage.removeItem("currentUser");  // ✅ Clear stored username
-        setUsername(""); // ✅ Reset username in context
-        navigate("/"); // ✅ Redirect to Welcome Page
+        localStorage.removeItem("currentUser");
+        setUsername("");
+        navigate("/");
     };
 
     // ✅ Handles game selection
     const handleGameSelection = () => {
-        const selectedGame = document.querySelector('input[name="game"]:checked')?.value;
         if (selectedGame) navigate(`/game/${selectedGame}`);
     };
 
     return (
         <div className="dashboard-page">
             <Header />
-            <NavBar /> {/* ✅ Keeps Hamburger Menu */}
+            <NavBar />
             <div className="dashboard-container">
                 
-                {/* ✅ Profile Section */}
-                <div className="panel profile">
-                    <h2>🧑‍💼 {username || "Your Profile"}</h2>
-                    <img
-                        src={profilePlaceholder} 
-                        alt="User Profile Placeholder"
-                        className="profileplaceholder"
-
-                    />
-                    <p><strong>Username:</strong> {username || "NeuroUser42"}</p>
-                    <p><strong>Games Played:</strong> 120</p>
-                    <p><strong>Current Streak:</strong> 🔥 14 Days</p>
-                    <p><strong>Achievements:</strong> 🏅 Brain Trainer Level 3</p>
-                </div>
-
-                {/* ✅ Progress Overview */}
-                <div className="panel progress">
-                    <h2>📊 Progress Overview</h2>
-                    <img
-                        src={progressChart} 
-                        alt="User Progress Chart"
-                        className="stats-image"
-                    />
-                    <p>You're improving! Keep pushing forward to increase your streak! 🚀</p>
-                </div>
-
                 {/* ✅ Game Selection Panel */}
                 <div className="panel progress">
                     <h2>Select a Game to Play</h2>
-                    <label><input type="radio" name="game" value="math" /> 🧮 Math</label>
-                    <label><input type="radio" name="game" value="trivia" /> ❓ Trivia</label>
-                    <label><input type="radio" name="game" value="reaction" /> ⚡ Reaction</label>
-                    <label><input type="radio" name="game" value="memory" /> 🧠 Memory</label>
-                    <label><input type="radio" name="game" value="sudoku" /> 🔢 Sudoku</label>  {/* ✅ Sudoku Added! */}
-                    <button onClick={handleGameSelection} disabled={!document.querySelector('input[name="game"]:checked')}>
-                        Play Now!
-                    </button>
-
+                    
+                    {/* ✅ Update state on selection */}
+                    <label><input type="radio" name="game" value="math" onChange={(e) => setSelectedGame(e.target.value)} /> 🧮 Math</label>
+                    <label><input type="radio" name="game" value="trivia" onChange={(e) => setSelectedGame(e.target.value)} /> ❓ Trivia</label>
+                    <label><input type="radio" name="game" value="reaction" onChange={(e) => setSelectedGame(e.target.value)} /> ⚡ Reaction</label>
+                    <label><input type="radio" name="game" value="memory" onChange={(e) => setSelectedGame(e.target.value)} /> 🧠 Memory</label>
+                    <label><input type="radio" name="game" value="sudoku" onChange={(e) => setSelectedGame(e.target.value)} /> 🔢 Sudoku</label>
+                    
+                    {/* ✅ Button is only enabled when a game is selected */}
+                    <button class="nav-button" onClick={handleGameSelection} disabled={!selectedGame}>Play Now!</button> 
                 </div>
 
                 {/* ✅ Settings Panel */}
