@@ -5,7 +5,7 @@ import Header from "./Header";
 import NavBar from "./NavBar"; 
 import "../styles.css";
 import progressChart from "../assets/progress.png";
-import profilePlaceholder from "/assets/profile-placeholder.png";
+import profilePlaceholder from "../assets/profile-placeholder.png";
 
 
 const DashboardPage = () => {
