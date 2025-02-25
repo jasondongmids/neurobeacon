@@ -4,6 +4,9 @@ import UserContext from "../context/UserContext";
 import Header from "./Header";
 import NavBar from "./NavBar"; 
 import "../styles.css";
+import progressChart from "../assets/progress.png";
+import profileplaceholder from "/assets/profile-placeholder.png";
+
 
 const DashboardPage = () => {
     const { username, setUsername } = useContext(UserContext);
@@ -31,9 +34,9 @@ const DashboardPage = () => {
                 <div className="panel profile">
                     <h2>🧑‍💼 {username || "Your Profile"}</h2>
                     <img
-                        src={require("../assets/profile-placeholder.png")}
-                        alt="User Avatar"
-                        className="profile-image"
+                        src={progressChart} 
+                        alt="User Profile Placeholder"
+                        className="profileplaceholder"
                     />
                     <p><strong>Username:</strong> {username || "NeuroUser42"}</p>
                     <p><strong>Games Played:</strong> 120</p>
@@ -45,7 +48,7 @@ const DashboardPage = () => {
                 <div className="panel progress">
                     <h2>📊 Progress Overview</h2>
                     <img
-                        src={require("../assets/progress.png")}
+                        src={progressChart} 
                         alt="User Progress Chart"
                         className="stats-image"
                     />
