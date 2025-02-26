@@ -46,21 +46,34 @@ async function sendModelRequest(event, modelInput, setModelPrediction) {
 
 const TestPage = () => {
     const { username } = useContext(UserContext);
-    const [inputValue, setInputValue] = useState('');
+    const [gameType, setGameType] = useState('');
+    const [category, setCategory] = useState(null);
     const [queryType, setQueryType] = useState('');
+    const [queryCategory, setQueryCategory] = useState('');
     const [queryLimit, setQueryLimit] = useState('');
     const [modelInput, setModelInput] = useState('');
     const [modelPrediction, setModelPrediction] = useState('');
     const { userState, addUserState, getUserState } = useContext(UserStateContext)
 
-    const handleAddUserState = (event, stateType) => {
+    const handleAddUserState = (event, gameType, category) => {
         event.preventDefault()
-        addUserState(stateType)
+        const data = JSON.stringify({
+            prev_is_slow: 1,
+            prev_is_correct: 1,
+            total_questions: 1,
+            total_correct: 1,
+            percent_correct: 1,
+            total_elapsed_time: 100,
+            average_user_time: 100,      
+        })
+
+        addUserState(gameType, category, data)
     }
 
-    const handleGetUserState = (event, stateType, queryLimit) => {
+    const handleGetUserState = (event, gameType, category, limit) => {
         event.preventDefault()
-        getUserState(stateType, queryLimit)
+        console.log(gameType)
+        getUserState(gameType, category, limit)
     }
 
     return (
@@ -71,37 +84,54 @@ const TestPage = () => {
             <div className="main-container">
                 <Panel title="Stats/Instructions Panel" position="left" />
                 <div className="flex flex-col items-center p-4 space-y-4">
-                    <form onSubmit={(e) => handleAddUserState(e, inputValue)} className="flex space-x-2">
+                    <form onSubmit={(e) => handleAddUserState(e, gameType, category)} className="flex space-x-2">
                         <select
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                            className="border p-2 rounded"
-                        >
+                            value={gameType}
+                            onChange={(e) => setGameType(e.target.value)}
+                            className="border p-2 rounded">
                             <option value="" disabled>Select an option</option>
-                            <option value="STATE">STATE</option>
-                            <option value="MATH">MATH</option>
-                            <option value="VISUAL">VISUAL</option>
+                            <option value="math">MATH</option>
+                            <option value="trivia">TRIVIA</option>
+                            <option value="visual">VISUAL</option>
+                        </select>
+                        <select
+                            value={category || ""}
+                            onChange={(e) => setCategory(e.target.value)}
+                            className="border p-2 rounded">
+                            <option value="">Optional: Select an option</option>
+                            <option value="sub">SUB</option>
+                            <option value="add">ADD</option>
+                            <option value="minus">MINUS</option>
                         </select>
                         <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">
                         Add User State
                         </button>
                     </form>
 
-                    <form onSubmit={(e) => handleGetUserState(e, queryType, queryLimit)} className="flex space-x-2">
+                    <form onSubmit={(e) => handleGetUserState(e, queryType, queryCategory, queryLimit)} className="flex space-x-2">
                         <select
                             value={queryType}
                             onChange={(e) => setQueryType(e.target.value)}
-                            className="border p-2 rounded"
-                        >
+                            className="border p-2 rounded">
                             <option value="" disabled>Select an option</option>
-                            <option value="STATE">STATE</option>
-                            <option value="MATH">MATH</option>
-                            <option value="VISUAL">VISUAL</option>
+                            <option value="math">MATH</option>
+                            <option value="trivia">TRIVIA</option>
+                            <option value="visual">VISUAL</option>
+                        </select>
+                        <select
+                            value={queryCategory || ""}
+                            onChange={(e) => setQueryCategory(e.target.value)}
+                            className="border p-2 rounded">
+                            <option value="">Optional: Select an option</option>
+                            <option value="sub">SUB</option>
+                            <option value="add">ADD</option>
+                            <option value="minus">MINUS</option>
                         </select>
                         <input
                             type="text"
                             value={queryLimit}
                             onChange={(e) => setQueryLimit(e.target.value)}
+                            onBlur={() => setQueryLimit(queryLimit || "")}
                             placeholder="# records to query"
                         />
                         <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">
@@ -132,7 +162,7 @@ const TestPage = () => {
                     {modelPrediction != "" ? (
                         <pre>Prediction: {JSON.stringify(modelPrediction, null, 2)}</pre>
                     ) : (
-                        <p style={{color: "black"}}>No prediction available</p>
+                        <p style={{color: "black"}}>Endpoint is not live!</p>
                     )}
                 </div>
                 <Panel title="Hints/Feedback Panel" position="right" />

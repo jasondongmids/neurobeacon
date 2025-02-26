@@ -1,20 +1,23 @@
 import { util } from '@aws-appsync/utils';
 
+// function arguments (gameType, category, limit)
 export function request(ctx) {
-    // const userStat = `STATE#${ctx.arguments?.user_stat}`;
-    // console.log('Context:', ctx)
-    // const userStat = ctx.arguments.user_stat
-    const userStat = `${ctx.arguments.type}#${ctx.identity.sub}`
-    const limit = ctx.arguments.limit
+    const user = ctx.identity.sub
+    const pk = (ctx.arguments.category) 
+        ? `${ctx.arguments.gameType.toUpperCase()}#${ctx.arguments.category.toUpperCase()}#${user}` 
+        : `${ctx.arguments.gameType.toUpperCase()}#${user}`
 
-    // console.log('userStat:', userStat)
+    const limit = (ctx.arguments.limit) ? ctx.arguments.limit : 1
+
+    console.log('Context (Before):', ctx)
+    console.log('Limit:', limit)
 
     return {
         operation: 'Query',
         query: {
-            expression: "#us = :userStat" ,
-            expressionNames: { "#us": "user_stat" },
-            expressionValues: util.dynamodb.toMapValues({ ":userStat": userStat }),
+            expression: "#us = :userState" ,
+            expressionNames: { "#us": "user_state_pk" },
+            expressionValues: util.dynamodb.toMapValues({ ":userState": pk }),
         },
         scanIndexForward: false,
         limit: limit,
@@ -22,6 +25,6 @@ export function request(ctx) {
 }
 
 export function response(ctx) {
-    // console.log('Context (After):', ctx)
+    console.log('Context (After):', ctx)
     return ctx.result.items.length > 0 ? ctx.result.items : null;
 }
