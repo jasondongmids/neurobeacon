@@ -3,97 +3,141 @@ import { dataClient } from "../index";
 
 const UserStateContext = createContext();
 
-
-// user_stat: a.string().required(), // all user data set in function
-// stat: a.string().required(), // created in function
-// current_streak: a.integer(), // create state variable
-// total_questions: a.integer(), // create state variable
-// state: a.integer(), // ?
-// prev_is_slow: a.integer(), // is_slow?
-// prev_is_correct: a.integer(),  is_correct
-// elapsed_time_total: a.integer(), in game
-// timestamp_created: a.datetime() created in function
-
 export const UserStateProvider = ({ children }) => {
     // ✅ Load stored user state data
-    const [userState, setUserState] = useState("");
-    // const [prevCorrect, setPrevCorrect] = useState("")
-    const [totalQuestions, setTotalQuestions] = useState("") // questions_roll_ct
-    const [totalCorrect, setTotalCorrect] = useState("") // correct_answers_roll_sum
-    const [totalElapsedTime, setTotalElapsedTime] = useState("")
-    const [gameCorrect, setGameCorrect] = useState("")
-    const [gameQuestions, setGameQuestions] = useState("")
+    const [userGameState, setUserGameState] = useState({
+        prev_is_slow: "",
+        prev_is_correct: "",
+        total_questions: "",
+        total_correct: "",
+        percent_correct: "",
+        total_elapsed_time: "",
+        average_user_time: "",
+    });
 
+    const [userCategoryState, setUserCategoryState] = useState({
+        total_questions: "",
+        total_correct: ""
+    });
 
     // ✅ Save user state when updated // to be updated!
     useEffect(() => {
-        localStorage.setItem("userState", userState);
-    }, [userState]);    
+        localStorage.setItem("userGameState", userGameState);
+    }, [userGameState]);    
 
-    // ✅ Add user state // to be updated!
+    // ✅ Add single GAME#, GAME#CATEGORY#, or GAME#STATISTICS# state
     const addUserState = async (gameType, category, inputData) => {
         try {
-            console.log('data:', inputData)
-            // const prefix = (category) ? `${gameType}#${category}`.toUpperCase() : `${gameType}`.toUpperCase()
-
-            // console.log('Prefix:', prefix)
-            console.log('inputData:', inputData, typeof inputData)
-
             const { data, errors } = await dataClient.mutations.addUserState({
-                // prefix: prefix,
                 gameType: gameType,
                 category: category,
                 data: inputData
             });
     
             if (errors) {
-                console.error('Error from GraphQL mutation:', errors);
+                console.error('Check inputs or CloudWatch logs:', errors);
             } else {
-                console.log('User state added successfully!', data);
+                console.log('Successful add', data);
             }
         } catch (error) {
-            console.error('Error adding user state:', error);
+            console.error('Error with function in UserStateContext.jsx:', error);
         } 
     };
 
-    // ✅ Get user state // to be updated!
+    // ✅ Query GAME#, GAME#CATEGORY#, or GAME#STATISTICS# state(s)
     const getUserState = async (gameType, category, queryLimit) => {
         try {
-            // const prefix = (category) ? `${gameType}#${category}` : `${gameType}`
-
-            // console.log('Prefix:', prefix)
-            console.log('queryLimit:', queryLimit)
-
             const { data, errors }= await dataClient.queries.getUserState({
-                // prefix: prefix,
                 gameType: gameType,
                 category: category,
                 limit: parseInt(queryLimit)
             });
     
             if (errors) {
-                console.error('Error from GraphQL mutation:', errors);
+                console.error('Check inputs or CloudWatch logs:', errors);
             } else {
-                console.log('User query successful', data);
-                // if data == null;
-                //     do something // initiate state
+                console.log('Successful query', data);
                 setTotalQuestions(data.total_questions)
                 setTotalCorrect(data.total_correct)
                 setTotalElapsedTime(data.totalElapsedTime)
-
-                // setUserState(data)
             }
         } catch (error) {
-            console.error('Error querying user state:', error)
+            console.error('Error with function in UserStateContext.jsx:', error)
+        }
+    };
+
+    // ✅ Update GAME# react state during game submit
+    const updateUserGameState = (newUserState) => {
+        // newState = {correct, elapsed_time}
+        const { correct, elapsed_time } = newUserState;
+
+        setGameState(prevState => {
+            const totalQuestions = prevState.total_questions + 1;
+            const totalCorrect = correct ? prevState.total_correct + 1 : prevState.total_correct;
+            const totalElapsedTime = prevState.total_elapsed_time + elapsed_time;
+    
+            return {
+                ...prevState,
+                prev_is_correct: correct,
+                total_questions: totalQuestions,
+                total_correct: totalCorrect,
+                percent_correct: totalCorrect / totalQuestions,
+                total_elapsed_time: totalElapsedTime,
+                average_user_time: totalElapsedTime / totalQuestions,
+            };
+        })
+    };
+
+    // ✅ Update GAME#CATEGORY# react state during game submit
+    const updateUserCategoryState = (newUserState) => {
+        setUserCategoryState(prevState => {
+            const totalQuestions = prevState.total_questions + 1;
+            const totalCorrect = newUserState.correct ? prevState.total_correct + 1 : prevState.total_correct;
+
+            return {
+                ...prevState,
+                total_questions: totalQuestions,
+                total_correct: totalCorrect,
+                percent_correct: totalCorrect / totalQuestions,
+            }
+        })
+    }
+
+    // ✅ Add GAME#, GAME#CATEGORY#, GAME#STAT, GAMEHX# dynamodb tables
+    const transactGameData = async (gameType, category, gameStateData, categoryStateData) => {
+        // transactData = total_questions, 
+        try {
+            const gameData = JSON.stringify({
+                ...gameStateData // reminder to add prediction
+            })
+            
+            const categoryData = JSON.stringify(categoryStateData)
+
+            console.log('GameData', gameData)
+            console.log('Type', typeof gameData)
+
+            //
+            const gameStateResult = await addUserState(gameType, "", gameData)
+            const categoryStateResult = await addUserState(gameType, category, categoryData)
+
+            return { gameStateResult, categoryStateResult }
+
+        } catch (error) {
+            console.error('Error with function in UserStateContext.jsx:', error)
         }
     };
 
     return (
         <UserStateContext.Provider value ={{
-            userState,
-            setUserState,
+            userGameState,
+            setUserGameState,
+            userCategoryState,
+            setUserCategoryState,
             addUserState,
             getUserState,
+            updateUserGameState,
+            updateUserCategoryState,
+            transactGameData,
         }}>
             { children }
         </UserStateContext.Provider>

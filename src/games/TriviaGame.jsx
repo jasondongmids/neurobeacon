@@ -1,5 +1,6 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import triviaQuestions from "../data/final_trivia_questions.json";
+import { setConstantValue } from "typescript";
 
 const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
     const [questionIndex, setQuestionIndex] = useState(0);
@@ -154,6 +155,14 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
             setSessionCorrectCount(prev => prev + 1);
             setMessage(`✅ Correct! You earned ${scoreEarned} points.`);
             setScore(prev => prev + scoreEarned);
+
+            // Plan of attack:
+            // 0) Update GameHx with each attempt
+            // 1) After correct, attempts=3 => Update State
+            // 2) Send Updated State to Model
+            // 3) Append prediction to updated state
+            // 4) Do transaction to update state and game history
+            
         } else {
             console.warn("❌ Incorrect Answer!");
             setAttempts(prev => prev + 1);

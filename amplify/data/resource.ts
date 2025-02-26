@@ -18,6 +18,8 @@ const schema = a.schema({
       percent_correct: a.float(),
       total_elapsed_time: a.integer(),
       average_user_time: a.float(),
+      // difficulty: a.string(),
+      // predicted_difficulty: a.string(),
       created_at: a.integer(),
       updated_at: a.integer()
     }),  
@@ -54,6 +56,22 @@ const schema = a.schema({
         entry: "./getUserState.js"
       })
     ),
+
+    // transactData: a
+    //   .mutation()
+    //   .arguments({
+    //     gameType: a.string().required(),
+    //     category: a.string(),
+    //     gameData: a.json(),
+    //     categoryData: a.json(),
+    //   })
+    //   .returns(a.string())
+    //   .authorization(allow => [allow.authenticated()])
+    //   .handler(
+    //     a.handler.custom({
+    //       entry: "./transactData.js"
+    //     })
+    //   )
     
     // Define Game Table
     // Game: a.customType({
