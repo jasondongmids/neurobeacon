@@ -55,7 +55,7 @@ const TestPage = () => {
     // const [modelPrediction, setModelPrediction] = useState('');
     const [transactType, setTransactType] = useState('')
     const [transactCategory, setTransactCategory] = useState('')
-    const { userState, addUserState, getUserState, transactGameData } = useContext(UserStateContext)
+    const { queryStates, addUserState, queryUserStates, transactGameData } = useContext(UserStateContext)
     const { modelPrediction, setModelPrediction, modelInput, setModelInput, sendModelRequest } = useContext(ModelContext)
 
     const handleAddUserState = (event, gameType, category) => {
@@ -73,11 +73,15 @@ const TestPage = () => {
         addUserState(gameType, category, data)
     }
 
-    const handleGetUserState = (event, gameType, category, limit) => {
-        event.preventDefault()
-        console.log(gameType)
-        getUserState(gameType, category, limit)
-    }
+    const handleQueryUserStates = async (event, gameType, category, limit) => {
+        try {
+            event.preventDefault();
+            await queryUserStates(gameType, category, limit);
+            console.log("Query Successful.");
+        } catch (error) {
+            console.error("Error fetching user state:", error);
+        }
+    };
 
     const handleTransactGameData = (transactType, transactCategory) => {
         console.log('transact_type', !transactType)
@@ -139,8 +143,8 @@ const TestPage = () => {
                         Add User State
                         </button>
                     </form>
-                    {/* ✅ Test getUserState */}
-                    <form onSubmit={(e) => handleGetUserState(e, queryType, queryCategory, queryLimit)} className="flex space-x-2">
+                    {/* ✅ Test query/getUserState */}
+                    <form onSubmit={(e) => handleQueryUserStates(e, queryType, queryCategory, queryLimit)} className="flex space-x-2">
                         <select
                             value={queryType}
                             onChange={(e) => setQueryType(e.target.value)}
@@ -170,8 +174,8 @@ const TestPage = () => {
                         Query User State
                         </button>
                     </form>
-                    {userState != "" ? (
-                        <pre>{JSON.stringify(userState, null, 2)}</pre>
+                    {queryStates != "" ? (
+                        <pre>{JSON.stringify(queryStates, null, 2)}</pre>
                     ) : (
                         <p style={{color: "black"}}>No user state available</p>
                     )}

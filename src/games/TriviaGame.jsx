@@ -1,6 +1,6 @@
-import React, { useState, useEffect, forwardRef, useImperativeHandle } from "react";
+import React, { useState, useEffect, useContext, forwardRef, useImperativeHandle } from "react";
 import triviaQuestions from "../data/final_trivia_questions.json";
-import { setConstantValue } from "typescript";
+import UserStateContext from "../context/UserStateContext"
 
 const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
     const [questionIndex, setQuestionIndex] = useState(0);
@@ -20,6 +20,12 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
     // ✅ New State: Decade Selection
     const [showDecadeModal, setShowDecadeModal] = useState(true);
     const [selectedDecades, setSelectedDecades] = useState([]);
+
+    // ✅ JLD Updates for database updates
+    const { 
+        userGameState, userCategoryState, getUserState, queryUserStates, updateUserGameState, updateUserCategoryState, transactGameData 
+        } = useContext(UserStateContext);
+    const [gameStartTime, setGameStartTime] = useState(0)
 
     useEffect(() => {
         console.log("🟡 TriviaGame Mounted! Starting New Session...");
@@ -50,6 +56,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
         setAttempts(0);
         setSessionStartTime(Date.now());
         setShowDecadeModal(true);  // ✅ Reset & Show Decade Selection Modal
+        setGameStartTime(Date.now());
     };
 
     useImperativeHandle(ref, () => ({
@@ -86,11 +93,17 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
                 setShuffledAnswers(shuffled);
             }
         };
-    
 
     const handleAnswerSelection = (answer) => {
         setSelectedAnswer(answer);
     };
+
+    const handleSessionStart = () => {
+        setShowDecadeModal(false); 
+        loadFilteredQuestions(); 
+        getUserState("trivia", ""); 
+        getUserState("trivia", "sub")
+    }
 
     const endSession = (endTime) => {
         console.log("🛑 Ending session...");
@@ -157,11 +170,24 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
             setScore(prev => prev + scoreEarned);
 
             // Plan of attack:
-            // 0) Update GameHx with each attempt
-            // 1) After correct, attempts=3 => Update State
-            // 2) Send Updated State to Model
-            // 3) Append prediction to updated state
+            // -1) Load last game and category state upon session; category determination - complete
+            // 0) Update GameHx with each attempt - to do
+            // 1) After correct, attempts=3 => Update State - complete
+            // 2) Send Updated State to Model - to do
+            // 3) Append prediction to updated state - to do
             // 4) Do transaction to update state and game history
+
+            // ✅ Update states when correct            
+            const totalGameTimeInSec = Math.floor((endTime - gameStartTime) / 1000)
+            const newUserState = {
+                correct: true,
+                elapsed_time: totalGameTimeInSec
+            }
+
+            updateUserGameState(newUserState)
+            updateUserCategoryState(newUserState)
+            transactGameData("trivia", "sub", userGameState, userCategoryState)
+            setGameStartTime(Date.now())
             
         } else {
             console.warn("❌ Incorrect Answer!");
@@ -169,6 +195,19 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
     
             if (attempts >= 2) {
                 setMessage(`❌ Nice try! The correct answer was: ${correctAnswer}`);
+
+                // ✅ Update states when incorrect after three attempts  
+                const totalGameTimeInSec = Math.floor((endTime - gameStartTime) / 1000)
+                const newUserState = {
+                    correct: false,
+                    elapsed_time: totalGameTimeInSec
+                }
+
+                updateUserGameState(newUserState)
+                updateUserCategoryState(newUserState)
+                transactGameData("trivia", "sub", userGameState, userCategoryState)
+                setGameStartTime(Date.now())
+
             } else {
                 setMessage(`❌ Try Again! (${2 - attempts} attempts left)`);
                 return;
@@ -244,7 +283,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
                         <p><label><input type="checkbox" value="1980s" onChange={(e) => setSelectedDecades(prev => [...prev, e.target.value])} /> 1980s</label></p>
                         <p><label><input type="checkbox" value="1990s" onChange={(e) => setSelectedDecades(prev => [...prev, e.target.value])} /> 1990s</label></p>
                         <p><label><input type="checkbox" value="2000s" onChange={(e) => setSelectedDecades(prev => [...prev, e.target.value])} /> 2000s</label></p>
-                        <button onClick={() => { setShowDecadeModal(false); loadFilteredQuestions(); }}>Start Game</button>
+                        <button onClick={() => handleSessionStart()}>Start Game</button>
                     </div>
                 </div>
             )}
