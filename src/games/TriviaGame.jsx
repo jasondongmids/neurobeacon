@@ -175,7 +175,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
             // 1) After correct, attempts=3 => Update State - complete
             // 2) Send Updated State to Model - to do
             // 3) Append prediction to updated state - to do
-            // 4) Do transaction to update state and game history
+            // 4) Do transaction to update state and game history - to do game hx
 
             // ✅ Update states when correct            
             const totalGameTimeInSec = Math.floor((endTime - gameStartTime) / 1000)
@@ -186,7 +186,12 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
 
             updateUserGameState(newUserState)
             updateUserCategoryState(newUserState)
-            transactGameData("trivia", "sub", userGameState, userCategoryState)
+            // transactGameData("trivia", "sub", userGameState, userCategoryState)
+            useEffect(() => {
+                if (userGameState && userCategoryState) {
+                    transactGameData("trivia", "sub", userGameState, userCategoryState)
+                }
+            }, [userGameState, userCategoryState])
             setGameStartTime(Date.now())
             
         } else {

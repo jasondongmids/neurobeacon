@@ -126,9 +126,9 @@ export const UserStateProvider = ({ children }) => {
                 prev_is_correct: correct,
                 total_questions: totalQuestions,
                 total_correct: totalCorrect,
-                percent_correct: totalCorrect / totalQuestions,
+                percent_correct: totalQuestions > 0 ? totalCorrect / totalQuestions : 0,
                 total_elapsed_time: totalElapsedTime,
-                average_user_time: totalElapsedTime / totalQuestions,
+                average_user_time: totalQuestions > 0 ? totalElapsedTime / totalQuestions : 0,
             };
         })
     };
@@ -143,7 +143,7 @@ export const UserStateProvider = ({ children }) => {
                 ...prevState,
                 total_questions: totalQuestions,
                 total_correct: totalCorrect,
-                percent_correct: totalCorrect / totalQuestions,
+                percent_correct: totalQuestions > 0 ? totalCorrect / totalQuestions : 0,
             }
         })
     }
