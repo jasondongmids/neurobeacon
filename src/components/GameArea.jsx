@@ -4,6 +4,7 @@ import "../styles.css";
 import FractionAdditionGame from "../games/FractionAdditionGame";
 import TriviaGame from "../games/TriviaGame";
 import SudokuGrid from "../games/SudokuGrid";  // ✅ Import Sudoku
+import ReactionGame from "../games/ReactionGame";  // ✅ Import Reaction game
 
 const GameArea = ({ onUpdateStats }) => {
     const { gameType } = useParams();  // ✅ Get selected game from URL
@@ -34,6 +35,8 @@ const GameArea = ({ onUpdateStats }) => {
                 return <TriviaGame ref={gameRef} onUpdateStats={onUpdateStats} />;
             case "sudoku":
                 return <SudokuGrid onUpdateStats={onUpdateStats} />;
+            case "reaction":
+                return <ReactionGame ref={gameRef} onUpdateStats={onUpdateStats}/>;
             default:
                 return <p className="error-message">❌ Invalid Game Selection</p>;
         }
