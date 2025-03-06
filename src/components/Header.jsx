@@ -9,7 +9,9 @@ const Header = () => {
 
     return (
         <div className="header">
+            <a href="/dashboard">
                 <img src={logo} alt="NeuroBeacon Logo" className="header-logo" />
+                    </a>
             <h1 className="header-title">Welcome to NeuroBeacon!</h1>
             
             {menuOpen && (
