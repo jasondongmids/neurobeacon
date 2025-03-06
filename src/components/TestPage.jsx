@@ -8,6 +8,7 @@ import Footer from "./Footer";
 import "../styles.css";
 import ModelContext from "../context/ModelContext"
 import UserStateContext from "../context/UserStateContext"
+import UserStatisticsContext from "../context/UserStatisticsContext"
 
 // How is everything related?
 // Step 1: amplify/resource.ts: define schema customType for external ddb data model. This is used for type checking for the mutations/queries for returns(a.ref()) 
@@ -55,8 +56,12 @@ const TestPage = () => {
     // const [modelPrediction, setModelPrediction] = useState('');
     const [transactType, setTransactType] = useState('')
     const [transactCategory, setTransactCategory] = useState('')
-    const { queryStates, addUserState, queryUserStates, transactGameData } = useContext(UserStateContext)
-    const { modelPrediction, setModelPrediction, modelInput, setModelInput, sendModelRequest } = useContext(ModelContext)
+    const [frequency, setFrequency] = useState('');
+    const [queryFrequency, setQueryFrequency] = useState('');
+    const [queryStatsLimit, setQueryStatsLimit] = useState('');
+    const { queryStates, addUserState, queryUserStates, transactGameData } = useContext(UserStateContext);
+    const { modelPrediction, setModelPrediction, modelInput, setModelInput, sendModelRequest } = useContext(ModelContext);
+    const { queryStatistics, queryStats, addStats } = useContext(UserStatisticsContext);
 
     const handleAddUserState = (event, gameType, category) => {
         event.preventDefault()
@@ -111,6 +116,46 @@ const TestPage = () => {
         prediction = sendModelRequest(modelInput)
         setModelPrediction(prediction)
     }
+
+    const handleAddStats = (event, frequency) => {
+        event.preventDefault()
+        const data = JSON.stringify({
+            total_sessions: 5,
+            total: {
+                    total_questions: 12,
+                    total_correct: 10,
+                    percent_correct: 0.833,            
+                },
+            math: {
+                    total_questions: 2,
+                    total_correct: 1,
+                    percent_correct: 0.5, 
+                },
+            visual: {
+                    total_questions: 2,
+                    total_correct: 1,
+                    percent_correct: 0.5, 
+                },
+            reaction: {
+                    total_questions: 2,
+                    total_correct: 2,
+                    percent_correct: 1.0,                            
+                },
+        })
+
+        addStats(frequency, data)
+    }
+
+    const handleQueryStats = async (event, frequency, limit) => {
+        try {
+            event.preventDefault();
+            await queryStats(frequency, limit);
+            console.log("Query Successful.");
+        } catch (error) {
+            console.error("Error fetching user state:", error);
+        }
+    };
+
     return (
         <div className="game-page">
             <Header />
@@ -120,6 +165,7 @@ const TestPage = () => {
                 <Panel title="Stats/Instructions Panel" position="left" />
                 <div className="flex flex-col items-center p-4 space-y-4">
                     {/* ✅ Test addUserState */}
+                    <h3>Test User States (UserStateHx)</h3>
                     <form onSubmit={(e) => handleAddUserState(e, gameType, category)} className="flex space-x-2">
                         <select
                             value={gameType}
@@ -180,6 +226,7 @@ const TestPage = () => {
                         <p style={{color: "black"}}>No user state available</p>
                     )}
                     {/* ✅ Test model endpoint */}
+                    <h3>Test Model Inference</h3>
                     <p style={{color: "black"}}>
                         Example State: [1, 1.23263889, 1.24328859, 0.875, 0.78, 0.84130453, 1 , 0.90024824]
                     </p>
@@ -199,8 +246,51 @@ const TestPage = () => {
                     ) : (
                         <p style={{color: "black"}}>Endpoint is not live!</p>
                     )}
-
+                    {/* ✅ Test addGameStats */}
+                    <h3>Test User Statistics (UserStateHx)</h3>
+                    <form onSubmit={(e) => handleAddStats(e, frequency)} className="flex space-x-2">
+                        <select
+                            value={frequency}
+                            onChange={(e) => setFrequency(e.target.value)}
+                            className="border p-2 rounded">
+                            <option value="" disabled>Select an option</option>
+                            <option value="daily">DAILY</option>
+                            <option value="weekly">WEEKLY</option>
+                            <option value="">OVERALL</option>
+                        </select>
+                        <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">
+                        Add Statistic
+                        </button>
+                    </form> 
+                    {/* ✅ Test queryGameStats */}                   
+                    <form onSubmit={(e) => handleQueryStats(e, queryFrequency, queryStatsLimit)} className="flex space-x-2">
+                        <select
+                            value={queryFrequency}
+                            onChange={(e) => setQueryFrequency(e.target.value)}
+                            className="border p-2 rounded">
+                            <option value="" disabled>Select an option</option>
+                            <option value="daily">DAILY</option>
+                            <option value="weekly">WEEKLY</option>
+                            <option value="">OVERALL</option>
+                        </select>
+                        <input
+                            type="text"
+                            value={queryStatsLimit}
+                            onChange={(e) => setQueryStatsLimit(e.target.value)}
+                            onBlur={() => setQueryStatsLimit(queryStatsLimit || "")}
+                            placeholder="# records to query"
+                        />
+                        <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">
+                        Query Statistics
+                        </button>
+                    </form>
+                    {queryStatistics != "" ? (
+                        <pre>{JSON.stringify(queryStatistics, null, 2)}</pre>
+                    ) : (
+                        <p style={{color: "black"}}>No statistics available</p>
+                    )}
                     {/* ✅ Test transactGameData */}
+                    <h3>Test Transaction</h3>
                     <label htmlFor="dropdown1">Choose a gameType: </label>
                     <select id="dropdown1" value={transactType} onChange={(e) => setTransactType(e.target.value)}>
                         <option value="" disabled>Required: Select an option</option>

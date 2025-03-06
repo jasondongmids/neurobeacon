@@ -3,15 +3,12 @@ import { auth } from './auth/resource';
 import { data } from './data/resource';
 import { aws_dynamodb } from "aws-cdk-lib"
 
-/**
- * @see https://docs.amplify.aws/react/build-a-backend/ to add storage, functions, and more
- */
 export const backend = defineBackend({
   auth,
   data,
 });
 
-// Link external ddb tables to App
+// ✅ Connect external dynamodb tables
 const extDataSourcesStack = backend.createStack("ExternalDataSources");
 
 const userStateHxTable = aws_dynamodb.Table.fromTableName(
@@ -34,4 +31,15 @@ const gamesTable = aws_dynamodb.Table.fromTableName(
 backend.data.addDynamoDbDataSource(
   "GamesTable",
   gamesTable
+)
+
+const userGameHxTable = aws_dynamodb.Table.fromTableName(
+  extDataSourcesStack,
+  "UserGameHxName",
+  "UserGameHxTest",
+)
+
+backend.data.addDynamoDbDataSource(
+  "UserGameHxTable",
+  userGameHxTable
 )

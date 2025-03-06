@@ -1,12 +1,10 @@
 import React, { createContext, useState, useEffect } from "react";
 import { dataClient } from "../index";
-import { data } from "react-router-dom";
-import jsxDevRuntime from "react/jsx-dev-runtime";
 
 const UserStateContext = createContext();
 
 export const UserStateProvider = ({ children }) => {
-    // ✅ Load stored user state data
+    // ✅ Create react states
     const [userGameState, setUserGameState] = useState({
         prev_is_slow: "",
         prev_is_correct: "",
@@ -16,7 +14,7 @@ export const UserStateProvider = ({ children }) => {
         total_elapsed_time: "",
         average_user_time: "",
     });
-
+    
     const [userCategoryState, setUserCategoryState] = useState({
         total_questions: "",
         total_correct: ""
@@ -158,14 +156,22 @@ export const UserStateProvider = ({ children }) => {
             
             const categoryData = JSON.stringify(categoryStateData)
 
-            console.log('GameData', gameData)
-            console.log('Type', typeof gameData)
+            // console.log('GameData', gameData)
+            // console.log('Type', typeof gameData)
 
-            //
             const gameStateResult = await addUserState(gameType, "", gameData)
             const categoryStateResult = await addUserState(gameType, category, categoryData)
 
             return { gameStateResult, categoryStateResult }
+
+            // const result = await dataClient.mutations.transactData({
+            //     gameType: gameType,
+            //     category: category,
+            //     gameData: gameData,
+            //     categoryData: categoryData,
+            // })
+            // console.log(result)
+            // return result
 
         } catch (error) {
             console.error('Error with function in UserStateContext.jsx:', error)
