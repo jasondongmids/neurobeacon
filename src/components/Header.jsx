@@ -9,7 +9,8 @@ const Header = () => {
 
     return (
         <div className="header">
-            <img src={logo} alt="NeuroBeacon Logo" className="header-logo" />
+                <img src={logo} alt="NeuroBeacon Logo" className="header-logo" />
+                    </a>
             <h1 className="header-title">Welcome to NeuroBeacon!</h1>
             
             {menuOpen && (
