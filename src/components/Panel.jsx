@@ -29,27 +29,36 @@ const Panel = ({ title, position, stats }) => {
 {/* ✅ Right Panel: Dynamic Hints */}
 {isOpen && position === "right" && (
     <div className="hints-content full-height">
-        {window.location.pathname.includes("sudoku") ? (
-            // ✅ Show Sudoku-specific hints
-            <ul className="sudoku-rules">
-                <li>🧩 Fill each row, column, and 3x3 box with numbers 1-9.</li>
-                <li>🚫 No duplicate numbers in any row, column, or box.</li>
-                <li>💡 Click a cell, then choose a number from the pad.</li>
-                <li>🔍 Use logic to deduce correct placements.</li>
-                <li>⚠️ Too many mistakes may end the game!</li>
-            </ul>
-        ) : (
-            // ✅ Default Hints for other games
-            <>
-                <ul className="hint-list">
-                    <li>🧠 Try breaking down the problem into smaller parts.</li>
-                    <li>⏳ Take your time and double-check your answer.</li>
-                    <li>🔍 Look for patterns that can help you solve this faster.</li>
-                    <li>🎯 Focus on accuracy before increasing speed.</li>
-                </ul>
-                <p>💡 Hints, feedback, and tips for improvement will go here.</p>
-            </>
-        )}
+                    {window.location.pathname.includes("reaction") ? (
+                        <ul className="reaction-hints">
+                            <li>🎯 Click the green box as fast as possible!</li>
+                            <li>👀 Stay focused, distractions are meant to throw you off!</li>
+                            <li>⚡ Faster reaction times mean higher scores.</li>
+                            <li>💡 Train yourself to spot targets quickly under different conditions.</li>
+                        </ul>
+                    ) : window.location.pathname.includes("sudoku") ? (
+                        <ul className="sudoku-rules">
+                            <li>🧩 Fill each row, column, and 3x3 box with numbers 1-9.</li>
+                            <li>🚫 No duplicate numbers in any row, column, or box.</li>
+                            <li>💡 Click a cell, then choose a number from the pad.</li>
+                            <li>🔍 Use logic to deduce correct placements.</li>
+                            <li>⚠️ Too many mistakes may end the game!</li>
+                        </ul>
+                    ) : window.location.pathname.includes("trivia") ? (
+                        <ul className="trivia-hints">
+                            <li>📖 Read all the answer choices carefully before selecting.</li>
+                            <li>🕵️‍♂️ Look for key hints in the question.</li>
+                            <li>💡 Trust your first instinct—it’s often correct!</li>
+                            <li>⏳ Manage your time wisely!</li>
+                        </ul>
+                    ) : (
+                        <ul className="default-hints">
+                            <li>🧠 Try breaking down the problem into smaller parts.</li>
+                            <li>⏳ Take your time and double-check your answer.</li>
+                            <li>🔍 Look for patterns that can help you solve this faster.</li>
+                            <li>🎯 Focus on accuracy before increasing speed.</li>
+                        </ul>
+                    )}
 
         <div className="bottom-buttons">
             <button className="nav-btn">Pause</button>
