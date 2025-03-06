@@ -2,6 +2,8 @@ import React from "react";
 import "../styles.css";
 
 const Footer = () => {
+        // ✅ Hide buttons if playing Reaction Game
+    const hideButtons = location.pathname.includes("/game/reaction");
     return (
         <div className="footer">
             <button className="btn reset" onClick={() => window.handleReset?.()}>
@@ -13,6 +15,7 @@ const Footer = () => {
             <button className="btn next" onClick={() => window.handleNextTask?.()}>
                 Next Task
             </button>
+            )}
         </div>
     );
 };
