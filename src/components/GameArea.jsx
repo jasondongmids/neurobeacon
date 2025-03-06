@@ -12,7 +12,7 @@ const GameArea = ({ onUpdateStats }) => {
 
     // ✅ Safeguard: Log a warning if an unknown gameType is detected
     useEffect(() => {
-        if (!["math", "trivia", "sudoku"].includes(gameType)) {
+        if (!["math", "trivia", "sudoku", "reaction"].includes(gameType)) {
             console.warn(`⚠️ Unknown gameType: "${gameType}" - Check routing.`);
         }
     }, [gameType]);
