@@ -35,6 +35,8 @@ const GamePage = () => {
         ? "Ready for some fun with math? 🔢"
         : gameType === "trivia"
         ? "Time to test your knowledge! ❓"
+        : gameType === "reaction"
+        ? "Get set, ready, GO! ⚡ Test your reaction speed!"
         : gameType === "sudoku"
         ? "Sharpen your logic with Sudoku! 🧩"
         : "Ready to train? 🧠";
