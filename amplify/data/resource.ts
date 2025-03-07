@@ -67,35 +67,51 @@ const schema = a.schema({
   }),  
 
   addStats: a
-  .mutation()
-  .arguments({
-    frequency: a.string(),
-    yyyymmdd: a.string(), // yyyymmdd for current day or sunday
-    data: a.json(),
-  })
-  .returns(a.ref("UserStats"))
-  .authorization(allow => [allow.authenticated()])
-  .handler(
-    a.handler.custom({
-      dataSource: "UserStateHxTable",
-      entry: "./addStats.js",
+    .mutation()
+    .arguments({
+      frequency: a.string(),
+      yyyymmdd: a.string(), // yyyymmdd for current day or sunday
+      data: a.json(),
     })
-  ),
+    .returns(a.ref("UserStats"))
+    .authorization(allow => [allow.authenticated()])
+    .handler(
+      a.handler.custom({
+        dataSource: "UserStateHxTable",
+        entry: "./addStats.js",
+      })
+    ),
 
   getStats: a
-  .query()
-  .arguments({
-    frequency: a.string(),
-    limit: a.integer(),
-  })
-  .returns(a.ref("UserStats").array())
-  .authorization(allow => [allow.authenticated()])
-  .handler(
-    a.handler.custom({
-      dataSource: "UserStateHxTable",
-      entry: "./getStats.js",
+    .query()
+    .arguments({
+      frequency: a.string(),
+      limit: a.integer(),
     })
-  ),
+    .returns(a.ref("UserStats").array())
+    .authorization(allow => [allow.authenticated()])
+    .handler(
+      a.handler.custom({
+        dataSource: "UserStateHxTable",
+        entry: "./getStats.js",
+      })
+    ),
+
+  updateStats: a
+    .mutation()
+    .arguments({
+      frequency: a.string(),
+      yyyymmdd: a.string(),
+      data: a.json(),
+    })
+    .returns(a.ref("UserStats"))
+    .authorization(allow => [allow.authenticated()])
+    .handler(
+      a.handler.custom({
+        dataSource: "UserStateHxTable",
+        entry: "./updateStats.js"
+      })
+    ),
 
   // ✅ UserGameHx schema, mutations, and queries
   UserGameHx: a.customType({

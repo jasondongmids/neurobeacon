@@ -58,10 +58,11 @@ const TestPage = () => {
     const [transactCategory, setTransactCategory] = useState('')
     const [frequency, setFrequency] = useState('');
     const [queryFrequency, setQueryFrequency] = useState('');
+    const [updateFrequency, setUpdateFrequency] = useState('');
     const [queryStatsLimit, setQueryStatsLimit] = useState('');
     const { queryStates, addUserState, queryUserStates, transactGameData } = useContext(UserStateContext);
     const { modelPrediction, setModelPrediction, modelInput, setModelInput, sendModelRequest } = useContext(ModelContext);
-    const { queryStatistics, queryStats, addStats } = useContext(UserStatisticsContext);
+    const { queryStatistics, queryStats, addStats, updateStats } = useContext(UserStatisticsContext);
 
     const handleAddUserState = (event, gameType, category) => {
         event.preventDefault()
@@ -76,7 +77,7 @@ const TestPage = () => {
         })
 
         addUserState(gameType, category, data)
-    }
+    };
 
     const handleQueryUserStates = async (event, gameType, category, limit) => {
         try {
@@ -109,13 +110,13 @@ const TestPage = () => {
         }
 
         transactGameData(transactType, transactCategory, gameStateData, categoryStateData)
-    }
+    };
 
     const handleSendModelRequest = (event, modelInput) => {
         event.preventDefault()
         prediction = sendModelRequest(modelInput)
         setModelPrediction(prediction)
-    }
+    };
 
     const handleAddStats = (event, frequency) => {
         event.preventDefault()
@@ -144,7 +145,36 @@ const TestPage = () => {
         })
 
         addStats(frequency, data)
-    }
+    };
+
+    const handleUpdateStats = (event, frequency) => {
+        event.preventDefault()
+        const data = JSON.stringify({
+            total_sessions: 6,
+            total: {
+                    total_questions: 13,
+                    total_correct: 10,
+                    percent_correct: 0.769,            
+                },
+            math: {
+                    total_questions: 3,
+                    total_correct: 1,
+                    percent_correct: 0.333, 
+                },
+            visual: {
+                    total_questions: 2,
+                    total_correct: 1,
+                    percent_correct: 0.5, 
+                },
+            reaction: {
+                    total_questions: 2,
+                    total_correct: 2,
+                    percent_correct: 1.0,                            
+                },
+        })
+
+        updateStats(frequency, data)
+    };
 
     const handleQueryStats = async (event, frequency, limit) => {
         try {
@@ -258,10 +288,25 @@ const TestPage = () => {
                             <option value="weekly">WEEKLY</option>
                             <option value="">OVERALL</option>
                         </select>
-                        <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">
+                        <button type="submit">
                         Add Statistic
                         </button>
-                    </form> 
+                    </form>
+                    {/* ✅ Test updateGameStats */}                   
+                    <form onSubmit={(e) => handleUpdateStats(e, updateFrequency)} className="flex space-x-2">
+                        <select
+                            value={updateFrequency}
+                            onChange={(e) => setUpdateFrequency(e.target.value)}
+                        >
+                            <option value="" disabled>Select an option</option>
+                            <option value="daily">DAILY</option>
+                            <option value="weekly">WEEKLY</option>
+                            <option value="">OVERALL</option>
+                        </select>
+                        <button type="submit">
+                        Update Statistics
+                        </button>
+                    </form>
                     {/* ✅ Test queryGameStats */}                   
                     <form onSubmit={(e) => handleQueryStats(e, queryFrequency, queryStatsLimit)} className="flex space-x-2">
                         <select

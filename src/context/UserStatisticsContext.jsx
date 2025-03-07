@@ -78,6 +78,14 @@ export const UserStatisticsProvider = ({children}) => {
         return formatDate(startOfWeekUnix)
     }
 
+    const getYearMonthDate = (frequency) => {
+        const yyyymmdd = frequency === 'daily' ? formatDate(Date.now())
+                : frequency === 'weekly' ? getStartOfWeek()
+                : Date.now()
+
+        return yyyymmdd
+    }
+
     // ✅ Update React state
     const updateDailyStatsState = (gameType, newDailyStatistics) => {
         const { correct } = newDailyStatistics;
@@ -134,9 +142,7 @@ export const UserStatisticsProvider = ({children}) => {
     // ✅ Add statistics
     const addStats = async (frequency, inputData) => {
         try {
-            const yyyymmdd = frequency === 'daily' ? formatDate(Date.now())
-                : frequency === 'weekly' ? getStartOfWeek()
-                : Date.now()
+            const yyyymmdd = getYearMonthDate(frequency)
 
             const { data, errors } = await dataClient.mutations.addStats({
                 frequency: frequency,
@@ -180,7 +186,7 @@ export const UserStatisticsProvider = ({children}) => {
         try {
             const { data, errors } = await dataClient.queries.getStats({
                 frequency: frequency,
-                limit: (queryLimit) ? parseInt(queryLimit) : "",
+                limit: (queryLimit) ? parseInt(queryLimit) : 0,
             });
             
             if (errors) {
@@ -194,6 +200,26 @@ export const UserStatisticsProvider = ({children}) => {
         }
     }
 
+    const updateStats = async(frequency, inputData) => {
+        try {
+            const yyyymmdd = getYearMonthDate(frequency)
+
+            const { data, errors } = await dataClient.mutations.updateStats({
+                frequency: frequency,
+                yyyymmdd: yyyymmdd,
+                data: inputData
+            });
+
+            if (errors) {
+                console.error('Check inputs or CloudWatch logs:', errors);
+            } else {
+                console.log('Successful update', data);
+            }
+        } catch (error) {
+            console.error('Error with function in UserStatisticsContext.jsx', error)
+        }
+    }
+
     return (
         <UserStatisticsContext.Provider value ={{
             dailyStats,
@@ -204,6 +230,7 @@ export const UserStatisticsProvider = ({children}) => {
             addStats,
             getStats,
             queryStats,
+            updateStats,
         }}>
             { children }
         </UserStatisticsContext.Provider>

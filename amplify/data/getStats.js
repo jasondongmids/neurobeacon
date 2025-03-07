@@ -21,7 +21,7 @@ export function request(ctx) {
         scanIndexForward: false,
     };
 
-    if (ctx.arguments.limit) {
+    if (ctx.arguments.limit > 0) {
         queryParams.limit = ctx.arguments.limit;
     }
 
