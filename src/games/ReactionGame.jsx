@@ -1,5 +1,5 @@
-// import React, { useRef, useEffect, useState, forwardRef, useImperativeHandle } from "react";
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, forwardRef, useImperativeHandle } from "react";
+// import React, { useRef, useEffect, useState } from "react";
 
 // Difficulty configuration remains the same.
 const difficultyLevels = {

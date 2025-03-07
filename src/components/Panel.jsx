@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "../styles.css";
-// import progressImg from "../assets/progress.png"
+import progressImg from "../assets/progress.png"
 
 const Panel = ({ title, position, stats }) => {
     const [isOpen, setIsOpen] = useState(true);
