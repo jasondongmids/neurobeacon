@@ -19,11 +19,14 @@ const Panel = ({ title, position, stats }) => {
             {/* ✅ Left Panel: Session Stats (Expands Fully) */}
             {isOpen && position === "left" && stats && (
                 <div className="session-stats full-height">
-                    <p>📊 <strong>Score:</strong> {stats.score}</p>
-                    <p>✅ <strong>Correct Answers:</strong> {stats.correctAnswers}</p>
-                    <p>❓ <strong>Questions Answered:</strong> {stats.questionsAnswered}</p>
-                    <p>🎯 <strong>Accuracy:</strong> {stats.accuracy}%</p>
+                    <p>📊 <strong>Score:</strong> {(Number(stats?.score) || 0).toFixed(2)}</p>
+                    <p>🏁 <strong>Round:</strong> {stats?.questionsAnswered || 0}/{stats?.maxRounds || 10}</p>
+                    <p>🎯 <strong>Accuracy:</strong> {Number(stats?.accuracy || 0).toFixed(2)}%</p>
+                    {gameType === "reaction" && (
+                      <p>⚡ <strong>Reaction Time:</strong> {stats?.reactionTime ? `${Number(stats.reactionTime).toFixed(2)}s` : "N/A"}</p>
+                    )}
                 </div>
+
             )}
 
 {/* ✅ Right Panel: Dynamic Hints */}
