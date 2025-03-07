@@ -45,17 +45,22 @@ const WelcomePage = () => {
     }
   };
 
-  const handleVerifyToken = async () => {
-    // This is a placeholder function. In your backend, you should implement token verification.
-    // For example, using AWS Amplify, you might call Auth.confirmSignUp.
-    const response = await confirmSignUp(inputUsername, verificationToken);
-    if (response === "CONFIRMED") {
-      setMessage("Your account has been verified! Please log in.");
-      setView("login");
-    } else {
-      setMessage(response);
-    }
-  };
+const handleVerifyToken = async () => {
+  // Call the backend function to verify the token (using AWS Amplify or your custom endpoint)
+  const response = await confirmSignUp(inputUsername, verificationToken);
+  
+  if (response === "CONFIRMED") {
+    // Display a success message and navigate to the dashboard after a short delay
+    setMessage("Your account has been verified! Redirecting to dashboard...");
+    setTimeout(() => {
+      navigate("/dashboard");
+    }, 2000); // 2-second delay before redirection
+  } else {
+    // If verification fails, display an error message
+    setMessage(response);
+  }
+};
+
 
   const handlePasswordReset = () => {
     const newPassword = prompt("🔐 Enter a new password:");
