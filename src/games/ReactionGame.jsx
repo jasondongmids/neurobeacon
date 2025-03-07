@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useRef, useEffect, useState, forwardRef, useImperativeHandle } from "react";
 
 // Difficulty configuration remains the same.
 const difficultyLevels = {
