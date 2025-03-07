@@ -131,19 +131,19 @@ const schema = a.schema({
     updated_at: a.integer()
   }),
 
-  addGameHx: a
-  .mutation()
-  .arguments({
-    data: a.json(),
-  })
-  .returns(a.ref("UserGameHx"))
-  .authorization(allow => [allow.authenticated()])
-  .handler(
-    a.handler.custom({
-      dataSource: "UserGameHxTable",
-      entry: "./addGameHx.js",
-    })
-  ),
+  // addGameHx: a
+  // .mutation()
+  // .arguments({
+  //   data: a.json(),
+  // })
+  // .returns(a.ref("UserGameHx"))
+  // .authorization(allow => [allow.authenticated()])
+  // .handler(
+  //   a.handler.custom({
+  //     dataSource: "UserGameHxTable",
+  //     entry: "./addGameHx.js",
+  //   })
+  // ),
 
 //   transactData: a
 //   .mutation()
