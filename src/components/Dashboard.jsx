@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import UserContext from "../context/UserContext";
 import Header from "./Header";
@@ -10,13 +10,21 @@ import profilePlaceholder from "../assets/profile-placeholder.png";
 import progressChart from "../assets/progress.png";
 
 const DashboardPage = () => {
-    const { username, setUsername } = useContext(UserContext);
+    const { username, setUsername, logoutUser } = useContext(UserContext);
     const navigate = useNavigate();
 
     // ✅ State to track selected game
     const [selectedGame, setSelectedGame] = useState("");
 
+    useEffect(() => {
+        console.log("Location:", location)
+        if (location.state?.redirected) {
+            setMessage("⚠️ You must be logged in to access that page.");
+        }
+    }, [location]);
+
     const handleLogout = () => {
+        logoutUser()
         localStorage.removeItem("currentUser");
         setUsername("");
         navigate("/");

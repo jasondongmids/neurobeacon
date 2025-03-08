@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
-import { signUp, signIn, signOut } from "aws-amplify/auth"
+import { signUp, signIn, signOut, getCurrentUser } from "aws-amplify/auth";
 
 const UserContext = createContext();
 
@@ -63,6 +63,16 @@ export const UserProvider = ({ children }) => {
         }
     }
 
+    const logoutUser = async () => {
+        try {
+            await signOut()
+            console.log("User logged out")
+        } catch (error) {
+            console.log("Logout error:", error)
+            return error.message
+        }
+    }
+
     // ✅ Reset a user's password
     const resetPassword = (loginUsername, newPassword) => {
         if (!users[loginUsername]) return "User not found.";
@@ -70,12 +80,36 @@ export const UserProvider = ({ children }) => {
         return "Password reset successfully!";
     };
 
+    const checkAuth = async () => {
+        try {
+            const user = await getCurrentUser();
+            // console.log("Current user", user)
+
+            if (user) {
+                setUsername(user.signInDetails?.loginId)
+                return true;
+            } 
+
+            return false;
+        } catch (error) {
+            console.log("User not signed in");
+            return false;
+        }
+    }
+
+    // const handleRedirect = async () => {
+    //     const isAuth = await checkAuth()
+
+    // }
+
     return (
         <UserContext.Provider value={{ 
             username, 
             setUsername, 
             registerUser, 
             loginUser, 
+            logoutUser,
+            checkAuth,
             resetPassword, 
             rememberMe, 
             setRememberMe 

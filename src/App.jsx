@@ -8,6 +8,7 @@ import WelcomePage from "./components/WelcomePage";
 import GamePage from "./components/GamePage";
 import Dashboard from "./components/Dashboard";
 import TestPage from "./components/TestPage";
+import Redirection from "./components/Redirection";
 
 function App() {
     return (
@@ -16,12 +17,14 @@ function App() {
         <UserStatisticsProvider>
         <ModelProvider>
             <Router>
-                <Routes>
-                    <Route path="/" element={<WelcomePage />} />
-                    <Route path="/game/:gameType" element={<GamePage />} />
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/test" element={<TestPage />} />
-                </Routes>
+                <Redirection>
+                    <Routes>
+                        <Route path="/" element={<WelcomePage />} />
+                        <Route path="/game/:gameType" element={<GamePage />} />
+                        <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/test" element={<TestPage />} />
+                    </Routes>
+                </Redirection>
             </Router>
         </ModelProvider>
         </UserStatisticsProvider>

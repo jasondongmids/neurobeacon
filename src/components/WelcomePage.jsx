@@ -18,21 +18,27 @@ const WelcomePage = () => {
   // 'view' controls which form is shown: login, register, reset, or verify.
   const [view, setView] = useState("login");
 
-  // Show redirect message if user was blocked
-  useEffect(() => {
-    if (location.state?.redirected) {
-      setMessage("⚠️ You must be logged in to access that page.");
-    }
-  }, [location]);
+    // ✅ Show redirect message if user was blocked
+    useEffect(() => {
+        console.log("Location:", location)
+        if (location.state?.redirected) {
+            setMessage("⚠️ You must be logged in to access that page.");
+        }
+    }, [location]);
 
-  const handleLogin = async () => {
-    const response = await loginUser(inputUsername, inputPassword);
-    if (response === "DONE") {
-      navigate("/dashboard");
-    } else {
-      setMessage(response);
-    }
-  };
+    const handleLogin = async () => {
+        // if (checkAuth()) {
+        //     navigate("/dashboard");
+        // }
+
+        const response = await loginUser(inputUsername, inputPassword);
+        console.log("Response:", response)
+        if (response === "DONE") {
+            navigate("/dashboard");
+        } else {
+            setMessage(response);
+        }
+    };
 
   const handleRegister = async () => {
     const response = await registerUser(inputUsername, inputPassword);
