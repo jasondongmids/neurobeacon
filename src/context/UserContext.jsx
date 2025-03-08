@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
-import { signUp, signIn, signOut, getCurrentUser } from "aws-amplify/auth";
+import { signUp, signIn, signOut, getCurrentUser, confirmSignUp } from "aws-amplify/auth";
 
 const UserContext = createContext();
 
@@ -42,7 +42,26 @@ export const UserProvider = ({ children }) => {
             return "Registered successfully!" // Need to update for user to verify password or we auto-confirm user
         } catch (error) {
             console.log("User signup failed:", error)
-            // setAuthError(error.message);
+            return error.message
+        }
+    }
+
+    // ✅ Confirm a verification token
+    const completeSignUp = async (username, verificationCode) => {
+        try {
+            const response = await confirmSignUp({
+                username: username,
+                confirmationCode: verificationCode
+            });
+            console.log("Confirmation response:", response)
+
+            if (response.isSignUpComplete) {
+                return "CONFIRMED"
+            } else {
+                return "INVALID"
+            }
+        } catch (error) {
+            console.log("Confirmation failed:", error)
             return error.message
         }
     }
@@ -95,18 +114,14 @@ export const UserProvider = ({ children }) => {
             console.log("User not signed in");
             return false;
         }
-    }
-
-    // const handleRedirect = async () => {
-    //     const isAuth = await checkAuth()
-
-    // }
+    };
 
     return (
         <UserContext.Provider value={{ 
             username, 
             setUsername, 
-            registerUser, 
+            registerUser,
+            completeSignUp, 
             loginUser, 
             logoutUser,
             checkAuth,

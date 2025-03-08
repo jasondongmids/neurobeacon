@@ -9,7 +9,7 @@ const WelcomePage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   // Note: confirmSignUp is assumed to be provided via the context or added later.
-  const { username, setUsername, rememberMe, setRememberMe, registerUser, loginUser, resetPassword, confirmSignUp } = useContext(UserContext);
+  const { username, setUsername, rememberMe, setRememberMe, registerUser, loginUser, resetPassword, completeSignUp } = useContext(UserContext);
 
   const [inputUsername, setInputUsername] = useState("");
   const [inputPassword, setInputPassword] = useState("");
@@ -27,10 +27,6 @@ const WelcomePage = () => {
     }, [location]);
 
     const handleLogin = async () => {
-        // if (checkAuth()) {
-        //     navigate("/dashboard");
-        // }
-
         const response = await loginUser(inputUsername, inputPassword);
         console.log("Response:", response)
         if (response === "DONE") {
@@ -53,14 +49,18 @@ const WelcomePage = () => {
 
 const handleVerifyToken = async () => {
   // Call the backend function to verify the token (using AWS Amplify or your custom endpoint)
-  const response = await confirmSignUp(inputUsername, verificationToken);
+  const response = await completeSignUp(inputUsername, verificationToken);
   
   if (response === "CONFIRMED") {
     // Display a success message and navigate to the dashboard after a short delay
-    setMessage("Your account has been verified! Redirecting to dashboard...");
-    setTimeout(() => {
-      navigate("/dashboard");
-    }, 2000); // 2-second delay before redirection
+    setMessage("Your account has been verified! Please login.");
+    setView("login")
+    // setTimeout(() => {
+    //   navigate("/dashboard");
+    // }, 2000); // 2-second delay before redirection
+  if (response === "INVALID") {
+    setMessage("Invalid verification code, please try again.")
+  }
   } else {
     // If verification fails, display an error message
     setMessage(response);
