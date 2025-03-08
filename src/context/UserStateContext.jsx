@@ -50,7 +50,7 @@ export const UserStateProvider = ({ children }) => {
         } 
     };
 
-    // ✅ Query GAME#, GAME#CATEGORY#, or GAME#STATISTICS# state(s)
+    // ✅ Get GAME#, GAME#CATEGORY#, or GAME#STATISTICS# state and Update react state
     const getUserState = async (gameType, category) => {
         try {
             const { data, errors } = await dataClient.queries.getUserState({
@@ -90,6 +90,7 @@ export const UserStateProvider = ({ children }) => {
         }
     };
 
+    // ✅ Query GAME#, GAME#CATEGORY#, or GAME#STATISTICS# state(s)
     const queryUserStates = async (gameType, category, queryLimit) => {
         try {
             const { data, errors }= await dataClient.queries.getUserState({
@@ -144,7 +145,7 @@ export const UserStateProvider = ({ children }) => {
                 percent_correct: totalQuestions > 0 ? totalCorrect / totalQuestions : 0,
             }
         })
-    }
+    };
 
     // ✅ Add GAME#, GAME#CATEGORY#, GAME#STAT, GAMEHX# dynamodb tables
     const transactGameData = async (gameType, category, gameStateData, categoryStateData) => {

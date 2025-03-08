@@ -4,6 +4,7 @@ import { UserProvider } from "./context/UserContext";
 import { UserStateProvider } from "./context/UserStateContext";
 import { ModelProvider } from "./context/ModelContext";
 import { UserStatisticsProvider } from "./context/UserStatisticsContext";
+import { GameHxProvider } from "./context/GameHxContext";
 import WelcomePage from "./components/WelcomePage";
 import GamePage from "./components/GamePage";
 import Dashboard from "./components/Dashboard";
@@ -15,6 +16,7 @@ function App() {
         <UserProvider>
         <UserStateProvider>
         <UserStatisticsProvider>
+        <GameHxProvider>
         <ModelProvider>
             <Router>
                 <Redirection>
@@ -27,6 +29,7 @@ function App() {
                 </Redirection>
             </Router>
         </ModelProvider>
+        </GameHxProvider>
         </UserStatisticsProvider>
         </UserStateProvider>
         </UserProvider>

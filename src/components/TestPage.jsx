@@ -9,6 +9,7 @@ import "../styles.css";
 import ModelContext from "../context/ModelContext"
 import UserStateContext from "../context/UserStateContext"
 import UserStatisticsContext from "../context/UserStatisticsContext"
+import GameHxContext from "../context/GameHxContext"
 
 // How is everything related?
 // Step 1: amplify/resource.ts: define schema customType for external ddb data model. This is used for type checking for the mutations/queries for returns(a.ref()) 
@@ -17,33 +18,6 @@ import UserStatisticsContext from "../context/UserStatisticsContext"
 // Step 4: amplify/data/*.js: these are the custom resolver graphQL queries which AppSync uses to query ddb. AppSync > select API > Functions
 // Step 5: Customized functions using graphQL API are located in context/UserStateContext.jsx (Entity/ReturnTypeName.jsx)
 // Step 6: load those functions by importing the context and wrap them around another function if additional changes are needed (see handleAddUserState)
-
-// Test model api
-// async function sendModelRequest(event, modelInput, setModelPrediction) {
-//     event.preventDefault();
-
-//     try {
-//         const invokeModel = post({
-//             apiName: "neurobeaconModel",
-//             path: "test/neurobeaconModel",
-//             region: "us-east-1",
-//             options: {
-//                 body: {
-//                     data: JSON.parse(modelInput)
-//                 }
-//             }
-//         });
-
-//         const { body } = await invokeModel.response;
-//         const response = await body.json();
-//         const prediction = response.body
-//         console.log("Post call succeeded:", response);
-//         setModelPrediction(prediction)
-//     } catch (error) {
-//         console.log("Post call failed:", JSON.parse(error.response))
-//     }
-// }
-
 
 const TestPage = () => {
     const { username } = useContext(UserContext);
@@ -60,9 +34,11 @@ const TestPage = () => {
     const [queryFrequency, setQueryFrequency] = useState('');
     const [updateFrequency, setUpdateFrequency] = useState('');
     const [queryStatsLimit, setQueryStatsLimit] = useState('');
+    const [gameHxType, setGameHxType] = useState('');
     const { queryStates, addUserState, queryUserStates, transactGameData } = useContext(UserStateContext);
     const { modelPrediction, setModelPrediction, modelInput, setModelInput, sendModelRequest } = useContext(ModelContext);
     const { queryStatistics, queryStats, addStats, updateStats } = useContext(UserStatisticsContext);
+    const { addGameHx } = useContext(GameHxContext);
 
     const handleAddUserState = (event, gameType, category) => {
         event.preventDefault()
@@ -185,6 +161,30 @@ const TestPage = () => {
             console.error("Error fetching user state:", error);
         }
     };
+
+    const handleAddGameHx = async (event, gameHxType) => {
+        try {
+            event.preventDefault();
+            const data = JSON.stringify({
+                question_id: 1,
+                question_type: gameHxType,
+                question_category: 1950,
+                difficulty: 2,
+                game_time_ms: 5000,
+                session_id: 2, // perhaps just generate here??
+                session_time_ms: 30,
+                attempt: 1,
+                user_answer: 'a',
+                is_correct: 1,
+                score: 30,
+            })
+
+            await addGameHx(data)
+            console.log("Query Successful")
+        } catch (error) {
+            console.error("Error adding GameHx:", error)
+        }
+    }
 
     return (
         <div className="game-page">
@@ -334,6 +334,22 @@ const TestPage = () => {
                     ) : (
                         <p style={{color: "black"}}>No statistics available</p>
                     )}
+                    {/* ✅ Test addGameHx */}
+                    <h3>Test GameHx (UserGameHx)</h3>
+                    <form onSubmit={(e) => handleAddGameHx(e, gameHxType)} className="flex space-x-2">
+                        <select
+                            value={gameHxType}
+                            onChange={(e) => setGameHxType(e.target.value)}
+                            className="border p-2 rounded">
+                            <option value="" disabled>Select an option</option>
+                            <option value="math">MATH</option>
+                            <option value="trivia">TRIVIA</option>
+                            <option value="visual">VISUAL</option>
+                        </select>
+                        <button type="submit">
+                        Add Game Hx
+                        </button>
+                    </form>
                     {/* ✅ Test transactGameData */}
                     <h3>Test Transaction</h3>
                     <label htmlFor="dropdown1">Choose a gameType: </label>

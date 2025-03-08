@@ -55,9 +55,6 @@ const handleVerifyToken = async () => {
     // Display a success message and navigate to the dashboard after a short delay
     setMessage("Your account has been verified! Please login.");
     setView("login")
-    // setTimeout(() => {
-    //   navigate("/dashboard");
-    // }, 2000); // 2-second delay before redirection
   if (response === "INVALID") {
     setMessage("Invalid verification code, please try again.")
   }

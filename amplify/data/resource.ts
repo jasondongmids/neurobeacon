@@ -127,23 +127,24 @@ const schema = a.schema({
     attempt: a.integer(),
     user_answer: a.string(),
     is_correct: a.boolean(),
+    score: a.integer(),
     created_at: a.integer(),
     updated_at: a.integer()
   }),
 
-  // addGameHx: a
-  // .mutation()
-  // .arguments({
-  //   data: a.json(),
-  // })
-  // .returns(a.ref("UserGameHx"))
-  // .authorization(allow => [allow.authenticated()])
-  // .handler(
-  //   a.handler.custom({
-  //     dataSource: "UserGameHxTable",
-  //     entry: "./addGameHx.js",
-  //   })
-  // ),
+  addGameHx: a
+  .mutation()
+  .arguments({
+    data: a.json(),
+  })
+  .returns(a.ref("UserGameHx"))
+  .authorization(allow => [allow.authenticated()])
+  .handler(
+    a.handler.custom({
+      dataSource: "UserGameHxTable",
+      entry: "./addGameHx.js",
+    })
+  ),
 
 //   transactData: a
 //   .mutation()
