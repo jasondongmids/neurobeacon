@@ -69,13 +69,11 @@ export const UserProvider = ({ children }) => {
     // ✅ Log in an existing user
     const loginUser = async (loginUsername, loginPassword) => {
         try {
-            await signOut() // ensure signout while testing
-
             const response = await signIn({
                 username: loginUsername,
                 password: loginPassword,
             });
-            return response.nextStep.signInStep // 'DONE' == successful; "CONFIRM_SIGN_UP" = user needs to complete email verify
+            return response.nextStep.signInStep
         } catch (error) {
             console.log("Login error:", error)
             return error.message
