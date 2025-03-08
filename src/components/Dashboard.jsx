@@ -23,8 +23,8 @@ const DashboardPage = () => {
         }
     }, [location]);
 
-    const handleLogout = () => {
-        logoutUser()
+    const handleLogout = async () => {
+        await logoutUser()
         localStorage.removeItem("currentUser");
         setUsername("");
         navigate("/");
