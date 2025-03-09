@@ -10,9 +10,9 @@ const Footer = () => {
     <div className="footer">
       {!hideButtons && (
         <>
-          <button className="btn reset" onClick={() => window.handleReset?.()}>
+          {/*  <button className="btn reset" onClick={() => window.handleReset?.()}>
             Reset
-          </button>
+          </button> */}
           <button className="btn submit" onClick={() => window.handleSubmit?.()}>
             Submit Answer
           </button>
