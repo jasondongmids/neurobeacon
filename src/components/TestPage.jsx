@@ -227,6 +227,7 @@ const TestPage = () => {
                             <option value="math">MATH</option>
                             <option value="trivia">TRIVIA</option>
                             <option value="visual">VISUAL</option>
+                            <option value="reaction">REACTION</option>
                         </select>
                         <select
                             value={category || ""}
@@ -236,6 +237,7 @@ const TestPage = () => {
                             <option value="sub">SUB</option>
                             <option value="add">ADD</option>
                             <option value="minus">MINUS</option>
+                            <option value="unk">UNKNOWN</option>
                         </select>
                         <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">
                         Add User State
@@ -251,6 +253,7 @@ const TestPage = () => {
                             <option value="math">MATH</option>
                             <option value="trivia">TRIVIA</option>
                             <option value="visual">VISUAL</option>
+                            <option value="reaction">REACTION</option>
                         </select>
                         <select
                             value={queryCategory || ""}
@@ -260,6 +263,7 @@ const TestPage = () => {
                             <option value="sub">SUB</option>
                             <option value="add">ADD</option>
                             <option value="minus">MINUS</option>
+                            <option value="unk">UNKNOWN</option>
                         </select>
                         <input
                             type="text"

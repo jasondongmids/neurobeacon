@@ -31,6 +31,7 @@ export function request(ctx) {
         total_elapsed_time: data.total_elapsed_time,
         average_user_time: data.average_user_time,
         // difficulty: data.difficulty,
+        // score: data.score,
         // predicted_difficulty: data.predicted_difficulty,
         created_at: sk,
         updated_at: sk

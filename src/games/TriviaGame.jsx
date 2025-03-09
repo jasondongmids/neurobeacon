@@ -231,7 +231,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
                 question_category: "sub",
                 difficulty: difficulty === "easy" ? 0 : difficulty === "medium" ? 1 : 2, // assigned in above; double check
                 game_time_ms: Math.min(totalGameTimeMs, 2147483647),
-                session_id: "sessionId", // perhaps just generate here??
+                session_id: sessionId, // perhaps just generate here??
                 session_time_ms: 2000,// unsure if needed
                 attempt: attempts,
                 user_answer: selectedAnswer,
@@ -264,7 +264,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
                     question_category: "sub",
                     difficulty: difficulty === "easy" ? 0 : difficulty === "medium" ? 1 : 2, // assigned in above; double check
                     game_time_ms: Math.min(totalGameTimeMs, 2147483647),
-                    session_id: "sessionId", // perhaps just generate here??
+                    session_id: sessionId, // perhaps just generate here??
                     session_time_ms: 2000,// unsure if needed
                     attempt: attempts,
                     user_answer: selectedAnswer,
@@ -284,7 +284,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
                     question_category: "sub",
                     difficulty: difficulty === "easy" ? 0 : difficulty === "medium" ? 1 : 2, // assigned in above; double check
                     game_time_ms: Math.min(totalGameTimeMs, 2147483647),
-                    session_id: "sessionId", // perhaps just generate here??
+                    session_id: sessionId, // perhaps just generate here??
                     session_time_ms: 2000,// unsure if needed
                     attempt: attempts,
                     user_answer: selectedAnswer,

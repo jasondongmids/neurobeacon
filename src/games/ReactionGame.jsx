@@ -1,5 +1,7 @@
-import React, { useRef, useEffect, useState, forwardRef, useImperativeHandle } from "react";
+import React, { useRef, useEffect, useContext, useState, forwardRef, useImperativeHandle } from "react";
 // import React, { useRef, useEffect, useState } from "react";
+import UserStateContext from "../context/UserStateContext";
+import GameHxContext from "../context/GameHxContext";
 
 // Difficulty configuration remains the same.
 const difficultyLevels = {
@@ -54,6 +56,17 @@ const ReactionGame = ({ onUpdateStats }) => {
     accuracy: "0.00",
     avgReactionTime: "N/A"
   });
+
+  // Database: State and reference variables
+  const [sessionId, setSessionId] = useState("");  
+  const { 
+      userGameState, userCategoryState, getUserState, queryUserStates,
+      updateUserGameState, updateUserCategoryState, transactGameData 
+      } = useContext(UserStateContext);
+  const { addGameHx } = useContext(GameHxContext)
+  const initStateRef = useRef(true)
+  const prevGameStateRef = useRef(userGameState)
+  const prevCategoryStateRef = useRef(userCategoryState)
 
   // ────────────────────────────────────────────────────────────────
   // HELPER FUNCTIONS (using function declarations)
@@ -149,6 +162,12 @@ const ReactionGame = ({ onUpdateStats }) => {
     setCorrectClicks(0);
     setMessage("");
     usedImagesRef.current = [];
+
+    // Database: Load initial states
+    if (initStateRef) {
+      getUserState("reaction", "");
+      getUserState("reaction", "unk") // unknown how categories to be defined
+    }
   }
 
   function getNextImage() {
@@ -228,6 +247,36 @@ const ReactionGame = ({ onUpdateStats }) => {
   }, [round, correctClicks, reactionTimes, score]);
 
   // ────────────────────────────────────────────────────────────────
+  // DATABASE: FUNCTIONS AND EFFECTS
+  useEffect(() => {
+      const pGameState = prevGameStateRef.current;
+      const pCategoryState = prevCategoryStateRef.current;
+      console.log('initStateRef:', initStateRef)
+
+      if (
+          pGameState !== userGameState &&
+          pCategoryState !== userCategoryState &&
+          userGameState != null &&
+          userCategoryState != null &&
+          initStateRef.current == false
+      ) {
+          // console.log("USERGAMESTATE:", userGameState);
+          // console.log("USERCATEGORYSTATE:", userCategoryState)
+          transactGameData("reaction", "unk", userGameState, userCategoryState)
+          // console.log('Transaction Complete')
+      }
+
+      prevGameStateRef.current = userGameState;
+      prevCategoryStateRef.current = userCategoryState;
+  }, [userGameState, userCategoryState])
+
+  function batchWrite(newUserState, gameData) {
+    updateUserGameState(newUserState);
+    updateUserCategoryState(newUserState);
+    addGameHx(gameData)
+  }
+
+  // ────────────────────────────────────────────────────────────────
   // HANDLE CLICK EVENTS
   function handleClick(event) {
     if (!waitingForGreen || !startTime) return;
@@ -237,9 +286,29 @@ const ReactionGame = ({ onUpdateStats }) => {
       offsetX <= targetBox.x + targetBox.width &&
       offsetY >= targetBox.y &&
       offsetY <= targetBox.y + targetBox.height;
+      const reaction = (Date.now() - startTime) / 1000;
+      console.log("Reaction Time:", reaction)
+
+    // Database: enable transactions and aggregate variables for gamehx update
+    if (initStateRef) {
+      initStateRef.current = false
+    }
+
+    const gameData = JSON.stringify({
+      question_id: "unknown",
+      question_type: "reaction",
+      question_category: "unknown",
+      difficulty: difficulty === "easy" ? 0 : difficulty === "medium" ? 1 : 2,
+      game_time_ms: Math.min(reaction * 1000, 2147483647),
+      session_id: sessionId,
+      session_time_ms: 2000, // placeholder before implementing,
+      attempt: mistakes + 1,
+      user_answer: "not_applicable",
+      is_correct: isCorrectClick,
+      score: 100 // placeholder before implementing
+    })
 
     if (isCorrectClick) {
-      const reaction = (Date.now() - startTime) / 1000;
       setReactionTimes(prev => [...prev, reaction]);
       setCorrectClicks(prev => prev + 1);
 
@@ -256,8 +325,19 @@ const ReactionGame = ({ onUpdateStats }) => {
         setTimeout(endGame, 700);
       } else {
         setTimeout(startNewRound, 1000);
+      
+      // Database: Update user state and game hx
+      const newUserState = {
+        correct: true,
+        elapsed_time: reaction        
+      };
+      batchWrite(newUserState, gameData);
+
       }
     } else {
+      // Database: Update game hx
+      addGameHx(gameData)
+
       // Incorrect click.
       setMistakes(prev => {
         const newMistakes = prev + 1;
