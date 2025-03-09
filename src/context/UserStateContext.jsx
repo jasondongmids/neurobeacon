@@ -8,11 +8,11 @@ export const UserStateProvider = ({ children }) => {
     const [userGameState, setUserGameState] = useState({
         prev_is_slow: "",
         prev_is_correct: "",
-        total_questions: "",
-        total_correct: "",
-        percent_correct: "",
-        total_elapsed_time: "",
-        average_user_time: "",
+        total_questions: 0,
+        total_correct: 0,
+        percent_correct: 0.0,
+        total_elapsed_time: 0,
+        average_user_time: 0,
     });
     
     const [userCategoryState, setUserCategoryState] = useState({
@@ -126,7 +126,7 @@ export const UserStateProvider = ({ children }) => {
                 total_questions: totalQuestions,
                 total_correct: totalCorrect,
                 percent_correct: totalQuestions > 0 ? totalCorrect / totalQuestions : 0,
-                total_elapsed_time: totalElapsedTime,
+                total_elapsed_time: Math.min(totalElapsedTime, 2147483647),
                 average_user_time: totalQuestions > 0 ? totalElapsedTime / totalQuestions : 0,
             };
         })
@@ -162,7 +162,7 @@ export const UserStateProvider = ({ children }) => {
 
             const gameStateResult = await addUserState(gameType, "", gameData)
             const categoryStateResult = await addUserState(gameType, category, categoryData)
-
+            console.log("Transaction successful", { gameStateResult, categoryStateResult })
             return { gameStateResult, categoryStateResult }
         } catch (error) {
             console.error('Error with function in UserStateContext.jsx:', error)

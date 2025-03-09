@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useRef, useEffect } from "react";
 import UserContext from "../context/UserContext";
 import Header from "./Header";
 import NavBar from "./NavBar"; // ✅ Ensure Hamburger Menu is Here
@@ -35,10 +35,31 @@ const TestPage = () => {
     const [updateFrequency, setUpdateFrequency] = useState('');
     const [queryStatsLimit, setQueryStatsLimit] = useState('');
     const [gameHxType, setGameHxType] = useState('');
-    const { queryStates, addUserState, queryUserStates, transactGameData } = useContext(UserStateContext);
+    const { userGameState, userCategoryState, queryStates, addUserState, queryUserStates, transactGameData } = useContext(UserStateContext);
     const { modelPrediction, setModelPrediction, modelInput, setModelInput, sendModelRequest } = useContext(ModelContext);
     const { queryStatistics, queryStats, addStats, updateStats } = useContext(UserStatisticsContext);
     const { addGameHx } = useContext(GameHxContext);
+    const initStateRef = useRef(true)
+    const prevGameStateRef = useRef(userGameState)
+    const prevCategoryStateRef = useRef(userCategoryState)
+
+    useEffect(() => {
+        const pGameState = prevGameStateRef.current;
+        const pCategoryState = prevCategoryStateRef.current;
+
+        if (
+            pGameState !== userGameState &&
+            pCategoryState !== userCategoryState &&
+            userGameState != null &&
+            userCategoryState != null &&
+            initStateRef == false
+        ) {
+            transactGameData("trivia", "sub", userGameState, userCategoryState)
+        }
+
+        prevGameStateRef.current = userGameState;
+        prevCategoryStateRef.current = userCategoryState;
+    }, [userGameState, userCategoryState])
 
     const handleAddUserState = (event, gameType, category) => {
         event.preventDefault()
