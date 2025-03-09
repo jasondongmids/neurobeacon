@@ -87,7 +87,7 @@ const handleVerifyToken = async () => {
       <input 
         type="text"
         className="input-field"
-        placeholder="Enter your username"
+        placeholder="Enter your email"
         value={inputUsername}
         onChange={(e) => setInputUsername(e.target.value)}
       />
