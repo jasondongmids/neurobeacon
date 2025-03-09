@@ -88,9 +88,10 @@ const TestPage = () => {
         transactGameData(transactType, transactCategory, gameStateData, categoryStateData)
     };
 
-    const handleSendModelRequest = (event, modelInput) => {
+    const handleSendModelRequest = async (event, modelInput) => {
         event.preventDefault()
-        prediction = sendModelRequest(modelInput)
+        const prediction = await sendModelRequest(modelInput)
+        console.log("Prediction:", prediction)
         setModelPrediction(prediction)
     };
 
@@ -274,7 +275,7 @@ const TestPage = () => {
                     {modelPrediction != "" ? (
                         <pre>Prediction: {JSON.stringify(modelPrediction, null, 2)}</pre>
                     ) : (
-                        <p style={{color: "black"}}>Endpoint is not live!</p>
+                        <p style={{color: "black"}}>No Prediction</p>
                     )}
                     {/* ✅ Test addGameStats */}
                     <h3>Test User Statistics (UserStateHx)</h3>

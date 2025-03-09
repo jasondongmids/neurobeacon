@@ -164,16 +164,6 @@ export const UserStateProvider = ({ children }) => {
             const categoryStateResult = await addUserState(gameType, category, categoryData)
 
             return { gameStateResult, categoryStateResult }
-
-            // const result = await dataClient.mutations.transactData({
-            //     gameType: gameType,
-            //     category: category,
-            //     gameData: gameData,
-            //     categoryData: categoryData,
-            // })
-            // console.log(result)
-            // return result
-
         } catch (error) {
             console.error('Error with function in UserStateContext.jsx:', error)
         }
