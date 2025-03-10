@@ -319,6 +319,9 @@ const ReactionGame = ({ onUpdateStats }) => {
       const finalScore = timeBonus * difficultyLevels[difficulty].speedFactor;
       setScore(prev => prev + finalScore);
 
+      // Add a success message.
+      setMessage(`✅ Great job! Reaction time: ${reaction.toFixed(2)} sec.`);
+
       setWaitingForGreen(false);
       updateStats(round);
       if (round >= maxRounds) {
@@ -353,6 +356,8 @@ const ReactionGame = ({ onUpdateStats }) => {
             }
           }, 1000);
           return 0;
+        } else if (newMistakes === 1) {
+          setMessage("❌ Incorrect click. Try again!");
         } else if (newMistakes === 2) {
           setMessage("⚠️ One more mistake and the round ends!");
         }
