@@ -92,7 +92,17 @@ body {
 .panel p {
     color:black;
 }
-
+.hints-content ul {
+    font-size: 18px;
+    list-style: none;     /* Removes bullets */
+    margin: 10px;            /* Remove default margin */
+    padding: 0;      /* Remove default padding */
+    text-align: left;
+  }
+  .hints-content li {
+    margin: 10px;            /* Remove default margin */
+    padding: 0;      /* Remove default padding */
+  }
 /* Panel Header (Title + Toggle Button) */
 .panel-header {
     margin: 0px;
