@@ -37,7 +37,7 @@ const NavBar = () => {
             {menuOpen && (
                 <div className="dropdown-menu" ref={menuRef}>
                     <button onClick={() => navigate("/")}>🏠 Home</button>
-                    {/*<button onClick={() => handleNavigation("/game")}>🎮 Game</button> */}
+                  {/*  <button onClick={() => handleNavigation("/game")}>🎮 Game</button> */}
                     <button onClick={() => handleNavigation("/dashboard")}>📊 Dashboard</button>
                 </div>
             )}
@@ -46,6 +46,7 @@ const NavBar = () => {
 };
 
 export default NavBar;
+
 
 
 
