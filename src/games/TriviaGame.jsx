@@ -357,19 +357,151 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
 
             {/* ✅ Decade Selection Modal */}
             {showDecadeModal && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <h2>Select Decades</h2>
-                       <p><label><input type="checkbox" value="1950s" onChange={(e) => setSelectedDecades(prev => [...prev, e.target.value])} /> 1950s</label></p>
-                       <p><label><input type="checkbox" value="1960s" onChange={(e) => setSelectedDecades(prev => [...prev, e.target.value])} /> 1960s</label></p>
-                       <p><label><input type="checkbox" value="1970s" onChange={(e) => setSelectedDecades(prev => [...prev, e.target.value])} /> 1970s</label></p>
-                        <p><label><input type="checkbox" value="1980s" onChange={(e) => setSelectedDecades(prev => [...prev, e.target.value])} /> 1980s</label></p>
-                        <p><label><input type="checkbox" value="1990s" onChange={(e) => setSelectedDecades(prev => [...prev, e.target.value])} /> 1990s</label></p>
-                        <p><label><input type="checkbox" value="2000s" onChange={(e) => setSelectedDecades(prev => [...prev, e.target.value])} /> 2000s</label></p>
-                        <button onClick={() => handleSessionStart()}>Start Game</button>
-                    </div>
-                </div>
-            )}
+  <div className="modal-overlay">
+    <div className="modal-content">
+      <h2>Select Decades</h2>
+
+      <p>
+        <label>
+          <input
+            type="checkbox"
+            value="1950s"
+            onChange={(e) => {
+              if (e.target.checked) {
+                setSelectedDecades((prev) => [
+                  ...new Set([...prev, e.target.value]),
+                ]);
+              } else {
+                setSelectedDecades((prev) =>
+                  prev.filter((val) => val !== e.target.value)
+                );
+              }
+            }}
+          />{" "}
+          1950s
+        </label>
+      </p>
+
+      <p>
+        <label>
+          <input
+            type="checkbox"
+            value="1960s"
+            onChange={(e) => {
+              if (e.target.checked) {
+                setSelectedDecades((prev) => [
+                  ...new Set([...prev, e.target.value]),
+                ]);
+              } else {
+                setSelectedDecades((prev) =>
+                  prev.filter((val) => val !== e.target.value)
+                );
+              }
+            }}
+          />{" "}
+          1960s
+        </label>
+      </p>
+
+      <p>
+        <label>
+          <input
+            type="checkbox"
+            value="1970s"
+            onChange={(e) => {
+              if (e.target.checked) {
+                setSelectedDecades((prev) => [
+                  ...new Set([...prev, e.target.value]),
+                ]);
+              } else {
+                setSelectedDecades((prev) =>
+                  prev.filter((val) => val !== e.target.value)
+                );
+              }
+            }}
+          />{" "}
+          1970s
+        </label>
+      </p>
+
+      <p>
+        <label>
+          <input
+            type="checkbox"
+            value="1980s"
+            onChange={(e) => {
+              if (e.target.checked) {
+                setSelectedDecades((prev) => [
+                  ...new Set([...prev, e.target.value]),
+                ]);
+              } else {
+                setSelectedDecades((prev) =>
+                  prev.filter((val) => val !== e.target.value)
+                );
+              }
+            }}
+          />{" "}
+          1980s
+        </label>
+      </p>
+
+      <p>
+        <label>
+          <input
+            type="checkbox"
+            value="1990s"
+            onChange={(e) => {
+              if (e.target.checked) {
+                setSelectedDecades((prev) => [
+                  ...new Set([...prev, e.target.value]),
+                ]);
+              } else {
+                setSelectedDecades((prev) =>
+                  prev.filter((val) => val !== e.target.value)
+                );
+              }
+            }}
+          />{" "}
+          1990s
+        </label>
+      </p>
+
+      <p>
+        <label>
+          <input
+            type="checkbox"
+            value="2000s"
+            onChange={(e) => {
+              if (e.target.checked) {
+                setSelectedDecades((prev) => [
+                  ...new Set([...prev, e.target.value]),
+                ]);
+              } else {
+                setSelectedDecades((prev) =>
+                  prev.filter((val) => val !== e.target.value)
+                );
+              }
+            }}
+          />{" "}
+          2000s
+        </label>
+      </p>
+
+      <button
+        onClick={() => {
+          // Hide the modal
+          setShowDecadeModal(false);
+          // Reset the session start time
+          setSessionStartTime(Date.now());
+          // Load the filtered questions
+          loadFilteredQuestions();
+        }}
+      >
+        Start Game
+      </button>
+    </div>
+  </div>
+)}
 
             <div className="scenario-text">{questions[questionIndex]?.question || "⚠️ No More Questions!"}</div>
 
