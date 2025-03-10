@@ -1,9 +1,11 @@
+// Panel.js
 import React, { useState } from "react";
+import { useParams } from "react-router-dom";
 import "../styles.css";
-import progressImg from "../assets/progress.png";
 
 const Panel = ({ title, position, stats }) => {
   const [isOpen, setIsOpen] = useState(true);
+  const { gameType } = useParams();
 
   const togglePanel = () => {
     setIsOpen(!isOpen);
@@ -11,49 +13,77 @@ const Panel = ({ title, position, stats }) => {
 
   return (
     <div className={`panel ${isOpen ? "open" : "closed"}`}>
-      {/* ✅ Collapsible Header - No Gap */}
       <h2 className="panel-header no-gap" onClick={togglePanel}>
         {title} {isOpen ? "▲" : "▼"}
       </h2>
 
-      {/* ✅ Left Panel: Session Stats (Expands Fully) */}
+      {/* Left Panel: Session Stats */}
       {isOpen && position === "left" && stats && (
         <div className="session-stats full-height">
-          <p>
-            📊 <strong>Score:</strong> {(Number(stats?.score) || 0).toFixed(2)}
-          </p>
-          <p>
-            🏁 <strong>Round:</strong> {stats?.questionsAnswered || 0}/{stats?.maxRounds || 10}
-          </p>
-          <p>
-            🎯 <strong>Accuracy:</strong> {Number(stats?.accuracy || 0).toFixed(2)}%
-          </p>
-          {window.location.pathname.includes("reaction") && (
-            <p>
-              ⚡ <strong>Reaction Time:</strong>{" "}
-              {stats?.reactionTime ? `${Number(stats.reactionTime).toFixed(2)}s` : "N/A"}
-            </p>
+          {gameType === "sudoku" ? (
+            <>
+              <p>📊 <strong>Score:</strong> {stats?.score || 0}</p>
+              <p>⏱ <strong>Time:</strong> {stats?.timer || 0} sec</p>
+              <p>❌ <strong>Mistakes:</strong> {stats?.mistakes || 0}</p>
+            </>
+          ) : (
+            <>
+              <p>📊 <strong>Score:</strong> {(Number(stats?.score) || 0).toFixed(2)}</p>
+              <p>🏁 <strong>Round:</strong> {stats?.questionsAnswered || 0}/{stats?.maxRounds || 10}</p>
+              <p>🎯 <strong>Accuracy:</strong> {Number(stats?.accuracy || 0).toFixed(2)}%</p>
+              {gameType === "reaction" && (
+                <p>⚡ <strong>Reaction Time:</strong> {stats?.reactionTime ? `${Number(stats.reactionTime).toFixed(2)}s` : "N/A"}</p>
+              )}
+            </>
           )}
         </div>
       )}
 
-      {/* ✅ Right Panel: Dynamic Hints */}
+      {/* Right Panel: Hints */}
       {isOpen && position === "right" && (
         <div className="hints-content full-height">
-          {window.location.pathname.includes("reaction") ? (
+          {gameType === "sudoku" ? (
+            <>
+              <ul className="sudoku-rules">
+                <li>🧩 Fill each row, column, and 3x3 box with numbers 1-9.</li>
+                <li>🚫 No duplicate numbers in any row, column, or box.</li>
+                <li>💡 Click a cell, then choose a number from the pad.</li>
+                <li>🔍 Use logic to deduce correct placements.</li>
+                <li>⚠️ Too many mistakes may end the game!</li>
+              </ul>
+              <div className="bottom-buttons">
+                <button
+                  className="nav-btn"
+                  onClick={() =>
+                    window.handleSudokuPause && window.handleSudokuPause()
+                  }
+                >
+                  Pause/Resume
+                </button>
+                <button
+                  className="nav-btn"
+                  onClick={() =>
+                    window.handleSudokuRestart && window.handleSudokuRestart()
+                  }
+                >
+                  Restart
+                </button>
+                <button
+                  className="nav-btn"
+                  onClick={() =>
+                    window.handleSudokuQuit && window.handleSudokuQuit()
+                  }
+                >
+                  Quit Game
+                </button>
+              </div>
+            </>
+          ) : window.location.pathname.includes("reaction") ? (
             <ul className="reaction-hints">
               <li>🎯 Click the green box as fast as possible!</li>
               <li>👀 Stay focused, distractions are meant to throw you off!</li>
               <li>⚡ Faster reaction times mean higher scores.</li>
               <li>💡 Train yourself to spot targets quickly under different conditions.</li>
-            </ul>
-          ) : window.location.pathname.includes("sudoku") ? (
-            <ul className="sudoku-rules">
-              <li>🧩 Fill each row, column, and 3x3 box with numbers 1-9.</li>
-              <li>🚫 No duplicate numbers in any row, column, or box.</li>
-              <li>💡 Click a cell, then choose a number from the pad.</li>
-              <li>🔍 Use logic to deduce correct placements.</li>
-              <li>⚠️ Too many mistakes may end the game!</li>
             </ul>
           ) : window.location.pathname.includes("trivia") ? (
             <ul className="trivia-hints">
@@ -70,11 +100,6 @@ const Panel = ({ title, position, stats }) => {
               <li>🎯 Focus on accuracy before increasing speed.</li>
             </ul>
           )}
-
-          <div className="bottom-buttons">
-            <button className="nav-btn">Pause</button>
-            <button className="nav-btn">Help</button>
-          </div>
         </div>
       )}
     </div>
@@ -82,7 +107,6 @@ const Panel = ({ title, position, stats }) => {
 };
 
 export default Panel;
-
 
 
 
