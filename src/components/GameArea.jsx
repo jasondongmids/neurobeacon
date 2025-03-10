@@ -10,13 +10,6 @@ const GameArea = ({ onUpdateStats }) => {
     const { gameType } = useParams();  // ✅ Get selected game from URL
     const gameRef = useRef(null);
 
-    // ✅ Safeguard: Log a warning if an unknown gameType is detected
-    useEffect(() => {
-        if (!["math", "trivia", "sudoku", "reaction"].includes(gameType)) {
-            console.warn(`⚠️ Unknown gameType: "${gameType}" - Check routing.`);
-        }
-    }, [gameType]);
-
     useEffect(() => {
         if (!gameRef.current) return;
         console.log(`🔧 Setting up button handlers for ${gameType}...`);
@@ -24,6 +17,7 @@ const GameArea = ({ onUpdateStats }) => {
         window.handleSubmit = () => gameRef.current?.handleSubmit?.();
         window.handleNextTask = () => gameRef.current?.generateNewProblem?.();
     }, [gameType]);
+    
 
     // ✅ Dynamically load the correct game
     const renderGame = () => {
@@ -34,9 +28,9 @@ const GameArea = ({ onUpdateStats }) => {
             case "trivia":
                 return <TriviaGame ref={gameRef} onUpdateStats={onUpdateStats} />;
             case "sudoku":
-                return <SudokuGrid onUpdateStats={onUpdateStats} />;
+                return <SudokuGrid ref={gameRef} onUpdateStats={onUpdateStats}/>;  // ✅ Sudoku now loads when selected
             case "reaction":
-                return <ReactionGame ref={gameRef} onUpdateStats={onUpdateStats}/>;
+                return <ReactionGame ref={gameRef} onUpdateStats={onUpdateStats}/>;  // ✅ Reaction Game now loads properly
             default:
                 return <p className="error-message">❌ Invalid Game Selection</p>;
         }
