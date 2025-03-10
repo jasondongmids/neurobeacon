@@ -1,28 +1,32 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";  // ✅ Import useLocation
 import "../styles.css";
 
 const Footer = () => {
-  const location = useLocation(); // Define location from react-router-dom
-  const hideButtons = location.pathname.includes("/game/reaction");
+    const location = useLocation(); // ✅ Move inside the component
 
-  return (
-    <div className="footer">
-      {!hideButtons && (
-        <>
-          {/*  <button className="btn reset" onClick={() => window.handleReset?.()}>
-            Reset
-          </button> */}
-          <button className="btn submit" onClick={() => window.handleSubmit?.()}>
-            Submit Answer
-          </button>
-          <button className="btn next" onClick={() => window.handleNextTask?.()}>
-            Next Task
-          </button>
-        </>
-      )}
-    </div>
-  );
+    // ✅ Hide buttons if playing Reaction Game
+    const hideButtons = location.pathname.includes("/game/reaction") || location.pathname.includes("/game/sudoku");
+
+
+    return (
+        <div className="footer">
+            {!hideButtons && (  // ✅ Hide buttons dynamically
+                <>
+                  {/*  <button className="btn reset" onClick={() => window.handleReset?.()}>
+                        Reset 
+                    </button> */}
+                    <button className="btn submit" onClick={() => window.handleSubmit?.()}>
+                        Submit Answer
+                    </button>
+                    <button className="btn next" onClick={() => window.handleNextTask?.()}>
+                        Next Question
+                    </button>
+                </>
+            )}
+        </div>
+    );
 };
 
 export default Footer;
+
