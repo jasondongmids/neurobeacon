@@ -83,12 +83,13 @@ export const UserStateProvider = ({ children }) => {
             }
     
             if (category) {
+                const category = JSON.parse(data[0].category)
                 setUserCategoryState({
                     category: {
-                        category: data[0].category,
-                        total_questions: data[0].total_questions,
-                        total_correct: data[0].total_correct,
-                        percent_correct: data[0].percent_correct,
+                        category: category.category,
+                        total_questions: category.total_questions,
+                        total_correct: category.total_correct,
+                        percent_correct: category.percent_correct,
                     }
                 });
             } else {
@@ -130,7 +131,7 @@ export const UserStateProvider = ({ children }) => {
     // ✅ Update GAME# react state during game submit
     const updateUserGameState = (newUserState, categoryState) => {
         const { correct, elapsed_time, score, difficulty } = newUserState;
-        const category = categoryState.category
+        const category = categoryState.category // review??
 
         setUserGameState(prevState => {
             const totalQuestions = prevState.total_questions + 1;
@@ -150,12 +151,7 @@ export const UserStateProvider = ({ children }) => {
                 score: score,
                 difficulty: difficulty,
                 predicted_difficulty: 1, // placeholder
-                category: {
-                    category: category.category,
-                    total_questions: category.total_questions,
-                    total_correct: category.total_correct,
-                    percent_correct: category.percent_correct,
-                }
+                category: category
             };
         })
     };
@@ -163,15 +159,19 @@ export const UserStateProvider = ({ children }) => {
     // ✅ Update GAME#CATEGORY# react state during game submit
     const updateUserCategoryState = (newUserState) => {
         setUserCategoryState(prevState => {
-            const totalQuestions = prevState.total_questions + 1;
-            const totalCorrect = newUserState.correct ? prevState.total_correct + 1 : prevState.total_correct;
+            const prevValues = prevState.category
+            const totalQuestions = prevValues.total_questions + 1 || 1;
+            const totalCorrect = newUserState.correct ? prevValues.total_correct + 1 : 0 //prevValues.total_correct;
 
             return {
                 ...prevState,
-                category: newUserState.category,
-                total_questions: totalQuestions,
-                total_correct: totalCorrect,
-                percent_correct: totalQuestions > 0 ? totalCorrect / totalQuestions : 0,
+                category: {
+                    category: newUserState.category,
+                    total_questions: totalQuestions,
+                    total_correct: totalCorrect,
+                    percent_correct: totalQuestions > 0 ? totalCorrect / totalQuestions : 0
+                }
+
             }
         })
     };
@@ -186,12 +186,13 @@ export const UserStateProvider = ({ children }) => {
     const transactGameData = async (gameType, category, gameStateData, categoryStateData) => {
         // transactData = total_questions, 
         try {
+            console.log('Transact category data:', categoryStateData)
+            const categoryData = JSON.stringify(categoryStateData)
             const gameData = JSON.stringify({
-                ...gameStateData // reminder to add prediction
+                ...gameStateData, // reminder to add prediction
+                category: {...categoryStateData.category}
             })
             
-            const categoryData = JSON.stringify(categoryStateData)
-
             // console.log('GameData', gameData)
             // console.log('Type', typeof gameData)
 

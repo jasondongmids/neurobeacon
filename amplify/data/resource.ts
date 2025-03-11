@@ -135,18 +135,18 @@ const schema = a.schema({
   }),
 
   addGameHx: a
-  .mutation()
-  .arguments({
-    data: a.json(),
-  })
-  .returns(a.ref("UserGameHx"))
-  .authorization(allow => [allow.authenticated()])
-  .handler(
-    a.handler.custom({
-      dataSource: "UserGameHxTable",
-      entry: "./addGameHx.js",
+    .mutation()
+    .arguments({
+      data: a.json(),
     })
-  ),
+    .returns(a.ref("UserGameHx"))
+    .authorization(allow => [allow.authenticated()])
+    .handler(
+      a.handler.custom({
+        dataSource: "UserGameHxTable",
+        entry: "./addGameHx.js",
+      })
+    ),
 
 //   transactData: a
 //   .mutation()

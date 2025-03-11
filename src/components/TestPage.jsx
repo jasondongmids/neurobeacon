@@ -207,22 +207,21 @@ const TestPage = () => {
     const handleAddGameHx = async (event, gameHxType) => {
         try {
             event.preventDefault();
-            const data = JSON.stringify({
-                question_id: 1,
+            const data = {
+                question_id: 'test',
                 question_type: gameHxType,
-                question_category: 1950,
+                question_category: '1950',
                 difficulty: 2,
                 game_time_ms: 5000,
-                session_id: 2, // perhaps just generate here??
+                session_id: 'test', // perhaps just generate here??
                 session_time_ms: 30,
                 attempt: 1,
                 user_answer: 'a',
-                is_correct: 1,
+                is_correct: false,
                 score: 30,
-            })
+            }
 
             await addGameHx(data)
-            console.log("Query Successful")
         } catch (error) {
             console.error("Error adding GameHx:", error)
         }

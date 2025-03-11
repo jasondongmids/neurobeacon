@@ -20,7 +20,7 @@ export function request(ctx) {
             category: data.category.category,
             total_questions: data.category.total_questions,
             total_correct: data.category.total_correct,
-            precent_correct: data.category.percent_correct,
+            percent_correct: data.category.percent_correct,
         },
         created_at: sk,
         updated_at: sk
@@ -40,7 +40,7 @@ export function request(ctx) {
             category: data.category.category,
             total_questions: data.category.total_questions,
             total_correct: data.category.total_correct,
-            precent_correct: data.category.percent_correct,
+            percent_correct: data.category.percent_correct,
         },
         created_at: sk,
         updated_at: sk
