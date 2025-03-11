@@ -25,6 +25,8 @@ const DashboardPage = () => {
 
     const handleLogout = async () => {
         await logoutUser()
+    const handleLogout = () => {
+        logoutUser()
         localStorage.removeItem("currentUser");
         setUsername("");
         navigate("/");
