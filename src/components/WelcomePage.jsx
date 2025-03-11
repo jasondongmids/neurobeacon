@@ -19,41 +19,6 @@ const WelcomePage = () => {
   const [view, setView] = useState("login");
 
     // ✅ Show redirect message if user was blocked
-    // useEffect(() => {
-    //     const checkRedirect = async () => {
-    //         console.log("Location:", location)
-    //         const isAuth = await checkAuth();
-    //         console.log("isAuth:", isAuth)
-
-    //         // if (isAuth) {
-    //         //     console.log("Location:", location)
-    //         //     }
-            
-    //     // console.log("checkAuth", checkAuth())
-    //         if (isAuth) {
-    //             if (location.state?.redirected) {
-    //                 navigate(location.pathname, { replace: true, state: { redirected: false } });
-    //                 console.log("Location updated here:", location)
-    //                 }
-    //             } else {
-    //                 if (!location.state?.redirected) {
-    //                     navigate(location.pathname, { replace: true, state: { redirected: true}})
-    //                 }
-
-    //                 // if (location.state?.redirected) {
-    //                 setMessage("⚠️ You must be logged in to access that page.");
-    //                 // }
-    //                 console.log("Location updated there:", location)
-    //             }
-
-    //         // if (location.state?.redirected) {
-    //         //     setMessage("⚠️ You must be logged in to access that page.");
-    //         // }
-    //     }
-    //     checkRedirect()
-    // }, [location, navigate]);
-
-    // ✅ Show redirect message if user was blocked
     useEffect(() => {
         console.log("Location:", location)
         if (location.state?.redirected) {
@@ -62,10 +27,6 @@ const WelcomePage = () => {
     }, [location]);
 
     const handleLogin = async () => {
-        // if (checkAuth()) {
-        //     navigate("/dashboard");
-        // }
-
         const response = await loginUser(inputUsername, inputPassword);
         console.log("Response:", response)
         if (response === "DONE") {
@@ -181,9 +142,3 @@ const handleVerifyToken = async () => {
 };
 
 export default WelcomePage;
-
-
-
-
-
-

@@ -1,21 +1,24 @@
-import React, { useContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useContext, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import UserContext from "../context/UserContext";
-import Header from "./Header";
-import NavBar from "./NavBar"; 
+import NavBar from "./NavBar";
 import "../styles.css";
+import logo from "../assets/logo-words-no-background.png";
 
-// ✅ Import images directly (Replacing require())
-import profilePlaceholder from "../assets/profile-placeholder.png";
-import progressChart from "../assets/progress.png";
+const WelcomePage = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  // Note: confirmSignUp is assumed to be provided via the context or added later.
+  const { username, setUsername, rememberMe, setRememberMe, registerUser, loginUser, resetPassword, completeSignUp } = useContext(UserContext);
 
-const DashboardPage = () => {
-    const { username, setUsername, logoutUser } = useContext(UserContext);
-    const navigate = useNavigate();
+  const [inputUsername, setInputUsername] = useState("");
+  const [inputPassword, setInputPassword] = useState("");
+  const [verificationToken, setVerificationToken] = useState("");
+  const [message, setMessage] = useState("");
+  // 'view' controls which form is shown: login, register, reset, or verify.
+  const [view, setView] = useState("login");
 
-    // ✅ State to track selected game
-    const [selectedGame, setSelectedGame] = useState("");
-
+    // ✅ Show redirect message if user was blocked
     useEffect(() => {
         console.log("Location:", location)
         if (location.state?.redirected) {
@@ -23,83 +26,119 @@ const DashboardPage = () => {
         }
     }, [location]);
 
-    const handleLogout = async () => {
-        await logoutUser()
-    const handleLogout = () => {
-        logoutUser()
-        localStorage.removeItem("currentUser");
-        setUsername("");
-        navigate("/");
+    const handleLogin = async () => {
+        const response = await loginUser(inputUsername, inputPassword);
+        console.log("Response:", response)
+        if (response === "DONE") {
+            navigate("/dashboard");
+        } else {
+            setMessage(response);
+        }
     };
 
-    // ✅ Handles game selection and navigation
-    const handleGameSelection = () => {
-        if (selectedGame) navigate(`/game/${selectedGame}`);
-    };
+  const handleRegister = async () => {
+    const response = await registerUser(inputUsername, inputPassword);
+    if (response === "Registered successfully!") {
+      // After registration, instruct the user to check their email.
+      setMessage("A verification token has been sent to your email. Please check your email and enter the token below.");
+      setView("verify");
+    } else {
+      setMessage(response);
+    }
+  };
 
-    return (
-        <div className="dashboard-page">
-            <Header />
-            <NavBar />
-            <div className="dashboard-container">
-                
-                {/* ✅ Profile Section */}
-                <div className="panel profile">
-                    <h2>🧑‍💼 {username || "Your Profile"}</h2>
-                    <img
-                        src={profilePlaceholder}  // ✅ Now using ES6 import
-                        alt="User Avatar"
-                        className="profile-image"
-                    />
-                    <p><strong>Username:</strong> {username || "NeuroUser42"}</p>
-                    <p><strong>Games Played:</strong> 120</p>
-                    <p><strong>Current Streak:</strong> 🔥 14 Days</p>
-                    <p><strong>Achievements:</strong> 🏅 Brain Trainer Level 3</p>
-                </div>
-
-                {/* ✅ Progress Overview */}
-                <div className="panel progress">
-                    <h2>📊 Progress Overview</h2>
-                    <img
-                        src={progressChart}  // ✅ Now using ES6 import
-                        alt="User Progress Chart"
-                        className="stats-image"
-                    />
-                    <p>You're improving! Keep pushing forward to increase your streak! 🚀</p>
-                </div>
-
-                {/* ✅ Game Selection Panel */}
-                <div className="panel progress">
-                    <h2>Select a Game to Play</h2>
-                    
-                    {/* ✅ Use state to track selection */}
-                    <label><input type="radio" name="game" value="math" onChange={(e) => setSelectedGame(e.target.value)} /> 🧮 Math</label>
-                    <label><input type="radio" name="game" value="trivia" onChange={(e) => setSelectedGame(e.target.value)} /> ❓ Trivia</label>
-                    <label><input type="radio" name="game" value="reaction" onChange={(e) => setSelectedGame(e.target.value)} /> ⚡ Reaction</label>
-                    <label><input type="radio" name="game" value="memory" onChange={(e) => setSelectedGame(e.target.value)} /> 🧠 Memory</label>
-                    <label><input type="radio" name="game" value="sudoku" onChange={(e) => setSelectedGame(e.target.value)} /> 🔢 Sudoku</label>
-                    <br></br>
-                    {/* ✅ Enable button only when a game is selected */}
-                    <button className="nav-btn" onClick={handleGameSelection} disabled={!selectedGame}>
-                        Play Now!
-                    </button> 
-                </div>
-
-                {/* ✅ Settings Panel */}
-                <div className="panel settings">
-                    <h2>⚙️ Settings & Preferences</h2>
-                    <label><input type="checkbox" checked /> Enable Hints</label>
-                    <label><input type="checkbox" /> Sound Effects</label>
-                    <label><input type="checkbox" /> Dark Mode</label>
-                    <button className="logout-btn" onClick={handleLogout}>Logout</button>  
-                </div>
-
-            </div>
-        </div>
-    );
+const handleVerifyToken = async () => {
+  // Call the backend function to verify the token (using AWS Amplify or your custom endpoint)
+  const response = await completeSignUp(inputUsername, verificationToken);
+  
+  if (response === "CONFIRMED") {
+    // Display a success message and navigate to the dashboard after a short delay
+    setMessage("Your account has been verified! Please login.");
+    setView("login")
+  if (response === "INVALID") {
+    setMessage("Invalid verification code, please try again.")
+  }
+  } else {
+    // If verification fails, display an error message
+    setMessage(response);
+  }
 };
 
-export default DashboardPage;
 
+  const handlePasswordReset = () => {
+    const newPassword = prompt("🔐 Enter a new password:");
+    if (newPassword) {
+      const response = resetPassword(inputUsername, newPassword);
+      setMessage(response);
+      setView("login"); // Return to login after password reset
+    }
+  };
 
+  return (
+    <div className="welcome-container">
+      <NavBar />
+      <img src={logo} alt="NeuroBeacon Logo" className="welcome-logo" />
+      <h1>Welcome to NeuroBeacon</h1>
+      <p>Train your brain and track your progress!</p>
 
+      {message && <p className="message">{message}</p>}
+
+      {/* Username Input */}
+      <input 
+        type="text"
+        className="input-field"
+        placeholder="Enter your email"
+        value={inputUsername}
+        onChange={(e) => setInputUsername(e.target.value)}
+      />
+
+      {/* Password Input (only hidden in Reset view if needed) */}
+      {view !== "reset" && (
+        <input 
+          type="password"
+          className="input-field"
+          placeholder="Enter your password"
+          value={inputPassword}
+          onChange={(e) => setInputPassword(e.target.value)}
+        />
+      )}
+
+      {/* Verification Token Input - visible only in 'verify' view */}
+      {view === "verify" && (
+        <input 
+          type="text"
+          className="input-field"
+          placeholder="Enter verification token"
+          value={verificationToken}
+          onChange={(e) => setVerificationToken(e.target.value)}
+        />
+      )}
+
+      {/* Button Container */}
+      <div className="button-container">
+        {view === "login" && <button className="auth-btn" onClick={handleLogin}>Login</button>}
+        {view === "register" && <button className="auth-btn" onClick={handleRegister}>Register</button>}
+        {view === "reset" && <button className="auth-btn" onClick={handlePasswordReset}>Reset Password</button>}
+        {view === "verify" && <button className="auth-btn" onClick={handleVerifyToken}>Verify Token</button>}
+      </div>
+
+      {/* Authentication Options */}
+      <div className="auth-options">
+        {view !== "reset" && view !== "verify" && (
+          <>
+            <button onClick={() => setView(view === "login" ? "register" : "login")}>
+              {view === "login" ? "New user? Register here" : "Already have an account? Log in"}
+            </button>
+            <button onClick={() => setView("reset")}>Forgot Password?</button>
+          </>
+        )}
+
+        {(view === "reset" || view === "verify") && (
+          <button onClick={() => setView("login")}>⬅ Back to Login</button>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default WelcomePage;
