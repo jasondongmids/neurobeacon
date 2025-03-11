@@ -32,34 +32,23 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
     const [sessionId, setSessionId] = useState("");
 
     const initGameStateRef = useRef(true)
-    const initCatStateRef = useRef(true)
     const gameRef = useRef("trivia")
     const prevGameStateRef = useRef(userGameState)
     const prevCategoryStateRef = useRef(userCategoryState)
  
     // ✅ Database: Functions and Effects
     useEffect(() => {
-        console.log("Updated category state:", userCategoryState);
-    }, [userCategoryState])
-
-    useEffect(() => {
-        // console.log('initGameStateRef:', initGameStateRef)
-        // console.log('initCatStateRef:', initCatStateRef)
-
         if (
             prevGameStateRef.current !== userGameState &&
             prevCategoryStateRef.current !== userCategoryState &&
             userGameState != null &&
             userCategoryState != null &&
-            initGameStateRef.current == false &&
-            initCatStateRef.current == false
+            initGameStateRef.current == false
         ) {
             transactGameData(gameRef.current, questions[questionIndex].decade, userGameState, userCategoryState)
         }
 
         prevGameStateRef.current = userGameState;
-        // prevCategoryStateRef.current = userCategoryState;
-    // }, [userGameState, userCategoryState]) // perhaps only monitor userGameState updates
     }, [userGameState])
 
     function batchWrite(newUserState, gameData) { // potentially add attribute for more flexibility
@@ -129,7 +118,6 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
 
         // Database: Load category totals and enable db updates
         getUserState(gameRef.current, randomizedQuestions[0]?.decade);
-        // initCatStateRef.current = false
 
         setTimeout(() => shuffleAnswers(randomizedQuestions[0]), 100);
     };
@@ -245,9 +233,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
                 category: gameCategory
             }
 
-            prevCategoryStateRef.current = userCategoryState
             updateUserCategoryState(newUserState)
-            initCatStateRef.current = false
             updateUserGameState(newUserState, userCategoryState)
             const gameData = {
                 question_id: "unknown",
@@ -262,7 +248,6 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
                 is_correct: isCorrect,
                 score: scoreEarned,
             }
-            console.log("GameData:", gameData)
             addGameHx(gameData)
             setGameStartTime(Date.now())
             
@@ -282,12 +267,8 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
                     category: gameCategory
                 }
 
-                prevCategoryStateRef.current = userCategoryState
                 updateUserCategoryState(newUserState)
-                initCatStateRef.current = false
                 updateUserGameState(newUserState, userCategoryState)
-
-                // transactGameData("trivia", "sub", userGameState, userCategoryState)
                 const gameData = {
                     question_id: "unknown",
                     question_type: gameRef.current,
@@ -301,7 +282,6 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
                     is_correct: isCorrect,
                     score: scoreEarned,
                 }
-                console.log("GameData:", gameData)
                 addGameHx(gameData)
                 setGameStartTime(Date.now())
 
@@ -359,9 +339,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
         
         // Database: Load new state if category is different
         if (questions[questionIndex]?.decade != questions[nextIndex]?.decade) {
-            initCatStateRef.current = true;
             getUserState(gameRef.current, questions[0]?.decade);
-            // initCatStateRef.current = false;
         }
         setQuestionIndex(nextIndex);
         setSelectedAnswer("");

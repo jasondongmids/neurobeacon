@@ -8,7 +8,6 @@ export const GameHxProvider = ({ children }) => {
     // ✅ Add single game history
     const addGameHx = async (gameData) => {
         try {
-            console.log("HERE:", gameData)
             const { data, errors } = await dataClient.mutations.addGameHx({
                 data: JSON.stringify(gameData)
             });

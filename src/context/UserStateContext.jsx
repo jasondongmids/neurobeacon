@@ -55,8 +55,10 @@ export const UserStateProvider = ({ children }) => {
     
             if (errors) {
                 console.error('Check inputs or CloudWatch logs:', errors);
+            } else if (category) {
+                console.log('Successful category state add', data);
             } else {
-                console.log('Successful add', data);
+                console.log('Successful game state add:', data)
             }
         } catch (error) {
             console.error('Error with function in UserStateContext.jsx:', error);
@@ -184,18 +186,12 @@ export const UserStateProvider = ({ children }) => {
 
     // ✅ Add GAME#, GAME#CATEGORY#, GAME#STAT, GAMEHX# dynamodb tables
     const transactGameData = async (gameType, category, gameStateData, categoryStateData) => {
-        // transactData = total_questions, 
         try {
-            console.log('Transact category data:', categoryStateData)
             const categoryData = JSON.stringify(categoryStateData)
             const gameData = JSON.stringify({
                 ...gameStateData, // reminder to add prediction
                 category: {...categoryStateData.category}
             })
-            
-            // console.log('GameData', gameData)
-            // console.log('Type', typeof gameData)
-
             const gameStateResult = await addUserState(gameType, "", gameData)
             const categoryStateResult = await addUserState(gameType, category, categoryData)
             console.log("Transaction successful", { gameStateResult, categoryStateResult })
