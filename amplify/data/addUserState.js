@@ -16,9 +16,12 @@ export function request(ctx) {
 
     const item = (ctx.arguments.category) 
         ? {
-        total_questions: data.total_questions,
-        total_correct: data.total_correct,
-        percent_correct: data.percent_correct,
+        category: {
+            category: data.category.category,
+            total_questions: data.category.total_questions,
+            total_correct: data.category.total_correct,
+            precent_correct: data.category.percent_correct,
+        },
         created_at: sk,
         updated_at: sk
         } 
@@ -30,9 +33,15 @@ export function request(ctx) {
         percent_correct: data.percent_correct,
         total_elapsed_time: data.total_elapsed_time,
         average_user_time: data.average_user_time,
-        // difficulty: data.difficulty,
-        // score: data.score,
-        // predicted_difficulty: data.predicted_difficulty,
+        score: data.score,
+        difficulty: data.difficulty,
+        predicted_difficulty: data.predicted_difficulty,
+        category: {
+            category: data.category.category,
+            total_questions: data.category.total_questions,
+            total_correct: data.category.total_correct,
+            precent_correct: data.category.percent_correct,
+        },
         created_at: sk,
         updated_at: sk
         };

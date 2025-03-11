@@ -69,6 +69,8 @@ export const UserProvider = ({ children }) => {
     // ✅ Log in an existing user
     const loginUser = async (loginUsername, loginPassword) => {
         try {
+            // await signOut()
+
             const response = await signIn({
                 username: loginUsername,
                 password: loginPassword,

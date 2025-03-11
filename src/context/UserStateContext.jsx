@@ -13,11 +13,24 @@ export const UserStateProvider = ({ children }) => {
         percent_correct: 0.0,
         total_elapsed_time: 0,
         average_user_time: 0,
+        score: 0,
+        difficulty: 0,
+        predicted_difficulty: 0,
+        category: {
+            category: "",
+            total_questions: 0,
+            total_correct: 0,
+            precent_correct: 0.0
+        }
     });
     
     const [userCategoryState, setUserCategoryState] = useState({
-        total_questions: "",
-        total_correct: ""
+        category: {
+            category: "",
+            total_questions: 0,
+            total_correct: 0,
+            percent_correct: 0.0
+        }
     });
 
     const [queryStates, setQueryStates] = useState('')
@@ -71,8 +84,12 @@ export const UserStateProvider = ({ children }) => {
     
             if (category) {
                 setUserCategoryState({
-                    total_questions: data[0].total_questions,
-                    total_correct: data[0].total_correct,
+                    category: {
+                        category: data[0].category,
+                        total_questions: data[0].total_questions,
+                        total_correct: data[0].total_correct,
+                        percent_correct: data[0].percent_correct,
+                    }
                 });
             } else {
                 setUserGameState({
@@ -111,9 +128,9 @@ export const UserStateProvider = ({ children }) => {
     };
 
     // ✅ Update GAME# react state during game submit
-    const updateUserGameState = (newUserState) => {
-        // newState = {correct, elapsed_time}
-        const { correct, elapsed_time } = newUserState;
+    const updateUserGameState = (newUserState, categoryState) => {
+        const { correct, elapsed_time, score, difficulty } = newUserState;
+        const category = categoryState.category
 
         setUserGameState(prevState => {
             const totalQuestions = prevState.total_questions + 1;
@@ -128,6 +145,17 @@ export const UserStateProvider = ({ children }) => {
                 percent_correct: totalQuestions > 0 ? totalCorrect / totalQuestions : 0,
                 total_elapsed_time: Math.min(totalElapsedTime, 2147483647),
                 average_user_time: totalQuestions > 0 ? totalElapsedTime / totalQuestions : 0,
+
+                // Always overwritten
+                score: score,
+                difficulty: difficulty,
+                predicted_difficulty: 1, // placeholder
+                category: {
+                    category: category.category,
+                    total_questions: category.total_questions,
+                    total_correct: category.total_correct,
+                    percent_correct: category.percent_correct,
+                }
             };
         })
     };
@@ -140,12 +168,19 @@ export const UserStateProvider = ({ children }) => {
 
             return {
                 ...prevState,
+                category: newUserState.category,
                 total_questions: totalQuestions,
                 total_correct: totalCorrect,
                 percent_correct: totalQuestions > 0 ? totalCorrect / totalQuestions : 0,
             }
         })
     };
+
+    // ✅ Update both GAME# and GAME#CATEGORY# react states
+    const updateStates = (newUserState) => {
+        updateUserCategoryState = (newUserState)
+        updateUserGameState = (newUserState, userCategoryState)
+    }
 
     // ✅ Add GAME#, GAME#CATEGORY#, GAME#STAT, GAMEHX# dynamodb tables
     const transactGameData = async (gameType, category, gameStateData, categoryStateData) => {
@@ -182,6 +217,7 @@ export const UserStateProvider = ({ children }) => {
             queryUserStates,
             updateUserGameState,
             updateUserCategoryState,
+            updateStates,
             transactGameData,
         }}>
             { children }

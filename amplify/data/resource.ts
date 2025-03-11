@@ -12,8 +12,10 @@ const schema = a.schema({
       percent_correct: a.float(),
       total_elapsed_time: a.integer(),
       average_user_time: a.float(),
-      // difficulty: a.string(),
-      // predicted_difficulty: a.string(),
+      score: a.integer(),
+      difficulty: a.integer(),
+      predicted_difficulty: a.integer(),
+      category: a.json(),
       created_at: a.integer(),
       updated_at: a.integer()
     }),  

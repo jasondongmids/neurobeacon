@@ -70,7 +70,16 @@ const TestPage = () => {
             total_correct: 1,
             percent_correct: 1,
             total_elapsed_time: 100,
-            average_user_time: 100,      
+            average_user_time: 100,
+            score: 30,
+            difficulty: 0,
+            predicted_difficulty: 0,
+            category: {
+                category: category, // not an issue for production
+                total_questions: 1,
+                total_correct: 1,
+                percent_correct: 1
+            }
         })
 
         addUserState(gameType, category, data)
@@ -96,14 +105,25 @@ const TestPage = () => {
             percent_correct: 1.0,
             total_elapsed_time: 1,
             average_user_time: 1.0,
-            // difficulty: 'easy',
-            // predicted_difficulty: 'easy'
+            score: 30,
+            difficulty: 0,
+            predicted_difficulty: 0,
+            category: {
+                category: transactCategory,
+                total_questions: 1,
+                total_correct: 1,
+                percent_correct: 1
+            }
         }
 
         const categoryStateData = {
-            total_questions: 1,
-            total_correct: 1,
-            percent_correct: 1,
+            category: {
+                category: transactCategory,
+                total_questions: 1,
+                total_correct: 1,
+                percent_correct: 1,
+            }
+
         }
 
         transactGameData(transactType, transactCategory, gameStateData, categoryStateData)
@@ -237,7 +257,7 @@ const TestPage = () => {
                             <option value="sub">SUB</option>
                             <option value="add">ADD</option>
                             <option value="minus">MINUS</option>
-                            <option value="unk">UNKNOWN</option>
+                            <option value="def">DEFAULT</option>
                         </select>
                         <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">
                         Add User State
@@ -263,7 +283,7 @@ const TestPage = () => {
                             <option value="sub">SUB</option>
                             <option value="add">ADD</option>
                             <option value="minus">MINUS</option>
-                            <option value="unk">UNKNOWN</option>
+                            <option value="def">DEFAULT</option>
                         </select>
                         <input
                             type="text"
