@@ -64,7 +64,8 @@ const ReactionGame = ({ onUpdateStats }) => {
       updateUserGameState, updateUserCategoryState, transactGameData 
       } = useContext(UserStateContext);
   const { addGameHx } = useContext(GameHxContext)
-  const initStateRef = useRef(true)
+  const initGameStateRef = useRef(true)
+  const gameRef = useRef("reaction")
   const prevGameStateRef = useRef(userGameState)
   const prevCategoryStateRef = useRef(userCategoryState)
 
@@ -163,11 +164,6 @@ const ReactionGame = ({ onUpdateStats }) => {
     setMessage("");
     usedImagesRef.current = [];
 
-    // Database: Load initial states
-    if (initStateRef) {
-      getUserState("reaction", "");
-      getUserState("reaction", "unk") // unknown how categories to be defined
-    }
   }
 
   function getNextImage() {
@@ -176,6 +172,12 @@ const ReactionGame = ({ onUpdateStats }) => {
     }
     const availableImages = imageFiles.filter(img => !usedImagesRef.current.includes(img));
     const newImage = availableImages[Math.floor(Math.random() * availableImages.length)];
+
+    // Database: Load category totals; category = image_path 
+    // console.log("NEW IMAGE:", newImage.replace(/\..*$/, ""))
+    // console.log("NEW IMAGE:", newImage)
+    getUserState(gameRef.current, newImage.replace(/\..*$/, ""))
+
     usedImagesRef.current.push(newImage);
     return newImage;
   }
@@ -251,19 +253,16 @@ const ReactionGame = ({ onUpdateStats }) => {
   useEffect(() => {
       const pGameState = prevGameStateRef.current;
       const pCategoryState = prevCategoryStateRef.current;
-      console.log('initStateRef:', initStateRef)
 
       if (
           pGameState !== userGameState &&
           pCategoryState !== userCategoryState &&
           userGameState != null &&
           userCategoryState != null &&
-          initStateRef.current == false
+          initGameStateRef.current == false
       ) {
-          // console.log("USERGAMESTATE:", userGameState);
-          // console.log("USERCATEGORYSTATE:", userCategoryState)
-          transactGameData("reaction", "unk", userGameState, userCategoryState)
-          // console.log('Transaction Complete')
+          // console.log("CATEGORY CHECK:", usedImagesRef.current.at(-1).replace(/\..*$/, ""))
+          transactGameData(gameRef.current, usedImagesRef.current.at(-1).replace(/\..*$/, ""), userGameState, userCategoryState)
       }
 
       prevGameStateRef.current = userGameState;
@@ -271,8 +270,8 @@ const ReactionGame = ({ onUpdateStats }) => {
   }, [userGameState, userCategoryState])
 
   function batchWrite(newUserState, gameData) {
-    updateUserGameState(newUserState);
     updateUserCategoryState(newUserState);
+    updateUserGameState(newUserState, userCategoryState);
     addGameHx(gameData)
   }
 
@@ -286,27 +285,25 @@ const ReactionGame = ({ onUpdateStats }) => {
       offsetX <= targetBox.x + targetBox.width &&
       offsetY >= targetBox.y &&
       offsetY <= targetBox.y + targetBox.height;
-      const reaction = (Date.now() - startTime) / 1000;
-      console.log("Reaction Time:", reaction)
+    const reaction = (Date.now() - startTime) / 1000;
 
-    // Database: enable transactions and aggregate variables for gamehx update
-    if (initStateRef) {
-      initStateRef.current = false
-    }
-
-    const gameData = JSON.stringify({
-      question_id: "unknown",
-      question_type: "reaction",
-      question_category: "unknown",
-      difficulty: difficulty === "easy" ? 0 : difficulty === "medium" ? 1 : 2,
+    // Database: variables for database updates
+    // console.log("USED IMAGE:", usedImagesRef.current.at(-1).replace(/\..*$/, ""))
+    // console.log("USED IMAGE:", usedImagesRef.current.at(-1))
+    const difficultyInt = difficulty === "easy" ? 0 : difficulty === "medium" ? 1 : 2;
+    const gameCategory = usedImagesRef.current.at(-1).replace(/\..*$/, "");
+    const gameData = {
+      question_id: gameCategory,
+      question_type: gameRef.current,
+      question_category: gameCategory,
+      difficulty: difficultyInt,
       game_time_ms: Math.min(reaction * 1000, 2147483647),
       session_id: sessionId,
       session_time_ms: 2000, // placeholder before implementing,
       attempt: mistakes + 1,
       user_answer: "not_applicable",
       is_correct: isCorrectClick,
-      score: 100 // placeholder before implementing
-    })
+    }
 
     if (isCorrectClick) {
       setReactionTimes(prev => [...prev, reaction]);
@@ -321,25 +318,42 @@ const ReactionGame = ({ onUpdateStats }) => {
 
       // Add a success message.
       setMessage(`✅ Great job! Reaction time: ${reaction.toFixed(2)} sec.`);
-
       setWaitingForGreen(false);
       updateStats(round);
+
+      // Database: Update user state and game hx when correct
+      const newUserState = {
+        correct: true,
+        elapsed_time: Math.min(reaction * 1000, 2147483647),
+        score: Math.round(finalScore),
+        difficulty: difficultyInt,
+        category: gameCategory     
+      };
+      gameData.score = Math.round(finalScore);
+      batchWrite(newUserState, gameData);
+
+      // Start new round
       if (round >= maxRounds) {
         setTimeout(endGame, 700);
       } else {
         setTimeout(startNewRound, 1000);
       
-      // Database: Update user state and game hx
-      const newUserState = {
-        correct: true,
-        elapsed_time: reaction        
-      };
-      batchWrite(newUserState, gameData);
-
       }
     } else {
-      // Database: Update game hx
-      addGameHx(gameData)
+      // Database: Update user state and game hx per attempt
+      gameData.score = 0
+      if (mistakes <= 2) {
+        addGameHx(gameData)
+      } else {
+        const newUserState = {
+          correct: false,
+          elapsed_time: Math.min(reaction * 1000, 2147483647),
+          score: 0,
+          difficulty: difficultyInt,
+          category: gameCategory     
+        };
+        batchWrite(newUserState, gameData)
+      }
 
       // Incorrect click.
       setMistakes(prev => {
@@ -394,6 +408,13 @@ const ReactionGame = ({ onUpdateStats }) => {
             onClick={() => {
               setGameStarted(true);
               startNewRound();
+
+              // Database: Load game state on initial load and generate sessionId
+              if (initGameStateRef) {
+                getUserState(gameRef.current, "");
+                initGameStateRef.current = false
+              }
+              setSessionId(crypto.randomUUID());
             }}
           >
             Start Reaction Game!

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, useRef, forwardRef, useImperativeHandle } from "react";
 import triviaQuestions from "../data/final_trivia_questions.json";
 import UserStateContext from "../context/UserStateContext";
-import GameHxContext, { GameHxProvider } from "../context/GameHxContext";
+import GameHxContext from "../context/GameHxContext";
 
 const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
     const [questionIndex, setQuestionIndex] = useState(0);
@@ -116,7 +116,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
         setQuestions([...randomizedQuestions]);  // ✅ Ensures state update triggers re-render
         setQuestionIndex(0);
 
-        // Database: Load category totals and enable db updates
+        // Database: Load category totals
         getUserState(gameRef.current, randomizedQuestions[0]?.decade);
 
         setTimeout(() => shuffleAnswers(randomizedQuestions[0]), 100);
@@ -166,9 +166,9 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
     };
 
     const handleSubmit = () => {
-        if (initGameStateRef) {
-            initGameStateRef.current = false
-        }
+        // if (initGameStateRef) {
+        //     initGameStateRef.current = false
+        // }
         
         if (!selectedAnswer) {
             setMessage("❌ Please select an answer!");

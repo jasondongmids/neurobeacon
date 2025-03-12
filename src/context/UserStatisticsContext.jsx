@@ -1,5 +1,4 @@
-import { InventoryFrequency } from "aws-cdk-lib/aws-s3";
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState } from "react";
 import { dataClient } from "..";
 
 const UserStatisticsContext = createContext();

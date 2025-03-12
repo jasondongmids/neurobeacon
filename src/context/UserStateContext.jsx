@@ -77,32 +77,50 @@ export const UserStateProvider = ({ children }) => {
             if (errors) {
                 console.error('Check inputs or CloudWatch logs:', errors);
                 return; // Exit function early if there are errors
-            }
-    
-            if (!data) {
-                console.warn("No user state data returned.");
+            } else if (!data) {
+                console.warn("No user state data returned, new game or category.");
+                if (category) {
+                    console.log("Resetting category state");
+                    setUserCategoryState({
+                        category: {
+                            category: "",
+                            total_questions: 0,
+                            total_correct: 0,
+                            percent_correct: 0.0
+                        }
+                    })
+                } else {
+                    console.log("Resetting game state");
+                    setUserGameState({
+                        prev_is_slow: "",
+                        prev_is_correct: "",
+                        total_questions: 0,
+                        total_correct: 0,
+                        percent_correct: 0.0,
+                        total_elapsed_time: 0,
+                        average_user_time: 0,
+                    });
+                }
                 return;
-            }
-    
-            if (category) {
-                const category = JSON.parse(data[0].category)
+            } else if (category) {
+                const categoryData = JSON.parse(data[0].category)
                 setUserCategoryState({
                     category: {
-                        category: category.category,
-                        total_questions: category.total_questions,
-                        total_correct: category.total_correct,
-                        percent_correct: category.percent_correct,
+                        category: categoryData.category,
+                        total_questions: categoryData.total_questions,
+                        total_correct: categoryData.total_correct,
+                        percent_correct: categoryData.percent_correct,
                     }
                 });
             } else {
                 setUserGameState({
-                    prev_is_slow: data[0].prev_is_slow,
-                    prev_is_correct: data[0].prev_is_correct,
-                    total_questions: data[0].total_questions,
-                    total_correct: data[0].total_correct,
-                    percent_correct: data[0].percent_correct,
-                    total_elapsed_time: data[0].total_elapsed_time,
-                    average_user_time: data[0].average_user_time,
+                    prev_is_slow: data[0].prev_is_slow || "",
+                    prev_is_correct: data[0].prev_is_correct || "",
+                    total_questions: data[0].total_questions || 0,
+                    total_correct: data[0].total_correct || 0,
+                    percent_correct: data[0].percent_correct || 0.0,
+                    total_elapsed_time: data[0].total_elapsed_time || 0,
+                    average_user_time: data[0].average_user_time || 0,
                 });
             }
         } catch (error) {
@@ -145,10 +163,13 @@ export const UserStateProvider = ({ children }) => {
                 prev_is_correct: correct,
                 total_questions: totalQuestions,
                 total_correct: totalCorrect,
-                percent_correct: totalQuestions > 0 ? totalCorrect / totalQuestions : 0,
+                percent_correct: totalQuestions > 0 
+                    ? parseFloat((totalCorrect / totalQuestions).toFixed(3)) 
+                    : 0,
                 total_elapsed_time: Math.min(totalElapsedTime, 2147483647),
-                average_user_time: totalQuestions > 0 ? totalElapsedTime / totalQuestions : 0,
-
+                average_user_time: totalQuestions > 0 
+                    ? parseFloat((totalElapsedTime / totalQuestions).toFixed(3)) 
+                    : 0,
                 // Always overwritten
                 score: score,
                 difficulty: difficulty,
@@ -171,9 +192,10 @@ export const UserStateProvider = ({ children }) => {
                     category: newUserState.category,
                     total_questions: totalQuestions,
                     total_correct: totalCorrect,
-                    percent_correct: totalQuestions > 0 ? totalCorrect / totalQuestions : 0
+                    percent_correct: totalQuestions > 0 
+                        ? parseFloat((totalCorrect / totalQuestions).toFixed(3)) 
+                        : 0,
                 }
-
             }
         })
     };
