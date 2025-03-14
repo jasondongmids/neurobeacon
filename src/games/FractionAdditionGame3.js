@@ -578,7 +578,6 @@ const endSession = (endTime) => {
         </div>
         </>
      );
-  };
-
+  });
 
 export default FractionAdditionGame;

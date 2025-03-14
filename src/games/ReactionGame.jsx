@@ -2,6 +2,8 @@ import React, { useRef, useEffect, useContext, useState, forwardRef, useImperati
 // import React, { useRef, useEffect, useState } from "react";
 import UserStateContext from "../context/UserStateContext";
 import GameHxContext from "../context/GameHxContext";
+import { invokeModel } from "../functions/Model";
+// import ModelContext from "../context/ModelContext"
 
 // Difficulty configuration remains the same.
 const difficultyLevels = {
@@ -60,10 +62,11 @@ const ReactionGame = ({ onUpdateStats }) => {
   // Database: State and reference variables
   const [sessionId, setSessionId] = useState("");  
   const { 
-      userGameState, userCategoryState, getUserState, queryUserStates,
+      userGameState, userCategoryState, setUserGameState, getUserState, prepareUserGameState,
       updateUserGameState, updateUserCategoryState, transactGameData 
       } = useContext(UserStateContext);
   const { addGameHx } = useContext(GameHxContext)
+  // const { primaryPrediction, targetPrediction, invokeModel } = useContext(ModelContext)
   const initGameStateRef = useRef(true)
   const gameRef = useRef("reaction")
   const prevGameStateRef = useRef(userGameState)
@@ -170,15 +173,22 @@ const ReactionGame = ({ onUpdateStats }) => {
     if (usedImagesRef.current.length === imageFiles.length) {
       usedImagesRef.current = [];
     }
+
+    // Model: Invoke Model
+    // const nextDifficulty = invokeModel(userGameState, "primary")
+    // console.log("Next Difficulty (placeholder):", nextDifficulty)
+
     const availableImages = imageFiles.filter(img => !usedImagesRef.current.includes(img));
     const newImage = availableImages[Math.floor(Math.random() * availableImages.length)];
 
-    // Database: Load category totals; category = image_path 
-    // console.log("NEW IMAGE:", newImage.replace(/\..*$/, ""))
-    // console.log("NEW IMAGE:", newImage)
-    getUserState(gameRef.current, newImage.replace(/\..*$/, ""))
-
     usedImagesRef.current.push(newImage);
+
+    // Database: Load category totals; category = image_path and enable ddb updates
+    getUserState(gameRef.current, newImage.replace(/\..*$/, ""))
+    if (initGameStateRef.current) {
+      getUserState(gameRef.current, "");
+    }
+
     return newImage;
   }
 
@@ -250,30 +260,50 @@ const ReactionGame = ({ onUpdateStats }) => {
 
   // ────────────────────────────────────────────────────────────────
   // DATABASE: FUNCTIONS AND EFFECTS
+  const batchWrite = async (newUserState, gameData) => {
+    // enable ddb writes
+    if (initGameStateRef.current) {
+      initGameStateRef.current = false;
+    }
+    try {
+      updateUserCategoryState(newUserState);
+      const prepState = prepareUserGameState(newUserState, userGameState, userCategoryState);
+      const primaryPrediction = await invokeModel(prepState, 'primary');
+      const targetPrediction = await invokeModel(prepState, 'target');
+      const finalState = {
+       ...prepState,
+       score: newUserState.score,
+       predicted_difficulty: primaryPrediction,
+       target_difficulty: targetPrediction 
+      };
+      const finalGameData = {
+        ...gameData,
+        score: newUserState.score
+      }
+      updateUserGameState(finalState);
+      addGameHx(finalGameData);
+      return "complete"
+    } catch (error) {
+      console.error("Error with batch write")
+    }
+  }
+
   useEffect(() => {
       const pGameState = prevGameStateRef.current;
       const pCategoryState = prevCategoryStateRef.current;
-
       if (
           pGameState !== userGameState &&
-          pCategoryState !== userCategoryState &&
+          pCategoryState != userCategoryState &&
           userGameState != null &&
           userCategoryState != null &&
           initGameStateRef.current == false
       ) {
-          // console.log("CATEGORY CHECK:", usedImagesRef.current.at(-1).replace(/\..*$/, ""))
           transactGameData(gameRef.current, usedImagesRef.current.at(-1).replace(/\..*$/, ""), userGameState, userCategoryState)
       }
 
       prevGameStateRef.current = userGameState;
       prevCategoryStateRef.current = userCategoryState;
-  }, [userGameState, userCategoryState])
-
-  function batchWrite(newUserState, gameData) {
-    updateUserCategoryState(newUserState);
-    updateUserGameState(newUserState, userCategoryState);
-    addGameHx(gameData)
-  }
+  }, [userGameState])
 
   // ────────────────────────────────────────────────────────────────
   // HANDLE CLICK EVENTS
@@ -288,8 +318,6 @@ const ReactionGame = ({ onUpdateStats }) => {
     const reaction = (Date.now() - startTime) / 1000;
 
     // Database: variables for database updates
-    // console.log("USED IMAGE:", usedImagesRef.current.at(-1).replace(/\..*$/, ""))
-    // console.log("USED IMAGE:", usedImagesRef.current.at(-1))
     const difficultyInt = difficulty === "easy" ? 0 : difficulty === "medium" ? 1 : 2;
     const gameCategory = usedImagesRef.current.at(-1).replace(/\..*$/, "");
     const gameData = {
@@ -304,6 +332,12 @@ const ReactionGame = ({ onUpdateStats }) => {
       user_answer: "not_applicable",
       is_correct: isCorrectClick,
     }
+    const newUserState = {
+      correct: true,
+      elapsed_time: Math.min(reaction * 1000, 2147483647),
+      difficulty: difficultyInt,
+      category: gameCategory     
+    };
 
     if (isCorrectClick) {
       setReactionTimes(prev => [...prev, reaction]);
@@ -322,36 +356,29 @@ const ReactionGame = ({ onUpdateStats }) => {
       updateStats(round);
 
       // Database: Update user state and game hx when correct
-      const newUserState = {
-        correct: true,
-        elapsed_time: Math.min(reaction * 1000, 2147483647),
-        score: Math.round(finalScore),
-        difficulty: difficultyInt,
-        category: gameCategory     
-      };
-      gameData.score = Math.round(finalScore);
-      batchWrite(newUserState, gameData);
+      newUserState.score = Math.round(finalScore)
+      batchWrite(newUserState, gameData)
 
       // Start new round
       if (round >= maxRounds) {
         setTimeout(endGame, 700);
+
+        // DATABASE + MODEL: FINE TUNING PLACEHOLDER
+        // 1) queryModel (last 10 results)
+        // 2) process data?
+        // 3) invoke fine-tuning endpoint
+
       } else {
         setTimeout(startNewRound, 1000);
       
       }
     } else {
       // Database: Update user state and game hx per attempt
-      gameData.score = 0
-      if (mistakes <= 2) {
+      if (mistakes < 2) {
+        gameData.score = 0
         addGameHx(gameData)
       } else {
-        const newUserState = {
-          correct: false,
-          elapsed_time: Math.min(reaction * 1000, 2147483647),
-          score: 0,
-          difficulty: difficultyInt,
-          category: gameCategory     
-        };
+        newUserState.score = 0
         batchWrite(newUserState, gameData)
       }
 
@@ -410,10 +437,6 @@ const ReactionGame = ({ onUpdateStats }) => {
               startNewRound();
 
               // Database: Load game state on initial load and generate sessionId
-              if (initGameStateRef) {
-                getUserState(gameRef.current, "");
-                initGameStateRef.current = false
-              }
               setSessionId(crypto.randomUUID());
             }}
           >

@@ -13,9 +13,11 @@ const schema = a.schema({
       total_elapsed_time: a.integer(),
       average_user_time: a.float(),
       score: a.integer(),
-      difficulty: a.integer(),
-      predicted_difficulty: a.integer(),
+      difficulty: a.integer(), // difficulty of previous prediction / current question
+      predicted_difficulty: a.integer(), // difficulty of next question (primary model)
+      target_difficulty: a.integer(), // target difficulty of current question (target model)
       category: a.json(),
+      user_embedding: a.json(),
       created_at: a.integer(),
       updated_at: a.integer()
     }),  

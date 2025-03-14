@@ -16,6 +16,7 @@ export const UserStateProvider = ({ children }) => {
         score: 0,
         difficulty: 0,
         predicted_difficulty: 0,
+        target_difficulty: 0,
         category: {
             category: "",
             total_questions: 0,
@@ -90,7 +91,7 @@ export const UserStateProvider = ({ children }) => {
                         }
                     })
                 } else {
-                    console.log("Resetting game state");
+                    console.log("Resetting game state"); // re-evaluate this
                     setUserGameState({
                         prev_is_slow: "",
                         prev_is_correct: "",
@@ -99,6 +100,7 @@ export const UserStateProvider = ({ children }) => {
                         percent_correct: 0.0,
                         total_elapsed_time: 0,
                         average_user_time: 0,
+                        predicted_difficulty: 1,
                     });
                 }
                 return;
@@ -121,6 +123,7 @@ export const UserStateProvider = ({ children }) => {
                     percent_correct: data[0].percent_correct || 0.0,
                     total_elapsed_time: data[0].total_elapsed_time || 0,
                     average_user_time: data[0].average_user_time || 0,
+                    predicted_difficulty: data[0].predicted_difficulty || 1,
                 });
             }
         } catch (error) {
@@ -148,36 +151,72 @@ export const UserStateProvider = ({ children }) => {
         }
     };
 
-    // ✅ Update GAME# react state during game submit
-    const updateUserGameState = (newUserState, categoryState) => {
+    // ✅ Prepare GAME# state for model invokation prior updating UserGameState and ddb add
+    const prepareUserGameState = (newUserState, gameState, categoryState) => {
         const { correct, elapsed_time, score, difficulty } = newUserState;
-        const category = categoryState.category // review??
+        const category = categoryState.category
 
-        setUserGameState(prevState => {
-            const totalQuestions = prevState.total_questions + 1;
-            const totalCorrect = correct ? prevState.total_correct + 1 : prevState.total_correct;
-            const totalElapsedTime = prevState.total_elapsed_time + elapsed_time;
+        // const prepState = {...userGameState}
+        const totalQuestions = gameState.total_questions + 1;
+        const totalCorrect = correct ? gameState.total_correct + 1 : gameState.total_correct;
+        const totalElapsedTime = gameState.total_elapsed_time + elapsed_time;
+
+        const prepState = {
+            // ...gameState,
+            prev_is_correct: correct,
+            total_questions: totalQuestions,
+            total_correct: totalCorrect,
+            percent_correct: totalQuestions > 0 
+                ? parseFloat((totalCorrect / totalQuestions).toFixed(3)) 
+                : 0,
+            total_elapsed_time: Math.min(totalElapsedTime, 2147483647),
+            average_user_time: totalQuestions > 0 
+                ? parseFloat((totalElapsedTime / totalQuestions).toFixed(3)) 
+                : 0,
+            // Always overwritten
+            score: score,
+            difficulty: difficulty,
+            category: category
+        }
+
+        return prepState
+    }
+
+    // ✅ Update GAME# react state during game submit
+    // const updateUserGameState = (newUserState, categoryState) => {
+    //     const { correct, elapsed_time, score, difficulty, predicted_difficulty, target_difficulty } = newUserState;
+    //     const category = categoryState.category
+
+    //     setUserGameState(prevState => {
+    //         const totalQuestions = prevState.total_questions + 1;
+    //         const totalCorrect = correct ? prevState.total_correct + 1 : prevState.total_correct;
+    //         const totalElapsedTime = prevState.total_elapsed_time + elapsed_time;
     
-            return {
-                ...prevState,
-                prev_is_correct: correct,
-                total_questions: totalQuestions,
-                total_correct: totalCorrect,
-                percent_correct: totalQuestions > 0 
-                    ? parseFloat((totalCorrect / totalQuestions).toFixed(3)) 
-                    : 0,
-                total_elapsed_time: Math.min(totalElapsedTime, 2147483647),
-                average_user_time: totalQuestions > 0 
-                    ? parseFloat((totalElapsedTime / totalQuestions).toFixed(3)) 
-                    : 0,
-                // Always overwritten
-                score: score,
-                difficulty: difficulty,
-                predicted_difficulty: 1, // placeholder
-                category: category
-            };
-        })
-    };
+    //         return {
+    //             ...prevState,
+    //             prev_is_correct: correct,
+    //             total_questions: totalQuestions,
+    //             total_correct: totalCorrect,
+    //             percent_correct: totalQuestions > 0 
+    //                 ? parseFloat((totalCorrect / totalQuestions).toFixed(3)) 
+    //                 : 0,
+    //             total_elapsed_time: Math.min(totalElapsedTime, 2147483647),
+    //             average_user_time: totalQuestions > 0 
+    //                 ? parseFloat((totalElapsedTime / totalQuestions).toFixed(3)) 
+    //                 : 0,
+    //             // Always overwritten
+    //             score: score,
+    //             difficulty: difficulty,
+    //             predicted_difficulty: predicted_difficulty, // placeholder
+    //             target_difficulty: target_difficulty,
+    //             category: category
+    //         };
+    //     })
+    // };
+
+    const updateUserGameState = (newUserState) => {
+        setUserGameState({...newUserState});
+    }
 
     // ✅ Update GAME#CATEGORY# react state during game submit
     const updateUserCategoryState = (newUserState) => {
@@ -234,6 +273,7 @@ export const UserStateProvider = ({ children }) => {
             addUserState,
             getUserState,
             queryUserStates,
+            prepareUserGameState,
             updateUserGameState,
             updateUserCategoryState,
             updateStates,

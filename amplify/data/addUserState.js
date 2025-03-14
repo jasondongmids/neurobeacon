@@ -36,12 +36,30 @@ export function request(ctx) {
         score: data.score,
         difficulty: data.difficulty,
         predicted_difficulty: data.predicted_difficulty,
+        target_difficulty: data.target_difficulty,
         category: {
             category: data.category.category,
             total_questions: data.category.total_questions,
             total_correct: data.category.total_correct,
             percent_correct: data.category.percent_correct,
         },
+        // user_embedding: {
+        //     easy: {
+        //         total_questions: 0,
+        //         total_correct: 0,
+        //         percent_correct: 0.0
+        //     },
+        //     medium: {
+        //         total_questions: 0,
+        //         total_correct: 0,
+        //         percent_correct: 0
+        //     },
+        //     hard: {
+        //         total_questions: 0,
+        //         total_correct: 0,
+        //         percent_correct: 0.0
+        //     }
+        // }
         created_at: sk,
         updated_at: sk
         };
