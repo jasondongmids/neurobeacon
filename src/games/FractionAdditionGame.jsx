@@ -1,4 +1,7 @@
-import { useRef, useEffect, useState, forwardRef, useImperativeHandle } from "react";
+import { useRef, useEffect, useState, forwardRef, useImperativeHandle, useContext } from "react";
+import UserStateContext from "../context/UserStateContext";
+import GameHxContext from "../context/GameHxContext";
+import { invokeModel } from "../functions/Model";
 
 // ─────────────────────────────────────────────────────────────────────────────
 //                           HELPER FUNCTIONS
@@ -126,6 +129,19 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
   // Flag to prevent rapid duplicate generation:
   const [isGenerating, setIsGenerating] = useState(false);
 
+  // Database: State and reference variables
+  const { 
+      userGameState, userCategoryState, getUserState, prepareUserGameState,
+      updateUserGameState, updateUserCategoryState, transactGameData 
+      } = useContext(UserStateContext);
+  const { addGameHx } = useContext(GameHxContext)
+  const [sessionId, setSessionId] = useState("");  
+
+  const initGameStateRef = useRef(true)
+  const gameRef = useRef("math")
+  const prevGameStateRef = useRef(userGameState)
+  const prevCategoryStateRef = useRef(userCategoryState)
+
   // ----- Effects -----
   // 1) Fetch problems from "/problems.json" on mount, then start the session.
   useEffect(() => {
@@ -162,6 +178,49 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
     resetInputs,
   }));
 
+  // Database: Functions and Effects
+  const batchWrite = async (newUserState, gameData) => {
+    // enable ddb writes
+    if (initGameStateRef.current) {
+      initGameStateRef.current = false;
+    }
+    try {
+      updateUserCategoryState(newUserState);
+      const prepState = prepareUserGameState(newUserState, userGameState, userCategoryState);
+      const primaryPrediction = await invokeModel(prepState, 'primary');
+      const targetPrediction = await invokeModel(prepState, 'target');
+      const finalState = {
+       ...prepState,
+       score: newUserState.score,
+       predicted_difficulty: primaryPrediction,
+       target_difficulty: targetPrediction 
+      };
+      const finalGameData = {
+        ...gameData,
+        score: newUserState.score
+      }
+      updateUserGameState(finalState);
+      addGameHx(finalGameData);
+      return "complete"
+    } catch (error) {
+      console.error("Error with batch write")
+    }
+  }
+
+  useEffect(() => {
+    if (
+        prevGameStateRef.current !== userGameState &&
+        prevCategoryStateRef.current !== userCategoryState &&
+        userGameState != null &&
+        userCategoryState != null &&
+        initGameStateRef.current == false
+    ) {
+        transactGameData(gameRef.current, currentProblem.scenario_type, userGameState, userCategoryState)
+    }
+    prevGameStateRef.current = userGameState;
+    prevCategoryStateRef.current = userCategoryState;
+}, [userGameState])
+
   // ----- Start New Session -----  
   // Accepts loadedData from fetch.
   const startNewSession = (loadedData) => {
@@ -178,6 +237,7 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
     setAttempts(0);
     setMessage("");
     setSessionStartTime(Date.now());
+    setSessionId(crypto.randomUUID()); // Database: generate sessionId
     // Delay to allow state resets, then generate the first problem using loaded data.
     setTimeout(() => {
       console.log("🆕 Generating first problem...");
@@ -204,6 +264,15 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
     setDifficulty(probDifficulty);
     const scoreMod = probDifficulty === "easy" ? 30 : probDifficulty === "medium" ? 60 : 100;
     setScoreModifier(scoreMod);
+
+    // Database: Load initial states and reload category state if next problem is different scenario
+    if (initGameStateRef.current) {
+      getUserState(gameRef.current, randomProblem.scenario_type)
+      getUserState(gameRef.current, "");
+    }
+    if (userCategoryState.category.category != randomProblem.scenario_type) {
+      getUserState(gameRef.current, randomProblem.scenario_type)
+    }
 
     // Use scenario_type to drive tailored generation logic.
     switch (randomProblem.scenario_type) {
@@ -393,6 +462,27 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
         isCorrect = userInputValue === correctValue;
       }
     }
+
+    // Database: variables for database updates
+    const difficultyInt = difficulty === "easy" ? 0 : difficulty === "medium" ? 1 : 2;
+    const gameCategory = currentProblem.scenario_type;
+    const gameData = {
+      question_id: currentProblem.id,
+      question_type: gameRef.current,
+      question_category: gameCategory,
+      difficulty: difficultyInt,
+      // game_time_ms: 100, // placeholder
+      session_id: sessionId,
+      session_time_ms: 2000, // placeholder before implementing,
+      attempt: attempts + 1,
+      user_answer: selectedChoice,
+      is_correct: isCorrect,
+    }
+    const newUserState = {
+      // elapsed_time: Math.min(reaction * 1000, 2147483647),
+      difficulty: difficultyInt,
+      category: gameCategory     
+    };
   
     let scoreEarned = 0;
     if (isCorrect) {
@@ -423,6 +513,14 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
         }
         return newCount;
       });
+
+      // Database: Update user state and game hx when correct
+      newUserState.correct = true;
+      newUserState.score = scoreEarned;
+      newUserState.elapsed_time = Math.min(elapsedTime * 1000, 2147483647);
+      gameData.game_time_ms = Math.min(elapsedTime * 1000, 2147483647);
+      batchWrite(newUserState, gameData)
+
     } else {
       console.warn("❌ Incorrect Answer!");
       const newAttempts = attempts + 1;
@@ -430,6 +528,14 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
       if (newAttempts >= 3) {
         setMessage(`❌ Nice try! The correct answer was ${correctValue}.`);
         setElapsedTime(((endTime - startTime) / 1000).toFixed(2));
+
+        // Database: Update user state when incorrect after three attempts
+        newUserState.correct = false
+        newUserState.score = 0
+        newUserState.elapsed_time = Math.min(elapsedTime * 1000, 2147483647);
+        gameData.game_time_ms = Math.min(elapsedTime * 1000, 2147483647);
+        batchWrite(newUserState, gameData)
+
         setQuestionCount((prev) => {
           const newCount = prev + 1;
           if (newCount >= maxRounds) {
@@ -441,6 +547,10 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
         });
       } else {
         setMessage(`❌ Try Again! (${3 - newAttempts} attempts left)`);
+
+        // Database: Update game hx per attempt
+        gameData.score = 0
+        addGameHx(gameData)
       }
     }
   };
