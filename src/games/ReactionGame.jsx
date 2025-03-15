@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useContext, useState, forwardRef, useImperativeHandle } from "react";
+import React, { useRef, useEffect, useContext, useState } from "react";
 // import React, { useRef, useEffect, useState } from "react";
 import UserStateContext from "../context/UserStateContext";
 import GameHxContext from "../context/GameHxContext";
@@ -60,13 +60,13 @@ const ReactionGame = ({ onUpdateStats }) => {
   });
 
   // Database: State and reference variables
-  const [sessionId, setSessionId] = useState("");  
   const { 
-      userGameState, userCategoryState, setUserGameState, getUserState, prepareUserGameState,
+      userGameState, userCategoryState, getUserState, prepareUserGameState,
       updateUserGameState, updateUserCategoryState, transactGameData 
       } = useContext(UserStateContext);
   const { addGameHx } = useContext(GameHxContext)
-  // const { primaryPrediction, targetPrediction, invokeModel } = useContext(ModelContext)
+  const [sessionId, setSessionId] = useState("");  
+
   const initGameStateRef = useRef(true)
   const gameRef = useRef("reaction")
   const prevGameStateRef = useRef(userGameState)
@@ -289,18 +289,15 @@ const ReactionGame = ({ onUpdateStats }) => {
   }
 
   useEffect(() => {
-      const pGameState = prevGameStateRef.current;
-      const pCategoryState = prevCategoryStateRef.current;
       if (
-          pGameState !== userGameState &&
-          pCategoryState != userCategoryState &&
+          prevGameStateRef.current !== userGameState &&
+          prevCategoryStateRef.current !== userCategoryState &&
           userGameState != null &&
           userCategoryState != null &&
           initGameStateRef.current == false
       ) {
           transactGameData(gameRef.current, usedImagesRef.current.at(-1).replace(/\..*$/, ""), userGameState, userCategoryState)
       }
-
       prevGameStateRef.current = userGameState;
       prevCategoryStateRef.current = userCategoryState;
   }, [userGameState])
@@ -333,7 +330,6 @@ const ReactionGame = ({ onUpdateStats }) => {
       is_correct: isCorrectClick,
     }
     const newUserState = {
-      correct: true,
       elapsed_time: Math.min(reaction * 1000, 2147483647),
       difficulty: difficultyInt,
       category: gameCategory     
@@ -356,6 +352,7 @@ const ReactionGame = ({ onUpdateStats }) => {
       updateStats(round);
 
       // Database: Update user state and game hx when correct
+      newUserState.correct = true
       newUserState.score = Math.round(finalScore)
       batchWrite(newUserState, gameData)
 
@@ -378,6 +375,7 @@ const ReactionGame = ({ onUpdateStats }) => {
         gameData.score = 0
         addGameHx(gameData)
       } else {
+        newUserState.correct = false
         newUserState.score = 0
         batchWrite(newUserState, gameData)
       }

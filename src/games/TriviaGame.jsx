@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext, useRef, forwardRef, useImperati
 import triviaQuestions from "../data/final_trivia_questions.json";
 import UserStateContext from "../context/UserStateContext";
 import GameHxContext from "../context/GameHxContext";
+import { invokeModel } from "../functions/Model";
 
 const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
     const [questionIndex, setQuestionIndex] = useState(0);
@@ -23,10 +24,10 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
     const [selectedDecades, setSelectedDecades] = useState([]);
 
     // ✅ Database: State and reference variables
-    const { 
-        userGameState, userCategoryState, getUserState, queryUserStates,
-        updateUserGameState, updateUserCategoryState, transactGameData 
-        } = useContext(UserStateContext);
+  const { 
+      userGameState, userCategoryState, setUserGameState, getUserState, prepareUserGameState,
+      updateUserGameState, updateUserCategoryState, transactGameData 
+      } = useContext(UserStateContext);
     const { addGameHx } = useContext(GameHxContext)
     const [gameStartTime, setGameStartTime] = useState(0)
     const [sessionId, setSessionId] = useState("");
@@ -37,6 +38,34 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
     const prevCategoryStateRef = useRef(userCategoryState)
  
     // ✅ Database: Functions and Effects
+    const batchWrite = async (newUserState, gameData) => {
+      // enable ddb writes
+      if (initGameStateRef.current) {
+        initGameStateRef.current = false;
+      }
+      try {
+        updateUserCategoryState(newUserState);
+        const prepState = prepareUserGameState(newUserState, userGameState, userCategoryState);
+        const primaryPrediction = await invokeModel(prepState, 'primary');
+        const targetPrediction = await invokeModel(prepState, 'target');
+        const finalState = {
+        ...prepState,
+        score: newUserState.score,
+        predicted_difficulty: primaryPrediction,
+        target_difficulty: targetPrediction 
+        };
+        const finalGameData = {
+          ...gameData,
+          score: newUserState.score
+        }
+        updateUserGameState(finalState);
+        addGameHx(finalGameData);
+        return "complete"
+      } catch (error) {
+        console.error("Error with batch write", error)
+      }
+    }
+
     useEffect(() => {
         if (
             prevGameStateRef.current !== userGameState &&
@@ -47,15 +76,9 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
         ) {
             transactGameData(gameRef.current, questions[questionIndex].decade, userGameState, userCategoryState)
         }
-
         prevGameStateRef.current = userGameState;
+        prevCategoryStateRef.current = userCategoryState;
     }, [userGameState])
-
-    function batchWrite(newUserState, gameData) { // potentially add attribute for more flexibility
-        updateUserGameState(newUserState);
-        updateUserCategoryState(newUserState);
-        addGameHx(gameData)
-      }
     // Database: End Updates
 
     useEffect(() => {
@@ -118,6 +141,9 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
 
         // Database: Load category totals
         getUserState(gameRef.current, randomizedQuestions[0]?.decade);
+        if (initGameStateRef.current) {
+          getUserState(gameRef.current, "");
+        }
 
         setTimeout(() => shuffleAnswers(randomizedQuestions[0]), 100);
     };
@@ -166,10 +192,6 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
     };
 
     const handleSubmit = () => {
-        // if (initGameStateRef) {
-        //     initGameStateRef.current = false
-        // }
-        
         if (!selectedAnswer) {
             setMessage("❌ Please select an answer!");
             return;
@@ -193,7 +215,24 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
 
         // Database: Variables for database updates
         const difficultyInt = difficulty === "easy" ? 0 : difficulty === "medium" ? 1 : 2;
-        const gameCategory = currentQuestion.decade; // perhaps create state var   
+        const gameCategory = currentQuestion.decade; // perhaps create state var
+        const gameData = {
+          question_id: "placeholder",
+          question_type: gameRef.current,
+          question_category: gameCategory,
+          difficulty: difficultyInt,
+          game_time_ms: Math.min(totalGameTimeMs, 2147483647),
+          session_id: sessionId,
+          session_time_ms: 2000, // placeholder before implementing,
+          attempt: attempts + 1,
+          user_answer: selectedAnswer,
+          is_correct: isCorrect,
+        };
+        const newUserState = {
+          elapsed_time: Math.min(totalGameTimeMs, 2147483647),
+          difficulty: difficultyInt,
+          category: gameCategory     
+        };
     
         if (isCorrect) {
             console.log("✅ Correct Answer!");
@@ -224,31 +263,11 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
             // 3) Append prediction to updated state - to do
             // 4) Do transaction to update state and game history - to do game hx
 
-            // ✅ Update states when correct        
-            const newUserState = {
-                correct: true,
-                elapsed_time: totalGameTimeMs,
-                score: scoreEarned,
-                difficulty: difficultyInt,
-                category: gameCategory
-            }
+            // ✅ Database: Update user state and game hx when correct     
+            newUserState.correct = true
+            newUserState.score = scoreEarned
+            batchWrite(newUserState, gameData)
 
-            updateUserCategoryState(newUserState)
-            updateUserGameState(newUserState, userCategoryState)
-            const gameData = {
-                question_id: "unknown",
-                question_type: gameRef.current,
-                question_category: gameCategory,
-                difficulty: difficultyInt,
-                game_time_ms: Math.min(totalGameTimeMs, 2147483646),
-                session_id: sessionId,
-                session_time_ms: 2000,// unsure if needed
-                attempt: attempts,
-                user_answer: selectedAnswer,
-                is_correct: isCorrect,
-                score: scoreEarned,
-            }
-            addGameHx(gameData)
             setGameStartTime(Date.now())
             
         } else {
@@ -258,50 +277,18 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
             if (attempts >= 2) {
                 setMessage(`❌ Nice try! The correct answer was: ${correctAnswer}`);
 
-                // ✅ Update states when incorrect after three attempts  
-                const newUserState = {
-                    correct: false,
-                    elapsed_time: totalGameTimeMs,
-                    score: scoreEarned,
-                    difficulty: difficultyInt,
-                    category: gameCategory
-                }
+                // ✅ Database: Update user state when incorrect after three attempts  
+                newUserState.correct = false
+                newUserState.score = 0
+                batchWrite(newUserState, gameData)
 
-                updateUserCategoryState(newUserState)
-                updateUserGameState(newUserState, userCategoryState)
-                const gameData = {
-                    question_id: "unknown",
-                    question_type: gameRef.current,
-                    question_category: gameCategory,
-                    difficulty: difficultyInt,
-                    game_time_ms: Math.min(totalGameTimeMs, 2147483646),
-                    session_id: sessionId,
-                    session_time_ms: 2000,// unsure if needed
-                    attempt: attempts,
-                    user_answer: selectedAnswer,
-                    is_correct: isCorrect,
-                    score: scoreEarned,
-                }
-                addGameHx(gameData)
                 setGameStartTime(Date.now())
 
             } else {
                 setMessage(`❌ Try Again! (${2 - attempts} attempts left)`);
 
-                const gameData = {
-                    question_id: "unknown",
-                    question_type: gameRef.current,
-                    question_category: gameCategory,
-                    difficulty: difficultyInt,
-                    game_time_ms: Math.min(totalGameTimeMs, 2147483646),
-                    session_id: sessionId,
-                    session_time_ms: 2000,// unsure if needed
-                    attempt: attempts,
-                    user_answer: selectedAnswer,
-                    is_correct: isCorrect,
-                    score: scoreEarned,
-                }
-                console.log("GameData:", gameData)
+                // Database: Update game hx per attempt
+                gameData.score = 0
                 addGameHx(gameData)
                 return;
             }
@@ -511,10 +498,10 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
           // Load the filtered questions
           loadFilteredQuestions();
           // Database: Load last game state and create sessionId
-          if (initGameStateRef) { // added session start update
-            getUserState(gameRef.current, "");
-            initGameStateRef.current = false 
-          }
+          // if (initGameStateRef) { // added session start update
+          //   getUserState(gameRef.current, "");
+          //   initGameStateRef.current = false 
+          // }
           setSessionId(crypto.randomUUID()); 
         }}
       >
