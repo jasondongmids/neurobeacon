@@ -150,6 +150,37 @@ const schema = a.schema({
       })
     ),
 
+  UserEmbed: a.customType({
+    user_pk: a.string().required(),
+    user_embedding: a.json(),
+    created_at: a.integer(),
+    updated_at: a.integer()
+  }),
+  
+  addUserEmbed: a
+    .mutation()
+    .arguments({
+      data: a.json(),
+    })
+    .returns(a.ref("UserEmbed"))
+    .authorization(allow => [allow.authenticated()])
+    .handler(
+      a.handler.custom({
+        dataSource: "UserTable",
+        entry: "./addUserEmbed.js",
+      })
+    ),
+  
+    getUserEmbed: a
+    .query()
+    .returns(a.ref("UserEmbed"))
+    .authorization(allow => [allow.authenticated()])
+    .handler(
+      a.handler.custom({
+        dataSource: "UserTable",
+        entry: "./getUserEmbed.js",
+      })
+    ),
 //   transactData: a
 //   .mutation()
 //   .arguments({

@@ -43,3 +43,14 @@ backend.data.addDynamoDbDataSource(
   "UserGameHxTable",
   userGameHxTable
 )
+
+// User
+const userTable = aws_dynamodb.Table.fromTableName(
+  extDataSourcesStack,
+  "UserName",
+  "UserTest"
+)
+backend.data.addDynamoDbDataSource(
+  "UserTable",
+  userTable
+)
