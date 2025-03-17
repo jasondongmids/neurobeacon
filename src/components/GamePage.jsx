@@ -26,23 +26,25 @@ const GamePage = () => {
     };
 
     const gameGreeting =
-    gameType === "math"
-      ? "Ready for some fun with math? 🔢"
-      : gameType === "trivia"
-      ? "Time to test your knowledge! ❓"
-      : gameType === "reaction"
-      ? "Get set, ready, GO! ⚡ Test your reaction speed!"
-      : gameType === "sudoku"
-      ? "Sharpen your logic and solve the puzzle! 🧩"
-      : "Ready to train? 🧠";
-  
-
+        gameType === "math"
+          ? "Ready for some fun with math? 🔢"
+          : gameType === "trivia"
+          ? "Time to test your knowledge! ❓"
+          : gameType === "reaction"
+          ? "Get set, ready, GO! ⚡ Test your reaction speed!"
+          : gameType === "sudoku"
+          ? "Sharpen your logic and solve the puzzle! 🧩"
+          : gameType === "memory"
+          ? "Time to test your memory! 🧠"
+          : "Ready to train? 🧠";
 
     return (
         <div className="game-page">
             <Header />
             <NavBar />
-            <h2 className="greeting">Hello, {username || "Player"}! {gameGreeting}</h2>
+            <h2 className="greeting">
+              Hello, {username || "Player"}! {gameGreeting}
+            </h2>
 
             {/* ✅ Main Layout */}
             <div className="main-container">
@@ -64,6 +66,7 @@ const GamePage = () => {
 };
 
 export default GamePage;
+
 
 
 
