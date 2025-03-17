@@ -35,7 +35,7 @@ const DashboardPage = () => {
 
   const handleGameSelection = () => {
     if (!selectedGame) {
-      setMessage("❌ Please select a game before playing.");
+      setMessage("❌ Please select a game to play from the list above!");
     } else {
       setMessage("");
       // Proceed with game selection logic.
