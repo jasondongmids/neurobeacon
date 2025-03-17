@@ -1,10 +1,14 @@
 import React, {
   useState,
   useEffect,
+  useContext,
   forwardRef,
   useImperativeHandle,
   useRef,
 } from "react";
+import UserStateContext from "../context/UserStateContext";
+import GameHxContext from "../context/GameHxContext";
+import { invokeModel } from "../functions/Model";
 
 const possibleIngredients = [
   "Apple",
@@ -180,6 +184,64 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
   // Use a ref to store attempt times for the current question
   const attemptTimesRef = useRef([]);
 
+  // Database: State and reference variables:
+  const { 
+      userGameState, userCategoryState, setUserGameState, getUserState, prepareUserGameState,
+      updateUserGameState, updateUserCategoryState, transactGameData 
+      } = useContext(UserStateContext);
+    const { addGameHx } = useContext(GameHxContext)
+    // const [gameStartTime, setGameStartTime] = useState(0)
+    const [sessionId, setSessionId] = useState(crypto.randomUUID()); // set immediately
+
+    const initGameStateRef = useRef(true)
+    const gameRef = useRef("trivia")
+    const prevGameStateRef = useRef(userGameState)
+    const prevCategoryStateRef = useRef(userCategoryState)
+
+  // Database: Functions and effects:
+  const batchWrite = async (newUserState, gameData) => {
+    // enable ddb writes
+    if (initGameStateRef.current) {
+      initGameStateRef.current = false;
+    }
+    try {
+      updateUserCategoryState(newUserState);
+      const prepState = prepareUserGameState(newUserState, userGameState, userCategoryState);
+      const primaryPrediction = await invokeModel(prepState, 'primary');
+      const targetPrediction = await invokeModel(prepState, 'target');
+      const finalState = {
+      ...prepState,
+      score: newUserState.score,
+      predicted_difficulty: primaryPrediction,
+      target_difficulty: targetPrediction 
+      };
+      const finalGameData = {
+        ...gameData,
+        is_correct: newUserState.correct,
+        score: newUserState.score
+      }
+      updateUserGameState(finalState);
+      addGameHx(finalGameData);
+      return "complete"
+    } catch (error) {
+      console.error("Error with batch write", error)
+    }
+  }
+
+  useEffect(() => {
+      if (
+          prevGameStateRef.current !== userGameState &&
+          prevCategoryStateRef.current !== userCategoryState &&
+          userGameState != null &&
+          userCategoryState != null &&
+          initGameStateRef.current == false
+      ) {
+          transactGameData(gameRef.current, "def", userGameState, userCategoryState)
+      }
+      prevGameStateRef.current = userGameState;
+      prevCategoryStateRef.current = userCategoryState;
+  }, [userGameState])
+
   const correctAnswer = kitchen.includes(target) && fridge.includes(target)
     ? "Both"
     : kitchen.includes(target)
@@ -257,6 +319,18 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
     }
   }, [gamePhase]);
 
+  const handleGameStart = () => {
+    setGamePhase("showFridge");
+
+    // Database: Load game and category state
+    if (initGameStateRef.current) {
+      getUserState(gameRef.current, "");
+      getUserState(gameRef.current, "def");
+    }
+
+    // handle difficulty changes here?
+  }
+
   const handleSubmit = () => {
       // Check if the user has selected an answer.
     if (!selectedChoice) {
@@ -274,6 +348,27 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
     const newAttempts = numAttempts + 1;
     setNumAttempts(newAttempts);
 
+    // Database: Variables for database updates
+    // const difficultyInt = difficulty === "easy" ? 0 : difficulty === "medium" ? 1 : 2;
+    // const gameCategory = currentQuestion.decade; // perhaps create state var
+    const gameData = {
+      question_id: "placeholder",
+      question_type: gameRef.current,
+      question_category: "default",
+      difficulty: difficulty, // already int
+      game_time_ms: Math.min(currentAttemptTime * 1000, 2147483647),
+      session_id: sessionId,
+      session_time_ms: 2000, // placeholder before implementing,
+      attempt: newAttempts,
+      user_answer: selectedChoice,
+      // is_correct: isCorrect,
+    };
+    const newUserState = {
+      elapsed_time: Math.min(currentAttemptTime * 1000, 2147483647),
+      difficulty: difficulty,
+      category: "default"
+    };
+
     if (selectedChoice === correctAnswer) {
       setScore((prev) => prev + Math.max(scoreModifier - 10 * numAttempts, 0));
       setElapsedTime(currentAttemptTime.toFixed(2));
@@ -283,15 +378,31 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
       // When the question is complete, record the attempt times for this question.
       setAllAttemptTimes((prev) => [...prev, attemptTimesRef.current]);
       setTimeout(() => nextRound(), 1500);
+
+      // Database: Update user state and game hx when correct
+      newUserState.correct = true
+      newUserState.score = score
+      batchWrite(newUserState, gameData)
+
     } else {
       if (newAttempts >= 3) {
         setMessage(`❌ Nice try! The correct answer was ${correctAnswer}.`);
         setAllAttemptTimes((prev) => [...prev, attemptTimesRef.current]);
         setTimeout(() => nextRound(), 2500);
+
+        // Database: Update user state when incorrect after three attempts
+        newUserState.correct = false
+        newUserState.score = 0
+        batchWrite(newUserState, gameData)
+
       } else {
         setMessage(
           `❌ Try Again! (${3 - newAttempts} attempt${3 - newAttempts === 1 ? "" : "s"} left)`
         );
+
+        // Database: Update game hx per attempt
+        gameData.score = 0
+        addGameHx(gameData)
       }
     }
   };
@@ -327,6 +438,9 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
     setMessage("");
     setNumAttempts(0);
     // No call to nextRound here.
+
+    // Database: Create new session id
+    setSessionId(crypto.randomUUID());
   };
   
 
@@ -376,7 +490,7 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
             Round {round}/{maxRounds}: It's time to see what ingredients you have!
             Click start when you are ready.
           </h2>
-          <button className="btn next" onClick={() => setGamePhase("showFridge")}>Start</button>
+          <button className="btn next" onClick={() => handleGameStart()}>Start</button>
         </div>
       )}
       {showFridge && (
