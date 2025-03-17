@@ -30,10 +30,16 @@ const DashboardPage = () => {
         navigate("/");
     };
 
-    // ✅ Handles game selection and navigation
     const handleGameSelection = () => {
-        if (selectedGame) navigate(`/game/${selectedGame}`);
+      if (!selectedGame) {
+        setMessage("❌ Please select a game before playing.");
+      } else {
+        // Proceed with game selection logic (e.g., navigation)
+        setMessage(""); // clear message if any
+        // your code to start the game goes here...
+      }
     };
+
 
     return (
         <div className="dashboard-page">
@@ -71,20 +77,26 @@ const DashboardPage = () => {
                     <h2>Select a Game to Play</h2>
                     
                     {/* ✅ Use state to track selection */}
-                    <label><input type="radio" name="game" value="math" onChange={(e) => setSelectedGame(e.target.value)} /> 🧮 Math</label>
-                    <label><input type="radio" name="game" value="trivia" onChange={(e) => setSelectedGame(e.target.value)} /> ❓ Trivia</label>
-                    <label><input type="radio" name="game" value="reaction" onChange={(e) => setSelectedGame(e.target.value)} /> ⚡ Reaction</label>
-                    <label><input type="radio" name="game" value="memory" onChange={(e) => setSelectedGame(e.target.value)} /> 🧠 Memory</label>
-                    <label><input type="radio" name="game" value="sudoku" onChange={(e) => setSelectedGame(e.target.value)} /> 🔢 Sudoku</label>
-                    <br></br>
-                    {/* ✅ Enable button only when a game is selected */}
-                    {/* Display message if no game selected */}
-                    {!selectedGame && <p style={{ color: "red" }}>Please select a game before playing.</p>}
-                    
-                    {/* Enable button only when a game is selected */}
-                    <button className="nav-btn" onClick={handleGameSelection} disabled={!selectedGame}>
-                      Play Now!
-                    </button>
+                  <label>
+                    <input type="radio" name="game" value="math" onChange={(e) => setSelectedGame(e.target.value)} /> 🧮 Math
+                  </label>
+                  <label>
+                    <input type="radio" name="game" value="trivia" onChange={(e) => setSelectedGame(e.target.value)} /> ❓ Trivia
+                  </label>
+                  <label>
+                    <input type="radio" name="game" value="reaction" onChange={(e) => setSelectedGame(e.target.value)} /> ⚡ Reaction
+                  </label>
+                  <label>
+                    <input type="radio" name="game" value="memory" onChange={(e) => setSelectedGame(e.target.value)} /> 🧠 Memory
+                  </label>
+                  <label>
+                    <input type="radio" name="game" value="sudoku" onChange={(e) => setSelectedGame(e.target.value)} /> 🔢 Sudoku
+                  </label>
+                  <br />
+                  <button className="nav-btn" onClick={handleGameSelection}>
+                    Play Now!
+                  </button>
+                  {message && <p style={{ color: "red" }}>{message}</p>}
                 </div>
 
                 {/* ✅ Settings Panel */}
