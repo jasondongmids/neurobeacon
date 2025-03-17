@@ -78,9 +78,13 @@ const DashboardPage = () => {
                     <label><input type="radio" name="game" value="sudoku" onChange={(e) => setSelectedGame(e.target.value)} /> 🔢 Sudoku</label>
                     <br></br>
                     {/* ✅ Enable button only when a game is selected */}
+                    {/* Display message if no game selected */}
+                    {!selectedGame && <p style={{ color: "red" }}>Please select a game before playing.</p>}
+                    
+                    {/* Enable button only when a game is selected */}
                     <button className="nav-btn" onClick={handleGameSelection} disabled={!selectedGame}>
-                        Play Now!
-                    </button> 
+                      Play Now!
+                    </button>
                 </div>
 
                 {/* ✅ Settings Panel */}
