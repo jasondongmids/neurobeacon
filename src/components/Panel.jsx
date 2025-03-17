@@ -85,7 +85,16 @@ const Panel = ({ title, position, stats }) => {
               <li>⚡ Faster reaction times mean higher scores.</li>
               <li>💡 Train yourself to spot targets quickly under different conditions.</li>
             </ul>
-          ) : window.location.pathname.includes("trivia") ? (
+          ) 
+          :window.location.pathname.includes("memory") ? (
+            <ul className="memory-hints">
+              <li>🧠 Focus on the placement of ingredients.</li>
+              <li>👀 Observe both the fridge and the kitchen.</li>
+              <li>💡 Use visual cues to recall the target ingredient's location.</li>
+              <li>🔄 Try to memorize the layout quickly!</li>
+            </ul>
+          )
+          : window.location.pathname.includes("trivia") ? (
             <ul className="trivia-hints">
               <li>📖 Read all the answer choices carefully before selecting.</li>
               <li>🕵️‍♂️ Look for key hints in the question.</li>
