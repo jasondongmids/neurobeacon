@@ -38,8 +38,7 @@ const DashboardPage = () => {
       setMessage("❌ Please select a game to play from the list above!");
     } else {
       setMessage("");
-      // Proceed with game selection logic.
-      // For example, navigate to the game page with the selected game type.
+      // Proceed with game selection logic. For example, navigate to the game page.
       navigate(`/game/${selectedGame}`);
     }
   };
@@ -61,21 +60,11 @@ const DashboardPage = () => {
           <p><strong>Games Played:</strong> 120</p>
           <p><strong>Current Streak:</strong> 🔥 14 Days</p>
           <p><strong>Achievements:</strong> 🏅 Brain Trainer Level 3</p>
-        </div>
-
-        {/* ✅ Progress Overview */}
-        <div className="panel progress">
-          <h2>📊 Progress Overview</h2>
-          <img
-            src={progressChart}
-            alt="User Progress Chart"
-            className="stats-image"
-          />
-          <p>You're improving! Keep pushing forward to increase your streak! 🚀</p>
+          <button className="logout-btn" onClick={handleLogout}>Logout</button>
         </div>
 
         {/* ✅ Game Selection Panel */}
-        <div className="panel progress">
+        <div className="panel game-selection">
           <h2>Select a Game to Play</h2>
           {/* ✅ Use state to track selection */}
           <label>
@@ -128,6 +117,17 @@ const DashboardPage = () => {
             Play Now!
           </button>
           {message && <p style={{ color: "red" }}>{message}</p>}
+        </div>
+
+        {/* ✅ Progress Overview */}
+        <div className="panel progress">
+          <h2>📊 Progress Overview</h2>
+          <img
+            src={progressChart}
+            alt="User Progress Chart"
+            className="stats-image"
+          />
+          <p>You're improving! Keep pushing forward to increase your streak! 🚀</p>
         </div>
       </div>
     </div>
