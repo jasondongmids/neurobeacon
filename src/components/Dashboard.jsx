@@ -67,7 +67,7 @@ const DashboardPage = () => {
         <div className="panel game-selection">
           <h2>Select a Game to Play</h2>
           {/* ✅ Use state to track selection */}
-          <label>
+          <label className="gameSelect">
             <input
               type="radio"
               name="game"
@@ -76,7 +76,7 @@ const DashboardPage = () => {
             />{" "}
             🧮 Math
           </label>
-          <label>
+          <label className="gameSelect">
             <input
               type="radio"
               name="game"
@@ -85,7 +85,7 @@ const DashboardPage = () => {
             />{" "}
             ❓ Trivia
           </label>
-          <label>
+          <label className="gameSelect">
             <input
               type="radio"
               name="game"
@@ -94,7 +94,7 @@ const DashboardPage = () => {
             />{" "}
             ⚡ Reaction
           </label>
-          <label>
+          <label className="gameSelect">
             <input
               type="radio"
               name="game"
@@ -103,7 +103,7 @@ const DashboardPage = () => {
             />{" "}
             🧠 Memory
           </label>
-          <label>
+          <label className="gameSelect">
             <input
               type="radio"
               name="game"
@@ -113,7 +113,7 @@ const DashboardPage = () => {
             🔢 Sudoku
           </label>
           <br />
-          <button className="nav-btn" onClick={handleGameSelection}>
+          <button className="nav-btn-select" onClick={handleGameSelection}>
             Play Now!
           </button>
           {message && <p style={{ color: "red" }}>{message}</p>}
