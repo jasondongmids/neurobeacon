@@ -50,8 +50,8 @@ const NavBar = () => {
          <button onClick={() => handleNavigation("/dashboard")}>
             📊 Dashboard
           </button>
-          <button className="logout-btn" onClick={handleLogout}>
-            Logout
+          <button onClick={handleLogout}>
+          🔓 Logout
           </button>
 
         </div>
