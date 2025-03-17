@@ -420,22 +420,22 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
     if (sessionOver) {
       console.warn("❌ Session is over, ignoring submit.");
       return;
+        }
+       // Check if an answer has been provided.
+    if (inputMode === "multiple-choice" && !selectedChoice) {
+      setMessage("❌ Please select an answer!");
+      return;
     }
-   // Check if an answer has been provided.
-if (inputMode === "multiple-choice" && !selectedChoice) {
-  setMessage("❌ Please select an answer!");
-  return;
-}
-if (inputMode === "input") {
-  if (currentProblem.type === "fraction" && (!userNumerator || !userDenominator)) {
-    setMessage("❌ Please enter both numerator and denominator!");
-    return;
-  }
-  if (currentProblem.type === "whole-number" && !userAnswer) {
-    setMessage("❌ Please enter your answer!");
-    return;
-  }
-}
+    if (inputMode === "input") {
+      if (currentProblem.type === "fraction" && (!userNumerator || !userDenominator)) {
+        setMessage("❌ Please enter both numerator and denominator!");
+        return;
+      }
+      if (currentProblem.type === "whole-number" && !userAnswer) {
+        setMessage("❌ Please enter your answer!");
+        return;
+      }
+    }
  
     const endTime = Date.now();
     let isCorrect = false;
