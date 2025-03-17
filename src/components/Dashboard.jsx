@@ -65,7 +65,7 @@ const DashboardPage = () => {
 
         {/* ✅ Game Selection Panel */}
         <div className="panel game-selection">
-          <h2 className="dboardH2>Select a Game to Play</h2>
+          <h2 className="dboardH2">Select a Game to Play</h2>
           {/* ✅ Use state to track selection */}
           <label className="gameSelect">
             <input
@@ -121,7 +121,7 @@ const DashboardPage = () => {
 
         {/* ✅ Progress Overview */}
         <div className="panel progress">
-          <h2 className="dboardH2>📊 Progress Overview</h2>
+          <h2 className="dboardH2">📊 Progress Overview</h2>
           <img
             src={progressChart}
             alt="User Progress Chart"
