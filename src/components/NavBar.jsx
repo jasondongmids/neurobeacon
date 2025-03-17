@@ -4,45 +4,60 @@ import UserContext from "../context/UserContext";
 import "../styles.css";
 
 const NavBar = () => {
-    const navigate = useNavigate();
-    const { username } = useContext(UserContext);
-    const [menuOpen, setMenuOpen] = useState(false);
-    const menuRef = useRef(null);
+  const navigate = useNavigate();
+  // Include logoutUser from UserContext
+  const { username, logoutUser } = useContext(UserContext);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
 
-    // ✅ Close menu when clicking outside
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (menuRef.current && !menuRef.current.contains(event.target)) {
-                setMenuOpen(false);
-            }
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
-
-    // ✅ Handle navigation & redirect with message if user isn't logged in
-    const handleNavigation = (path) => {
-        if (!username) {
-            navigate("/", { state: { redirected: true } }); // ✅ Redirect with message
-        } else {
-            navigate(path);
-        }
-        setMenuOpen(false); // Close menu after clicking
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setMenuOpen(false);
+      }
     };
 
-    return (
-        <div className="nav-container">
-            <div className="menu-icon" onClick={() => setMenuOpen(!menuOpen)}>☰</div>
-            {menuOpen && (
-                <div className="dropdown-menu" ref={menuRef}>
-                    <button onClick={() => navigate("/")}>🏠 Home</button>
-                  {/*  <button onClick={() => handleNavigation("/game")}>🎮 Game</button> */}
-                    <button onClick={() => handleNavigation("/dashboard")}>📊 Dashboard</button>
-                </div>
-            )}
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Handle navigation & redirect with message if user isn't logged in
+  const handleNavigation = (path) => {
+    if (!username) {
+      navigate("/", { state: { redirected: true } });
+    } else {
+      navigate(path);
+    }
+    setMenuOpen(false);
+  };
+
+  // Handle logout: call logoutUser, clear localStorage, then navigate to home
+  const handleLogout = async () => {
+    await logoutUser();
+    localStorage.removeItem("currentUser");
+    setMenuOpen(false);
+    navigate("/");
+  };
+
+  return (
+    <div className="nav-container">
+      <div className="menu-icon" onClick={() => setMenuOpen(!menuOpen)}>
+        ☰
+      </div>
+      {menuOpen && (
+        <div className="dropdown-menu" ref={menuRef}>
+         <button onClick={() => handleNavigation("/dashboard")}>
+            📊 Dashboard
+          </button>
+          <button className="logout-btn" onClick={handleLogout}>
+            Logout
+          </button>
+
         </div>
-    );
+      )}
+    </div>
+  );
 };
 
 export default NavBar;
