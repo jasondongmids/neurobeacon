@@ -5,6 +5,7 @@ import FractionAdditionGame from "../games/FractionAdditionGame";
 import TriviaGame from "../games/TriviaGame";
 import SudokuGrid from "../games/SudokuGrid";  // ✅ Import Sudoku
 import ReactionGame from "../games/ReactionGame";  // ✅ Import Reaction game
+import MemoryGame from "../games/MemoryGame";  // ✅ Import Memory game
 
 const GameArea = ({ onUpdateStats }) => {
     const { gameType } = useParams();  // ✅ Get selected game from URL
@@ -17,7 +18,6 @@ const GameArea = ({ onUpdateStats }) => {
         window.handleSubmit = () => gameRef.current?.handleSubmit?.();
         window.handleNextTask = () => gameRef.current?.generateNewProblem?.();
     }, [gameType]);
-    
 
     // ✅ Dynamically load the correct game
     const renderGame = () => {
@@ -28,9 +28,11 @@ const GameArea = ({ onUpdateStats }) => {
             case "trivia":
                 return <TriviaGame ref={gameRef} onUpdateStats={onUpdateStats} />;
             case "sudoku":
-                return <SudokuGrid ref={gameRef} onUpdateStats={onUpdateStats}/>;  // ✅ Sudoku now loads when selected
+                return <SudokuGrid ref={gameRef} onUpdateStats={onUpdateStats} />;
             case "reaction":
-                return <ReactionGame ref={gameRef} onUpdateStats={onUpdateStats}/>;  // ✅ Reaction Game now loads properly
+                return <ReactionGame ref={gameRef} onUpdateStats={onUpdateStats} />;
+            case "memory":
+                return <MemoryGame ref={gameRef} onUpdateStats={onUpdateStats} />;
             default:
                 return <p className="error-message">❌ Invalid Game Selection</p>;
         }
