@@ -47,7 +47,7 @@ const DashboardPage = () => {
     <div className="dashboard-page">
       <Header />
       <NavBar />
-      <div><p <strong>style={{ color: "red" }}>Thank You for Joining Our Beta Test. Current Functionality is not Final.<br />Please Do Not Use Phones for Testing. All Feedback Welcome!</strong></p></div>
+      <div><p <strong>style={{ color: "red" }}>Thank you for joining our Beta Test. Current functionality is not final.<br />Please do not use phones for testing. All feedback welcome!</strong></p></div>
       <div className="dashboard-container">
         {/* ✅ Profile Section */}
         <div className="panel profile">
