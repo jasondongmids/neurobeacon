@@ -54,7 +54,7 @@ const DashboardPage = () => {
 
           <p><strong>You've Played 120 games</strong></p>
           <p><strong>Your Current Streak is 🔥 14 Days </strong></p>
-          <p><strong>Congratulations!< /br> Your Hold the Rank of 🏅 Brain Trainer Level 3</strong></p>
+          <p><strong>Congratulations!</ br> Your Hold the Rank of 🏅 Brain Trainer Level 3</strong></p>
           <button className="logout-btn" onClick={handleLogout}>Logout</button>
         </div>
 
