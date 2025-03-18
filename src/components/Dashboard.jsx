@@ -50,16 +50,11 @@ const DashboardPage = () => {
       <div className="dashboard-container">
         {/* ✅ Profile Section */}
         <div className="panel profile">
-          <h2 className="dboardH2">🧑‍💼 {username || "Your Profile"}</h2>
-          <img
-            src={profilePlaceholder}
-            alt="User Avatar"
-            className="profile-image"
-          />
-          <p><strong>Username:</strong> {username || "NeuroUser42"}</p>
-          <p><strong>Games Played:</strong> 120</p>
-          <p><strong>Current Streak:</strong> 🔥 14 Days</p>
-          <p><strong>Achievements:</strong> 🏅 Brain Trainer Level 3</p>
+          <h2 className="dboardH2"> {username || "Your Profile"}</h2>
+
+          <p><strong>You've Played:</strong> 120 <strong> games</strong></p>
+          <p><strong>Your Current Streak is</strong> 🔥 14 Days</p>
+          <p><strong>Congratulations! Your Hold the Rank of</strong> 🏅 Brain Trainer Level 3</p>
           <button className="logout-btn" onClick={handleLogout}>Logout</button>
         </div>
 
