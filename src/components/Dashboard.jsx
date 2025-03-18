@@ -47,6 +47,7 @@ const DashboardPage = () => {
     <div className="dashboard-page">
       <Header />
       <NavBar />
+      <div><p style={{ color: "red" }}>This App is in Beta Test. Current Functionality is not Final. All Feedback Welcome!</p></div>
       <div className="dashboard-container">
         {/* ✅ Profile Section */}
         <div className="panel profile">
