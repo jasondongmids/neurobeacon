@@ -50,7 +50,7 @@ const DashboardPage = () => {
       <div className="dashboard-container">
         {/* ✅ Profile Section */}
         <div className="panel profile">
-          <h2 className="dboardH2"> {username || "Your Profile"}</h2>
+          <h2 className="dboardH2"> Welcom {username || "Your Profile"}!</h2>
 
           <p><strong>You've Played:</strong> 120 <strong> games</strong></p>
           <p><strong>Your Current Streak is</strong> 🔥 14 Days</p>
