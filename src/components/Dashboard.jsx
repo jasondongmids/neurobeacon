@@ -52,9 +52,9 @@ const DashboardPage = () => {
         <div className="panel profile">
           <h2 className="dboardH2"> Welcom {username || "Your Profile"}!</h2>
 
-          <p><strong>You've Played:</strong> 120 <strong> games</strong></p>
-          <p><strong>Your Current Streak is</strong> 🔥 14 Days</p>
-          <p><strong>Congratulations! Your Hold the Rank of</strong> 🏅 Brain Trainer Level 3</p>
+          <p><strong>You've Played 120 games</strong></p>
+          <p><strong>Your Current Streak is 🔥 14 Days </strong></p>
+          <p><strong>Congratulations! Your Hold the Rank of 🏅 Brain Trainer Level 3</strong></p>
           <button className="logout-btn" onClick={handleLogout}>Logout</button>
         </div>
 
