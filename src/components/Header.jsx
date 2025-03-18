@@ -13,7 +13,7 @@ const Header = () => {
                 <img src={logo} alt="NeuroBeacon Logo" className="header-logo" />
                     </a>
             <h1 className="header-title">Welcome to NeuroBeacon!</h1>
-            
+            <p style={{ color: "red" }}>This App is in Beta Test. Current Functionality is not Final. All Feedback Welcome!</p>
             {menuOpen && (
                 <div className="dropdown-menu">
                     <button onClick={() => navigate("/")}>🏠 Home</button>
