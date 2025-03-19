@@ -132,7 +132,7 @@ const IngredientGrid = ({ ingredients }) => {
         display: "grid",
         gridTemplateColumns: "repeat(3, 1fr)",
         gap: "10px",
-        z-index:"1",
+        zindex:"1",
         justifyContent: "center",
         alignItems: "center",
         maxWidth: "600px",
