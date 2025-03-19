@@ -952,12 +952,12 @@ p {
 }
 
 .reaction-game canvas {
-    margin-top: 10px;
+    margin-top: -20px;
 }
 .reaction-game p{
     font-size: 24px;
     font-weight: bold;
-    color:black;
+    color:white;
 }
 .reaction-game .modal-overlay p{
     font-size: 24px;
