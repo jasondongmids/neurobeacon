@@ -4,7 +4,7 @@ body {
     text-align: center;
     margin: 0;
     padding: 0;
-    background-color: #F5F5F5;
+    background-color: #2E86C1;
 }
 
 /* ====== Header Styles ====== */
@@ -70,7 +70,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: stretch;
-    height: calc(100vh - 150px); /* Adjusted to fit below the header */
+    /* height: calc(100vh - 150px); /* Adjusted to fit below the header */
     margin-bottom: 0px;
     padding: 0px;
 }
