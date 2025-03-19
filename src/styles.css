@@ -524,6 +524,7 @@ p {
 .dashboard-container {
     display: flex;
     justify-content: space-between;
+    background-color:#2e86c1;
     align-items: stretch;
     padding: 25px;
 }
