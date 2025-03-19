@@ -132,8 +132,6 @@ const IngredientGrid = ({ ingredients }) => {
         display: "grid",
         gridTemplateColumns: "repeat(3, 1fr)",
         gap: "10px",
-        zindex:"0",
-        backgroundcolor:"white",
         justifyContent: "center",
         alignItems: "center",
         maxWidth: "600px",
@@ -476,13 +474,13 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
         top: 0,
         left: 0,
         width: "100%",
-        height: "100vh", // ensures it fills the viewport
+      /*  height: "100vh", // ensures it fills the viewport */
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         zIndex: -1,
       }}
       placeholderColor="white"
-      transitionDuration="0.25s"
+      transitionDuration="0.4s"
     />
     <div style={{ textAlign: "center", padding: "20px" }}>
       {/* Your existing game content goes here */}
