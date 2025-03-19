@@ -411,8 +411,8 @@ const ReactionGame = ({ onUpdateStats }) => {
     <div className="reaction-game">
       {!gameStarted ? (
         <div>
-          <h2>Select Difficulty</h2>
-          <div>
+          {/* <h2>Select Difficulty</h2>
+           <div>
           <select
             value={difficulty}
             onChange={e => setDifficulty(e.target.value)}
@@ -420,7 +420,7 @@ const ReactionGame = ({ onUpdateStats }) => {
             <option value="easy">Easy</option>
             <option value="medium">Medium</option>
             <option value="hard">Hard</option>
-          </select></div>
+          </select></div> */}
           <h2>Select Box Color Scheme</h2>
           <div><select
             value={selectedColorScheme}
