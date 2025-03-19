@@ -6,6 +6,9 @@ body {
     padding: 0;
     background-color: #2E86C1;
 }
+.greeting h2 {
+    color: white;
+}
 
 /* ====== Header Styles ====== */
 .header {
