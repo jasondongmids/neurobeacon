@@ -475,7 +475,7 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
         top: 0,
         left: 0,
         width: "100%",
-        height: "50vh", // ensures it fills the viewport
+        height: "100vh", // ensures it fills the viewport
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         zIndex: -1,
@@ -496,13 +496,13 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
       )}
       {showFridge && (
         <div>
-          <h2>The Fridge:</h2>
+          <h2 style={{ color: "white" }}>The Fridge:</h2>
           <IngredientGrid ingredients={fridge} />
         </div>
       )}
       {showKitchen && (
         <div>
-          <h2>The Kitchen:</h2>
+          <h2 style={{ color: "white" }}>The Kitchen:</h2>
           <IngredientGrid ingredients={kitchen} />
         </div>
       )}
