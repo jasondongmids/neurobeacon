@@ -171,6 +171,13 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
     }
   }, [score, sessionCorrectCount, questionCount]);
 
+
+  useEffect(() => {
+  window.handleSubmit = handleSubmit;
+  window.handleNextTask = generateNewProblem;
+  window.handleReset = resetInputs;
+}, [handleSubmit, generateNewProblem, resetInputs]);
+
   // 3) Expose imperative functions so parent components can call them.
   useImperativeHandle(ref, () => ({
     handleSubmit,
