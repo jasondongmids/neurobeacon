@@ -537,6 +537,9 @@ p {
     color: red;
     background-color: white;
 }
+.betaMessage p {
+    color: red;
+}
 /* Panel Styling */
 .panel {
     background-color: #F5F5F5;
