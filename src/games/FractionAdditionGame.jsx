@@ -88,7 +88,6 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
   const [sessionCorrectCount, setSessionCorrectCount] = useState(0);
   const [sessionStartTime, setSessionStartTime] = useState(null);
   const [sessionEndTime, setSessionEndTime] = useState("");
-  const [gameKey, setGameKey] = useState(Date.now());
 
   // Problem values (fractions or whole numbers)
   const [n1, setNum1] = useState(0);
@@ -716,16 +715,17 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
 
             <button
               onClick={() => {
-                console.log("🔄 Restarting Game and Starting New Session...");
-                startNewSession(problems); // reset the session state with the loaded problems
+                console.log("🔄 Restarting Game and Loading Next Task...");
+                startNewSession();
                 setTimeout(() => {
-                  console.log("➡️ New session started, submit button re-enabled.");
+                  console.log("➡️ Loading Next Task...");
                   window.handleNextTask?.();
                 }, 300);
               }}
             >
               Start New Session
             </button>
+
             <button
               onClick={() => {
                 console.log("📌 Returning to Dashboard...");
