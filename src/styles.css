@@ -217,7 +217,9 @@ body {
     justify-content: space-between;
 }
 
-
+.game-content {
+background-color: #2e86c1;
+}
 
 /* Center game area properly */
 .game-area-container {
@@ -289,7 +291,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    border-top: 6px solid #4D4D4D;
+    /* border-top: 6px solid #4D4D4D; */
     width: 100%;
     position: fixed;
     bottom: 0;
