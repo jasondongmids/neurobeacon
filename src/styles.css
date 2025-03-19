@@ -86,6 +86,7 @@ body {
     width: 25%; /* Adjusted for better spacing */
     height: 100%; /* Stretch from header to footer */
     display: flex;
+    margin:10px;
     flex-direction: column;
     justify-content: flex-start; /* Ensures top alignment */
     overflow: hidden; /* Prevents unnecessary scrolling */
@@ -146,6 +147,7 @@ body {
     height: 100%;
     overflow: hidden;
     display: flex;
+    margin: 0px;
     align-items: center;
     justify-content: center;
     background-color: #2E86C1;
