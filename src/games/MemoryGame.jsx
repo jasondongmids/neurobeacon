@@ -474,7 +474,8 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
         top: 0,
         left: 0,
         width: "100%",
-      /*  height: "100vh", // ensures it fills the viewport */
+        backgroundcolor:"white",
+        height: "50vh", // ensures it fills the viewport
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
         zIndex: -1,
