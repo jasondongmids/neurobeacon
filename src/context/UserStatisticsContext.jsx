@@ -6,7 +6,8 @@ const UserStatisticsContext = createContext();
 export const UserStatisticsProvider = ({children}) => {
     // ✅ Create react states
     const [dailyStats, setDailyStats] = useState({
-        // current_streak: a.integer(),
+        current_streak: 0,
+        longest_streak: 0,
         // days_on_platform: a.integer(),
         // sk: "",
         total_sessions: 0,
@@ -27,12 +28,29 @@ export const UserStatisticsProvider = ({children}) => {
         },
         reaction: {
             total_questions: 0,
-            total_correct: 0             
+            total_correct: 0,
+            percent_correct: 0.0,             
+        },        
+        easy: {
+            total_questions: 0,
+            total_correct: 0,
+            percent_correct: 0.0,
+        },
+        medium: {
+            total_questions: 0,
+            total_correct: 0,
+            percent_correct: 0.0,
+        },
+        hard: {
+            total_questions: 0,
+            total_correct: 0,
+            percent_correct: 0.0,
         },
     });
 
     const [weeklyStats, setWeeklyStats] = useState({
-        // current_streak: a.integer(),
+        current_streak: 0,
+        longest_streak: 0,
         // days_on_platform: a.integer(),
         // sk: "",
         total_sessions: 0,
@@ -55,6 +73,21 @@ export const UserStatisticsProvider = ({children}) => {
             total_questions: 0,
             total_correct: 0,
             percent_correct: 0.0,         
+        },
+        easy: {
+            total_questions: 0,
+            total_correct: 0,
+            percent_correct: 0.0,
+        },
+        medium: {
+            total_questions: 0,
+            total_correct: 0,
+            percent_correct: 0.0,
+        },
+        hard: {
+            total_questions: 0,
+            total_correct: 0,
+            percent_correct: 0.0,
         },
     });
 
@@ -86,7 +119,7 @@ export const UserStatisticsProvider = ({children}) => {
     }
 
     // ✅ Update React state
-    const updateDailyStatsState = (gameType, newDailyStatistics) => {
+    const updateDailyStatsState = (newDailyStatistics, gameType, difficulty) => {
         const { correct } = newDailyStatistics;
 
         setDailyStats(prevStats => {
@@ -96,23 +129,37 @@ export const UserStatisticsProvider = ({children}) => {
             const gameQuestions = prevStats[gameType].total_questions + 1;
             const gameCorrect = correct ? prevStats[gameType].total_correct + 1 : prevStats[gameType].total_correct;
 
+            const diffQuestions = prevStats[difficulty].total_questions + 1;
+            const diffCorrect = correct ? prevStats[difficulty].total_correct + 1 : prevStats[difficulty].total_correct;
+
             return {
                 ...prevStats,
                 total: {
                     total_questions: totalQuestions,
                     total_correct: totalCorrect,
-                    percent_correct: totalCorrect / totalQuestions
+                    percent_correct: totalQuestions > 0
+                        ? parseFloat((totalCorrect / totalQuestions).toFixed(3))
+                        : 0.0,
                 },
                 [gameType]: {
                     total_questions: gameQuestions,
                     total_correct: gameCorrect,
-                    percent_correct: gameCorrect / gameQuestions
-                }
+                    percent_correct: gameQuestions > 0
+                        ? parseFloat((gameCorrect / gameQuestions).toFixed(3))
+                        : 0.0,
+                },
+                [difficulty]: {
+                    total_questions: diffQuestions,
+                    total_correct: diffCorrect,
+                    percent_correct: diffQuestions > 0
+                    ? parseFloat((diffCorrect / diffQuestions).toFixed(3))
+                    : 0.0,
+                },
             }
         })
     };
 
-    const updateWeeklyStatsState = (gameType, newWeeklyStatistics) => {
+    const updateWeeklyStatsState = (newWeeklyStatistics, daily, difficulty) => {
         const { correct } = newWeeklyStatistics;
 
         setWeeklyStats(prevStats => {
@@ -122,18 +169,32 @@ export const UserStatisticsProvider = ({children}) => {
             const gameQuestions = prevStats[gameType].total_questions + 1;
             const gameCorrect = correct ? prevStats[gameType].total_correct + 1 : prevStats[gameType].total_correct;
 
+            const diffQuestions = prevStats[difficulty].total_questions + 1;
+            const diffCorrect = correct ? prevStats[difficulty].total_correct + 1 : prevStats[difficulty].total_correct;
+
             return {
                 ...prevStats,
                 total: {
                     total_questions: totalQuestions,
                     total_correct: totalCorrect,
-                    percent_correct: totalCorrect / totalQuestions
+                    percent_correct: totalQuestions > 0
+                        ? parseFloat((totalCorrect / totalQuestions).toFixed(3))
+                        : 0.0,
                 },
                 [gameType]: {
                     total_questions: gameQuestions,
                     total_correct: gameCorrect,
-                    percent_correct: gameCorrect / gameQuestions
-                }
+                    percent_correct: gameQuestions > 0
+                        ? parseFloat((gameCorrect / gameQuestions).toFixed(3))
+                        : 0.0,
+                },
+                [difficulty]: {
+                    total_questions: diffQuestions,
+                    total_correct: diffCorrect,
+                    percent_correct: diffQuestions > 0
+                    ? parseFloat((diffCorrect / diffQuestions).toFixed(3))
+                    : 0.0,
+                },
             }
         })
     };
@@ -224,6 +285,7 @@ export const UserStatisticsProvider = ({children}) => {
             dailyStats,
             weeklyStats,
             queryStatistics,
+            setQueryStatistics,
             updateDailyStatsState,
             updateWeeklyStatsState,
             addStats,

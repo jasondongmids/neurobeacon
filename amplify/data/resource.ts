@@ -5,6 +5,7 @@ const schema = a.schema({
   UserStateHx: a.customType({
       user_state_pk: a.string().required(),
       sk: a.string().required(),
+      state_type: a.string(),
       prev_is_slow: a.boolean(),
       prev_is_correct: a.boolean(),
       total_questions: a.integer(),
@@ -59,13 +60,16 @@ const schema = a.schema({
   UserStats: a.customType({
     user_state_pk: a.string().required(),
     sk: a.string().required(),
-    // current_streak: a.integer(),
-    // days_on_platform: a.integer(),
+    current_streak: a.integer(),
+    longest_streak: a.integer(),
     total_sessions: a.integer(),
     total: a.json(),
     math: a.json(),
     visual: a.json(),
     reaction: a.json(),
+    easy: a.json(),
+    medium: a.json(),
+    hard: a.json(),
     created_at: a.integer(),
     updated_at: a.integer()
   }),  
@@ -81,7 +85,7 @@ const schema = a.schema({
     .authorization(allow => [allow.authenticated()])
     .handler(
       a.handler.custom({
-        dataSource: "UserStateHxTable",
+        dataSource: "UserTable",
         entry: "./addStats.js",
       })
     ),
@@ -96,7 +100,7 @@ const schema = a.schema({
     .authorization(allow => [allow.authenticated()])
     .handler(
       a.handler.custom({
-        dataSource: "UserStateHxTable",
+        dataSource: "UserTable",
         entry: "./getStats.js",
       })
     ),
@@ -150,6 +154,7 @@ const schema = a.schema({
       })
     ),
 
+  // Jason 3/18 - user data model might not be needed
   UserEmbed: a.customType({
     user_pk: a.string().required(),
     user_embedding: a.json(),

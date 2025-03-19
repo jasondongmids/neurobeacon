@@ -16,6 +16,7 @@ export function request(ctx) {
 
     const item = (ctx.arguments.category) 
         ? {
+        state_type: "category",
         category: {
             category: data.category.category,
             total_questions: data.category.total_questions,
@@ -26,6 +27,7 @@ export function request(ctx) {
         updated_at: sk
         } 
         : {
+        state_type: "state",
         prev_is_slow: data.prev_is_slow,
         prev_is_correct: data.prev_is_correct,
         total_questions: data.total_questions,

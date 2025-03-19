@@ -20,6 +20,8 @@ export function request(ctx) {
     console.log("sk:", sk)
 
     const item = {
+        current_streak: data.current_streak,
+        longest_streak: data.longest_streak,
         total_sessions: data.total_sessions,
         total: {
             total_questions: data.total.total_questions,
@@ -40,6 +42,21 @@ export function request(ctx) {
             total_questions: data.reaction.total_questions,
             total_correct: data.reaction.total_correct,
             percent_correct: data.reaction.percent_correct,
+        },
+        easy: {
+            total_questions: data.easy.total_questions,
+            total_correct: data.easy.total_correct,
+            percent_correct: data.easy.percent_correct,
+        },
+        medium: {
+            total_questions: data.medium.total_questions,
+            total_correct: data.medium.total_correct,
+            percent_correct: data.medium.percent_correct,
+        },
+        hard: {
+            total_questions: data.hard.total_questions,
+            total_correct: data.hard.total_correct,
+            percent_correct: data.hard.percent_correct,
         },
         created_at: timestamp,
         updated_at: timestamp
