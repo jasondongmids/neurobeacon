@@ -88,6 +88,8 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
   const [sessionCorrectCount, setSessionCorrectCount] = useState(0);
   const [sessionStartTime, setSessionStartTime] = useState(null);
   const [sessionEndTime, setSessionEndTime] = useState("");
+  const [isPaused, setIsPaused] = useState(false);
+
 
   // Problem values (fractions or whole numbers)
   const [n1, setNum1] = useState(0);
@@ -226,6 +228,7 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
   const startNewSession = (loadedData) => {
     console.log("🔄 Starting New Session...");
     setSessionOver(false);
+    setIsPaused(false); 
     setScore(0);
     setQuestionCount(0);
     setSessionCorrectCount(0);
@@ -417,8 +420,8 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
   // ----- Handle Submission -----
   const handleSubmit = () => {
     console.log("📤 Submit button clicked");
-    if (sessionOver) {
-      console.warn("❌ Session is over, ignoring submit.");
+    if (isPaused) {
+      console.warn("❌ Session is over, game is paused.");
       return;
         }
        // Check if an answer has been provided.
@@ -575,6 +578,7 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
   const endSession = (endTime) => {
     console.log("🛑 Ending session...");
     setSessionOver(true);
+    setIsPaused(true);
     if (!sessionStartTime) {
       console.error("🚨 sessionStartTime is NULL. Using current timestamp as fallback.");
       setSessionStartTime(Date.now());
