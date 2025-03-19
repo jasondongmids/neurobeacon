@@ -718,7 +718,7 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
               onClick={() => {
                 console.log("🔄 Restarting Game and Loading Next Task...");
                 setGameKey(Date.now()); // Change key to force remount
-                // Optionally call startNewSession() if needed here
+                // Optionally, call startNewSession() if you need to reset state before remounting
                 setTimeout(() => {
                   console.log("➡️ Loading Next Task...");
                   window.handleNextTask?.();
