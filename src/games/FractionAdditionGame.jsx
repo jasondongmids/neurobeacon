@@ -171,13 +171,6 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
     }
   }, [score, sessionCorrectCount, questionCount]);
 
-
-  useEffect(() => {
-  window.handleSubmit = handleSubmit;
-  window.handleNextTask = generateNewProblem;
-  window.handleReset = resetInputs;
-}, [handleSubmit, generateNewProblem, resetInputs]);
-
   // 3) Expose imperative functions so parent components can call them.
   useImperativeHandle(ref, () => ({
     handleSubmit,
@@ -723,7 +716,7 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
             <button
               onClick={() => {
                 console.log("🔄 Restarting Game and Loading Next Task...");
-                startNewSession();
+                startNewSession(problems);
                 setTimeout(() => {
                   console.log("➡️ Loading Next Task...");
                   window.handleNextTask?.();
