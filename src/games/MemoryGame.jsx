@@ -132,6 +132,7 @@ const IngredientGrid = ({ ingredients }) => {
         display: "grid",
         gridTemplateColumns: "repeat(3, 1fr)",
         gap: "10px",
+        z-index:"1",
         justifyContent: "center",
         alignItems: "center",
         maxWidth: "600px",
@@ -486,7 +487,7 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
       {/* Your existing game content goes here */}
       {gamePhase === "intro" && (
         <div>
-          <h2>
+          <h2 style={{ color: "white" }}>
             Round {round}/{maxRounds}: It's time to see what ingredients you have!
             Click start when you are ready.
           </h2>
@@ -507,7 +508,7 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
       )}
       {gamePhase === "question" && (
         <div>
-          <h2>Where did you see {target}?</h2>
+          <h2 style={{ color: "white" }}>Where did you see {target}?</h2>
           <IngredientItem name={target} />
           <div className="multiple-choice-options">
             {["Fridge", "Kitchen", "Both", "Neither"].map((option, index) => (
