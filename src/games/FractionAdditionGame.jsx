@@ -24,7 +24,7 @@ const simplifyFraction = (num, denom) => {
   const divisor = gcd(num, denom);
   const simplifiedNum = num / divisor;
   const simplifiedDenom = denom / divisor;
-  return simplifiedDenom === 1 ? `${simplifiedNum}` : `${simplifiedNum}/${simplifiedDenom}`;
+  return simplifiedDenom === 1 ? ${simplifiedNum} : ${simplifiedNum}/${simplifiedDenom};
 };
 
 // Simplify user input fraction string so that "2/4" becomes "1/2"
@@ -58,7 +58,7 @@ const generateNearMisses = (correctNumerator, correctDenom) => {
     const dMiss = correctDenom + (Math.floor(Math.random() * 3) - 1);
     if (nMiss <= 0 || dMiss <= 0) continue;
     if (nMiss === correctNumerator && dMiss === correctDenom) continue;
-    nearMisses.add(`${nMiss}/${dMiss}`);
+    nearMisses.add(${nMiss}/${dMiss});
   }
   return Array.from(nearMisses);
 };
@@ -88,6 +88,7 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
   const [sessionCorrectCount, setSessionCorrectCount] = useState(0);
   const [sessionStartTime, setSessionStartTime] = useState(null);
   const [sessionEndTime, setSessionEndTime] = useState("");
+  const [gameKey, setGameKey] = useState(Date.now());
 
   // Problem values (fractions or whole numbers)
   const [n1, setNum1] = useState(0);
@@ -287,7 +288,7 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
         const resultDenom = commonDenom;
         const simplified = simplifyFraction(resultNumerator, resultDenom);
         setNum1(n1); setDen1(d1); setNum2(n2); setDen2(d2);
-        setF1(`${n1}/${d1}`); setF2(`${n2}/${d2}`);
+        setF1(${n1}/${d1}); setF2(${n2}/${d2});
         const correctAnswer = simplified;
         const nearMissesRaw = generateNearMisses(resultNumerator, resultDenom);
         const nearMisses = nearMissesRaw.map((frac) => {
@@ -297,8 +298,8 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
         const allChoices = [correctAnswer, ...nearMisses].sort(() => Math.random() - 0.5);
         setChoices(allChoices);
         const scenario = randomProblem.scenario_text
-          .replace("_f1_", `${n1}/${d1}`)
-          .replace("_f2_", `${n2}/${d2}`);
+          .replace("_f1_", ${n1}/${d1})
+          .replace("_f2_", ${n2}/${d2});
         setScenarioText(scenario);
         break;
       }
@@ -324,7 +325,7 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
         const resultDenom = commonDenom;
         const simplified = simplifyFraction(resultNumerator, resultDenom);
         setNum1(n1); setDen1(d1); setNum2(n2); setDen2(d2);
-        setF1(`${n1}/${d1}`); setF2(`${n2}/${d2}`);
+        setF1(${n1}/${d1}); setF2(${n2}/${d2});
         const correctAnswer = simplified;
         const nearMissesRaw = generateNearMisses(resultNumerator, resultDenom);
         const nearMisses = nearMissesRaw.map((frac) => {
@@ -334,8 +335,8 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
         const allChoices = [correctAnswer, ...nearMisses].sort(() => Math.random() - 0.5);
         setChoices(allChoices);
         const scenario = randomProblem.scenario_text
-          .replace("_f1_", `${n1}/${d1}`)
-          .replace("_f2_", `${n2}/${d2}`);
+          .replace("_f1_", ${n1}/${d1})
+          .replace("_f2_", ${n2}/${d2});
         setScenarioText(scenario);
         break;
       }
@@ -344,12 +345,12 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
         const n2 = getRandomWholeNumber(1, 20);
         const correctAnswer = n1 + n2;
         setNum1(n1); setNum2(n2);
-        setF1(`${n1}`); setF2(`${n2}`);
+        setF1(${n1}); setF2(${n2});
         const allChoices = problemType === "multiple-choice" ? [correctAnswer.toString(), ...generateWholeNumberNearMisses(correctAnswer)] : [];
         setChoices(allChoices);
         const scenario = randomProblem.scenario_text
-          .replace("_val1_", `${n1}`)
-          .replace("_val2_", `${n2}`);
+          .replace("_val1_", ${n1})
+          .replace("_val2_", ${n2});
         setScenarioText(scenario);
         break;
       }
@@ -358,12 +359,12 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
         const n2 = getRandomWholeNumber(1, n1); // ensures n1 >= n2
         const correctAnswer = n1 - n2;
         setNum1(n1); setNum2(n2);
-        setF1(`${n1}`); setF2(`${n2}`);
+        setF1(${n1}); setF2(${n2});
         const allChoices = problemType === "multiple-choice" ? [correctAnswer.toString(), ...generateWholeNumberNearMisses(correctAnswer)] : [];
         setChoices(allChoices);
         const scenario = randomProblem.scenario_text
-          .replace("_val1_", `${n1}`)
-          .replace("_val2_", `${n2}`);
+          .replace("_val1_", ${n1})
+          .replace("_val2_", ${n2});
         setScenarioText(scenario);
         break;
       }
@@ -372,12 +373,12 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
         const n2 = getRandomWholeNumber(1, 20);
         const correctAnswer = n1 * n2;
         setNum1(n1); setNum2(n2);
-        setF1(`${n1}`); setF2(`${n2}`);
+        setF1(${n1}); setF2(${n2});
         const allChoices = problemType === "multiple-choice" ? [correctAnswer.toString(), ...generateWholeNumberNearMisses(correctAnswer)] : [];
         setChoices(allChoices);
         const scenario = randomProblem.scenario_text
-          .replace("_val1_", `${n1}`)
-          .replace("_val2_", `${n2}`);
+          .replace("_val1_", ${n1})
+          .replace("_val2_", ${n2});
         setScenarioText(scenario);
         break;
       }
@@ -388,12 +389,12 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
         const n1 = n2 * multiplier;
         const correctAnswer = Math.floor(n1 / n2);
         setNum1(n1); setNum2(n2);
-        setF1(`${n1}`); setF2(`${n2}`);
+        setF1(${n1}); setF2(${n2});
         const allChoices = problemType === "multiple-choice" ? [correctAnswer.toString(), ...generateWholeNumberNearMisses(correctAnswer)] : [];
         setChoices(allChoices);
         const scenario = randomProblem.scenario_text
-          .replace("_val1_", `${n1}`)
-          .replace("_val2_", `${n2}`);
+          .replace("_val1_", ${n1})
+          .replace("_val2_", ${n2});
         setScenarioText(scenario);
         break;
       }
@@ -450,7 +451,7 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
           : (n1 * (lcm(d1, d2) / d1) - n2 * (lcm(d1, d2) / d2)),
         lcm(d1, d2)
       );
-      userInputValue = `${userNumerator}/${userDenominator}`;
+      userInputValue = ${userNumerator}/${userDenominator};
       // Simplify user's input so that "2/4" becomes "1/2"
       const simplifiedUserInput = simplifyUserInput(userInputValue);
       isCorrect = selectedChoice === correctValue || simplifiedUserInput === correctValue;
@@ -517,7 +518,7 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
           scoreEarned = 0;
       }
       setSessionCorrectCount((prev) => prev + 1);
-      setMessage(`✅ Correct! You earned ${scoreEarned} points.`);
+      setMessage(✅ Correct! You earned ${scoreEarned} points.);
       setElapsedTime(((endTime - startTime) / 1000).toFixed(2));
       setScore((prev) => prev + scoreEarned);
       setQuestionCount((prev) => {
@@ -542,7 +543,7 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
       const newAttempts = attempts + 1;
       setAttempts(newAttempts);
       if (newAttempts >= 3) {
-        setMessage(`❌ Nice try! The correct answer was ${correctValue}.`);
+        setMessage(❌ Nice try! The correct answer was ${correctValue}.);
         setElapsedTime(((endTime - startTime) / 1000).toFixed(2));
 
         // Database: Update user state when incorrect after three attempts
@@ -562,7 +563,7 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
           return newCount;
         });
       } else {
-        setMessage(`❌ Try Again! (${3 - newAttempts} attempts left)`);
+        setMessage(❌ Try Again! (${3 - newAttempts} attempts left));
 
         // Database: Update game hx per attempt
         gameData.score = 0
@@ -589,7 +590,7 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
     const minutes = Math.floor(totalTimeInSec / 60);
     const seconds = totalTimeInSec % 60;
     setSessionEndTime(
-      minutes > 0 ? `${minutes} min ${seconds} sec` : `${seconds} sec`
+      minutes > 0 ? ${minutes} min ${seconds} sec : ${seconds} sec
     );
     setTimeout(() => {
       setShowSessionSummary(true);
@@ -688,7 +689,7 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
 
         <div className="fraction-feedback">
           {message && (
-            <p className={`feedback ${message.includes("✅") ? "success" : "error"}`}>
+            <p className={feedback ${message.includes("✅") ? "success" : "error"}}>
               {message}
             </p>
           )}
@@ -716,7 +717,8 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
             <button
               onClick={() => {
                 console.log("🔄 Restarting Game and Loading Next Task...");
-                startNewSession();
+                setGameKey(Date.now()); // Change key to force remount
+                // Optionally call startNewSession() if needed here
                 setTimeout(() => {
                   console.log("➡️ Loading Next Task...");
                   window.handleNextTask?.();
