@@ -22,7 +22,7 @@ export function request(ctx) {
     const item = {
         current_streak: data.current_streak,
         longest_streak: data.longest_streak,
-        total_sessions: data.total_sessions,
+        // total_sessions: data.total_sessions,
         total: {
             total_questions: data.total.total_questions,
             total_correct: data.total.total_correct,
@@ -63,7 +63,7 @@ export function request(ctx) {
     };
 
     return ddb.put({
-        key: { user_state_pk: pk, sk: sk },
+        key: { user_stats_pk: pk, sk: sk },
         item: item
     });
 }

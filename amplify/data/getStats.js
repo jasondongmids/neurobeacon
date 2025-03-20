@@ -14,9 +14,9 @@ export function request(ctx) {
     const queryParams = {
         operation: 'Query',
         query: {
-            expression: "#us = :userState" ,
-            expressionNames: { "#us": "user_state_pk" },
-            expressionValues: util.dynamodb.toMapValues({ ":userState": pk }),
+            expression: "#us = :userStats" ,
+            expressionNames: { "#us": "user_stats_pk" },
+            expressionValues: util.dynamodb.toMapValues({ ":userStats": pk }),
         },
         scanIndexForward: false,
     };

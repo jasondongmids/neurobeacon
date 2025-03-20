@@ -13,11 +13,13 @@ export function request(ctx) {
     const data = ctx.arguments.data;
 
     return ddb.update({
-        key: { user_state_pk: pk, sk: `${sk}` },
+        key: { user_stats_pk: pk, sk: `${sk}` },
         // condition: { total_questions: { lt: data.total.total_questions }}, // comment out for testing
         // can add another condition to check sum(data.game.total_questions) == data.total_questions
         update: { 
-            total_sessions: data.total_sessions,
+            current_streak: data.current_streak,
+            longest_streak: data.longest_streak,
+            // total_sessions: data.total_sessions,
             total: {
                 total_questions: data.total.total_questions,
                 total_correct: data.total.total_correct,

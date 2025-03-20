@@ -60,9 +60,10 @@ const schema = a.schema({
   UserStats: a.customType({
     user_state_pk: a.string().required(),
     sk: a.string().required(),
+    yyyymmdd: a.string(),
     current_streak: a.integer(),
     longest_streak: a.integer(),
-    total_sessions: a.integer(),
+    // total_sessions: a.integer(),
     total: a.json(),
     math: a.json(),
     visual: a.json(),

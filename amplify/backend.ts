@@ -47,8 +47,8 @@ backend.data.addDynamoDbDataSource(
 // User
 const userTable = aws_dynamodb.Table.fromTableName(
   extDataSourcesStack,
-  "UserName",
-  "UserTest"
+  "UserStatsName",
+  "UserStatsTest"
 )
 backend.data.addDynamoDbDataSource(
   "UserTable",
