@@ -146,8 +146,7 @@ const handleVerifyToken = async () => {
         )}
       </div>
     </div>
-  );
-};
+
       {/* Elevator Pitch Modal */}
       {showElevatorPitch && (
         <div className="modal-overlay">
