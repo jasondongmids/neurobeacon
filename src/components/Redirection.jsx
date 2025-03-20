@@ -15,13 +15,13 @@ const Redirection = ({ children }) => {
                 navigate("/", { state: { from: location.pathname } });
             }
 
-            if (isAuth && location.pathname == "/") {
+            if (isAuth && location.pathname === "/") {
                 navigate("/dashboard")
             }
         };
         
         handleRedirection();
-    }, [location.pathname, navigate]);
+    }, [location.pathname]);
 
     return children;
 };
