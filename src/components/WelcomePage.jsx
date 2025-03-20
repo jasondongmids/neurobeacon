@@ -81,7 +81,7 @@ const handleVerifyToken = async () => {
       <h1>Welcome to NeuroBeacon</h1>
       <p>Train your brain and track your progress!</p>
 
-            {/* Link to open the Elevator Pitch Modal */}
+    {/* Link to open the Elevator Pitch Modal */}
       <div className="elevator-pitch-link"><h3>Thank you for joining us for our Beta Test! Mobile development is still ongoing so please test only on tablets or computers.<br />Learn more about us by clicking the link below or enter an email and select a password to jump right in. When you are done, please be sure to fill out our survey linked on the User Dashboard to tell us how we did and what we can do better.<br />If you have any questions or concerns, please email us at <a href="mailto:fhayes3@berkeley.edu">fhayes3@berkeley.edu</a>. </h3>
         <button className="auth-btn secondary" onClick={() => setShowElevatorPitch(true)}>
           Learn More About NeuroBeacon
@@ -145,7 +145,6 @@ const handleVerifyToken = async () => {
           <button onClick={() => setView("login")}>⬅ Back to Login</button>
         )}
       </div>
-    </div>
 
       {/* Elevator Pitch Modal */}
       {showElevatorPitch && (
