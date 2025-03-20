@@ -474,13 +474,13 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
         top: 0,
         left: 0,
         width: "100%",
-        /* backgroundcolor:"white",*/
+        backgroundcolor:"#2e86c1;",
         height: "100%", // ensures it fills the viewport
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
-        zIndex: -1,
+        zIndex: 0,
       }}
-      /* placeholderColor="white" */
+      placeholderColor="#2e86c1;"
       transitionDuration="0.4s"
     />
     <div style={{ position: "relative", zIndex: 2, textAlign: "center", padding: "20px" }}>
