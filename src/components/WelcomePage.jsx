@@ -158,9 +158,8 @@ const handleVerifyToken = async () => {
 
       {/* Elevator Pitch Modal */}
       {showElevatorPitch && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h2>NeuroBeacon Elevator Pitch</h2>
+        <div className="modal-overlay-elevator">
+          <div className="modal-content-elevator">
             <p>
               Tenebris ad sinus custodi—Hold back the darkness. That’s our mission. Cognitive decline is a growing global challenge, and while no single solution exists, the power of mental engagement is undeniable. But too often, brain training feels disconnected from reality—rigid, repetitive, and uninspiring.
             </p>
