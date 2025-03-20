@@ -46,7 +46,7 @@ const getRandomIngredients = (diff) => {
    It accepts a src prop (e.g., "url('/memory-images/Fridge.jpg')")
    and any style overrides.
 */
-const LazyBackground = ({ src, style, placeholderColor = "#ccc", transitionDuration = "0.5s" }) => {
+const LazyBackground = ({ src, style, placeholderColor = "#ccc", transitionDuration = "0.1s" }) => {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -496,13 +496,13 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
       )}
       {showFridge && (
         <div>
-          <h2 style={{ color: "white" }}>The Fridge:</h2>
+          <h2 style={{ color: "black" }}>The Fridge:</h2>
           <IngredientGrid ingredients={fridge} />
         </div>
       )}
       {showKitchen && (
         <div>
-          <h2 style={{ color: "white" }}>The Kitchen:</h2>
+          <h2 style={{ color: "black" }}>The Kitchen:</h2>
           <IngredientGrid ingredients={kitchen} />
         </div>
       )}
