@@ -31,14 +31,6 @@ const simplifyFraction = (num, denom) => {
 const simplifyUserInput = (input) => {
   const parts = input.split("/");
   if (parts.length !== 2) return input; // not a fraction format; return as-is
-  const num = parseInt(parts[0], 10);
-  const denom = parseInt(parts[1], 10);
-  if (isNaN(num) || isNaN(denom) || denom === 0) return input;
-  return simplifyFraction(num, denom);
-};// Simplify user input fraction string so that "2/4" becomes "1/2"
-const simplifyUserInput = (input) => {
-  const parts = input.split("/");
-  if (parts.length !== 2) return input; // not a fraction format; return as-is
 
   let num = parseInt(parts[0], 10);
   let denom = parseInt(parts[1], 10);
