@@ -160,6 +160,42 @@ export const UserStatisticsProvider = ({children}) => {
         })
     };
 
+    // Handle first login
+    const handleLoginStats = async () => {
+        const stats = await queryStats("", 1)
+        const daily = await queryStats("daily", 1)
+        const weekly = await queryStats("weekly", 1)
+    
+        if (stats) {
+            setUserStats(parseNestedJson(stats[0]))
+        } else {
+            addStats("", JSON.stringify(userStats))
+        };
+    
+        if (daily) {
+            if (formatDate(daily[0].updated_at) < formatDate(Date.now())) {
+                const newStats = updateStreak(daily[0])
+                setDailyStats(parseNestedJson(newStats))
+            } else {
+            setDailyStats(parseNestedJson(daily[0]))
+            }
+        } else {
+          addStats("daily", JSON.stringify(dailyStats))
+        }; 
+    
+        if (weekly) {
+            if (formatDate(daily[0].updated_at) < formatDate(Date.now())) {
+                const newStats = updateStreak(weekly[0])
+                setWeeklyStats(parseNestedJson(newStats))
+            } else {
+                setWeeklyStats(parseNestedJson(weekly[0]))
+            }
+        } else {
+            addStats("weekly", JSON.stringify(weeklyStats))
+        }; 
+    }
+ 
+
     // Update current streak and longest streak on initial login
     const updateStreak = (inputData) => {
         const newStreak = inputData.current_streak + 1
@@ -256,11 +292,8 @@ export const UserStatisticsProvider = ({children}) => {
     return (
         <UserStatisticsContext.Provider value ={{
             dailyStats,
-            setDailyStats,
             weeklyStats,
-            setWeeklyStats,
             userStats,
-            setUserStats,
             queryStatistics,
             setQueryStatistics,
             updateStatsState,
@@ -270,8 +303,7 @@ export const UserStatisticsProvider = ({children}) => {
             queryStats,
             updateStats,
             parseNestedJson,
-            updateStreak,
-            formatDate,
+            handleLoginStats,
         }}>
             { children }
         </UserStatisticsContext.Provider>
