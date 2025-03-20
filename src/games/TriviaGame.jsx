@@ -522,7 +522,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
                 ))}
             </div>
 
-            <p className="feedback-info">{message}</p>
+            <p className="feedback-info"style={{ color: "black" }}>{message}</p>
         </div>
     );
     
