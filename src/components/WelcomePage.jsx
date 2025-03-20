@@ -81,6 +81,14 @@ const handleVerifyToken = async () => {
       <h1>Welcome to NeuroBeacon</h1>
       <p>Train your brain and track your progress!</p>
 
+            {/* Link to open the Elevator Pitch Modal */}
+      <div className="elevator-pitch-link"><h3>Thank you for joining us for our Beta Test! Mobile development is still ongoing so please test only on tablets or computers.<br />Learn more about us by clicking the link below or enter an email and select a password to jump right in. When you are done, please be sure to fill out our survey linked on the User Dashboard to tell us how we did and what we can do better.<br />If you have any questions or concerns, please email us at <a href="mailto:fhayes3@berkeley.edu">fhayes3@berkeley.edu</a>. </h3>
+        <button className="auth-btn secondary" onClick={() => setShowElevatorPitch(true)}>
+          Learn More About NeuroBeacon
+        </button>
+      </div>
+
+      
       {message && <p className="message">{message}</p>}
 
       {/* Username Input */}
@@ -140,5 +148,39 @@ const handleVerifyToken = async () => {
     </div>
   );
 };
-
+      {/* Elevator Pitch Modal */}
+      {showElevatorPitch && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>NeuroBeacon Elevator Pitch</h2>
+            <p>
+              Tenebris ad sinus custodi—Hold back the darkness. That’s our mission. Cognitive decline is a growing global challenge, and while no single solution exists, the power of mental engagement is undeniable. But too often, brain training feels disconnected from reality—rigid, repetitive, and uninspiring. 
+            </p>
+            <p>
+             That’s where NeuroBeacon comes in. We’re building a game-based cognitive training platform that isn’t just about sharpening the mind—it’s about engagement, adaptability, and joy. Our interactive challenges—from math-based problem-solving to rapid-recall to remembering what you have in your fridge or testing your reaction time while driving —are designed to reflect real-world thinking and decision-making, making learning feel both natural and rewarding. Each game adapts dynamically to the player, ensuring they’re always challenged at the right level. 
+            </p>
+            <p>
+            At the core of NeuroBeacon is an adaptive difficulty engine, powered by reinforcement learning principles. Instead of static difficulty settings, the platform evaluates each player's accuracy, speed, and interaction patterns in real-time. When a player solves problems efficiently, the game presents more complex challenges. If they struggle, the system adjusts to provide scaffolded learning opportunities, ensuring they remain engaged without frustration. 
+            </p>
+            <p>
+            This is what sets NeuroBeacon apart. Unlike traditional brain training apps that rely on fixed difficulty tiers, our system learns from the player, adapting at a pace that keeps them in their optimal learning zone—challenged, but not overwhelmed.   
+            </p>
+            <p>
+            We believe cognitive training should feel like play, not work. Whether it’s solving math puzzles in a restaurant setting, answering decade-based trivia, or tackling Sudoku-style logic challenges, NeuroBeacon transforms everyday thinking into an engaging experience. Looking ahead, we’re expanding our game library and refining our reinforcement learning model to create a truly personalized training experience. The end game? A platform that doesn’t just challenge users—but learns with them. 
+            </p>
+            <p>
+            Our goal is simple: Entertain. Sharpen. Spark Joy. If you’re interested in AI-driven game mechanics, cognitive adaptation, or just love fun and challenging experiences, we invite you to join Kara, Jason, Alice, Mia, and myself. We’d love to hear your thoughts, and we thank you for your time and consideration. 
+            </p>
+            <p>
+              -Fred Hayes
+            </p>
+            <button className="auth-btn" onClick={() => setShowElevatorPitch(false)}>
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 export default WelcomePage;
