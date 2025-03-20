@@ -189,3 +189,5 @@ const handleVerifyToken = async () => {
     </div>
   );
 };
+
+export default WelcomePage;
