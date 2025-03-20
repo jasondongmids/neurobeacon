@@ -478,12 +478,12 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
         height: "100%", // ensures it fills the viewport
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
-        zIndex: 0,
+       /* zIndex: 0, */
       }}
       /* placeholderColor="white" */
       transitionDuration="0.4s"
     />
-    <div style={{ textAlign: "center", padding: "20px", zIndex: 1, }}>
+    <div style={{ textAlign: "center", padding: "20px", }}>
       {/* Your existing game content goes here */}
       {gamePhase === "intro" && (
         <div>
