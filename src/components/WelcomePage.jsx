@@ -18,6 +18,8 @@ const WelcomePage = () => {
   // 'view' controls which form is shown: login, register, reset, or verify.
   const [view, setView] = useState("login");
 
+  const [showElevatorPitch, setShowElevatorPitch] = useState(false);
+
     // ✅ Show redirect message if user was blocked
     useEffect(() => {
         console.log("Location:", location)
