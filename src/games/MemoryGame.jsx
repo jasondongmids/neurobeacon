@@ -483,7 +483,7 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
       /* placeholderColor="white" */
       transitionDuration="0.4s"
     />
-    <div style={{ textAlign: "center", padding: "20px", zindex:"1" }}>
+    <div style={{ textAlign: "center", padding: "20px", zIndex: 1, }}>
       {/* Your existing game content goes here */}
       {gamePhase === "intro" && (
         <div>
