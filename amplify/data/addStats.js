@@ -20,6 +20,7 @@ export function request(ctx) {
     console.log("sk:", sk)
 
     const item = {
+        yyyymmdd: sk,
         current_streak: data.current_streak,
         longest_streak: data.longest_streak,
         // total_sessions: data.total_sessions,

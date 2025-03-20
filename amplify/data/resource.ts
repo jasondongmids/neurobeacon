@@ -58,7 +58,7 @@ const schema = a.schema({
 
   // ✅ UserStats schema, mutations, and queries; same ddb table as UserStateHx
   UserStats: a.customType({
-    user_state_pk: a.string().required(),
+    user_stats_pk: a.string().required(),
     sk: a.string().required(),
     yyyymmdd: a.string(),
     current_streak: a.integer(),
@@ -110,7 +110,7 @@ const schema = a.schema({
     .mutation()
     .arguments({
       frequency: a.string(),
-      yyyymmdd: a.string(),
+      // yyyymmdd: a.string(),
       data: a.json(),
     })
     .returns(a.ref("UserStats"))

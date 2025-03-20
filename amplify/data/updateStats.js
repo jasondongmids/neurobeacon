@@ -8,7 +8,7 @@ export function request(ctx) {
     const pk = ctx.arguments.frequency === 'daily' ? `DAILY#${user}`
         : ctx.arguments.frequency === 'weekly' ? `WEEKLY#${user}`
         : `STATS#${user}`
-    const sk = `${ctx.arguments.yyyymmdd}`
+    const sk = `${ctx.arguments.data.yyyymmdd}`
     const timestamp = util.time.nowEpochSeconds()
     const data = ctx.arguments.data;
 
