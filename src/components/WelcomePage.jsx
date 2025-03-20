@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import UserContext from "../context/UserContext";
-import NavBar from "./NavBar";
+//import NavBar from "./NavBar";
 import "../styles.css";
 import logo from "../assets/logo-words-no-background.png";
 
@@ -78,7 +78,7 @@ const handleVerifyToken = async () => {
 
   return (
     <div className="welcome-container">
-      <NavBar />
+      {/* <NavBar /> */}
       <img src={logo} alt="NeuroBeacon Logo" className="welcome-logo" />
       <h1>Welcome to NeuroBeacon</h1>
       <p>Train your brain and track your progress!</p>
