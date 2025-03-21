@@ -11,13 +11,14 @@ const UserStatisticsContext = createContext();
 
 export const UserStatisticsProvider = ({children}) => {
     // ✅ Create react states
+    const [userStats, setUserStats] = useState("")
+    const [dailyStats, setDailyStats] = useState("")
+    const [weeklyStats, setWeeklyStats] = useState("")
+    const [queryStatistics, setQueryStatistics] = useState('')
 
+    // Initial Stats
     const schema = {
         yyyymmdd: '',
-        current_streak: 1,
-        longest_streak: 1,
-        // days_on_platform: a.integer(),
-        // sk: "",
         // total_sessions: 0,
         total: {
             total_questions: 0,
@@ -77,11 +78,17 @@ export const UserStatisticsProvider = ({children}) => {
         },
     }
 
-    const [dailyStats, setDailyStats] = useState(structuredClone(schema))
-    const [weeklyStats, setWeeklyStats] = useState(structuredClone(schema))
-    const [userStats, setUserStats] = useState(structuredClone(schema))
-    const [queryStatistics, setQueryStatistics] = useState('')
+    const dailySchema = {
+        ...schema,
+        current_streak: 1,
+        longest_streak: 1,        
+    }
 
+    const weeklySchema = {
+        ...schema,
+        current_streak: 1,
+        longest_streak: 1,           
+    }
     // Write to database before tab closes or refreshed 
     // Beyond MVP; need to wrap graphQL query into JSON message instead of using function
     // useEffect(() => {
@@ -192,10 +199,13 @@ export const UserStatisticsProvider = ({children}) => {
         const daily = await queryStats("daily", 1)
         const weekly = await queryStats("weekly", 1)
     
+        console.log("STATS", stats)
         if (stats) {
+            console.log("SET STATS")
             setUserStats(parseNestedJson(stats[0]))
         } else {
-            addStats("", JSON.stringify(userStats))
+            console.log("USER STATS", userStats)
+            addStats("", JSON.stringify(schema))
         };
     
         if (daily) {
@@ -212,7 +222,7 @@ export const UserStatisticsProvider = ({children}) => {
                 setDailyStats(parseNestedJson(resetStreak))
             }
         } else {
-          addStats("daily", JSON.stringify(dailyStats))
+          addStats("daily", JSON.stringify(dailySchema))
         }; 
     
         if (weekly) {
@@ -229,7 +239,7 @@ export const UserStatisticsProvider = ({children}) => {
                 setWeeklyStats(parseNestedJson(resetStreak))
             }
         } else {
-            addStats("weekly", JSON.stringify(weeklyStats))
+            addStats("weekly", JSON.stringify(weeklySchema))
         }; 
     }
  
