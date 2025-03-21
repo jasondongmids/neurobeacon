@@ -1115,3 +1115,11 @@ button {
     line-height: 1.4;
   }
 }
+@media screen and (max-width: 600px) {
+  .header-logo {
+    height: 60px;    /* or set max-width: 60px; height: auto; */
+  }
+  .header-title {
+    font-size: 20px;
+  }
+}
