@@ -1133,8 +1133,8 @@ button {
   .panel.closed {
     display: inline-flex;
     width: auto;
-    margin-top: 0 5px;
-    margin-bottom: 0 5px;
+    margin: 5 0px;
+
   }
 }
 /* On mobile, keep collapsed panel headers horizontal */
