@@ -22,7 +22,12 @@ export const UserStateProvider = ({ children }) => {
             total_questions: 0,
             total_correct: 0,
             precent_correct: 0.0
-        }
+        },
+        user_embedding: {
+            easy_percent: 0.0,
+            medium_percent: 0.0,
+            hard_percent: 0.0,
+        },
     });
     
     const [userCategoryState, setUserCategoryState] = useState({

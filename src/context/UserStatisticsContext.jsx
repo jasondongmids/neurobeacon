@@ -18,7 +18,20 @@ export const UserStatisticsProvider = ({children}) => {
 
     useEffect(() => {
         console.log("Updated query statistics:", queryStatistics);
-    }, [queryStatistics]);    
+    }, [queryStatistics]);
+    
+    useEffect(() => {
+        console.log("Updated user statistics:", userStats);
+    }, [userStats]);
+
+    // unsure if these two are needed
+    // useEffect(() => {
+    //     console.log("Updated daily statistics:", dailyStats);
+    // }, [dailyStats]); 
+
+    // useEffect(() => {
+    //     console.log("Updated weekly statistics:", weeklyStats);
+    // }, [weeklyStats]); 
 
     // Initial Stats
     const schema = {
@@ -367,12 +380,10 @@ export const UserStatisticsProvider = ({children}) => {
                 console.error('Check inputs or CloudWatch logs:', errors);
             } else {
 
-                // const parsedData = (data) ? data.map(parseNestedJson) : data
-                // console.log(`Successful ${frequency} query`, parsedData);
-                // setQueryStatistics(parsedData)
-                // return parsedData
-                console.log(`Successful ${frequency} query`, data);
-                return data
+                const parsedData = (data) ? data.map(parseNestedJson) : data
+                console.log(`Successful ${frequency} query`, parsedData);
+                setQueryStatistics(parsedData)
+                return parsedData
             }
         } catch (error) {
             console.error('Error with function in UserStateContext.jsx:', error)

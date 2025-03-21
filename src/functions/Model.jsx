@@ -1,6 +1,42 @@
-// functions required for model inference
 import { post } from "aws-amplify/api";
 
+// HARD CODED VALUES
+const difficultyMapping = {
+    "easy": 0,
+    "medium": 1,
+    "hard": 2
+}
+
+const isSlowThresholds = {
+    "math": 1000,
+    "memory": 1000,
+    "reaction": 1000,
+    "sudoku": 1000,
+    "trivia": 1000
+}
+
+const gameTypeEmbed = {
+    "math": 3,
+    "memory": 4,
+    "reaction": 5,
+    "sudoku": 6,
+    "trivia": 7
+}
+
+// HELPER FUNCTIONS FOR MODEL
+export function getDiffString(integer) {
+    const reverseDiffMap = Object.fromEntries(Object.entries(difficultyMapping[0]).map(([k, v]) => [v, k]))
+    console.log("DIFFICULTY STRING", reverseDiffMap[integer])
+    return reverseDiffMap[integer]
+
+}
+
+export function getDiffInt(string) {
+    const diffMapping = difficultyMapping[0]
+    return diffMapping[string]
+}
+
+// INVOKE MODEL
 const prepRequest = (data) => {
     const modelInput = [
         Number(0), // placeholder for prev_is_slow

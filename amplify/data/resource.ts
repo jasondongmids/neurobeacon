@@ -14,9 +14,9 @@ const schema = a.schema({
       total_elapsed_time: a.integer(),
       average_user_time: a.float(),
       score: a.integer(),
-      difficulty: a.integer(), // difficulty of previous prediction / current question
-      predicted_difficulty: a.integer(), // difficulty of next question (primary model)
-      target_difficulty: a.integer(), // target difficulty of current question (target model)
+      difficulty: a.string(), // difficulty of previous prediction / current question
+      predicted_difficulty: a.string(), // difficulty of next question (primary model)
+      target_difficulty: a.string(), // target difficulty of current question (target model)
       category: a.json(),
       user_embedding: a.json(),
       created_at: a.integer(),
@@ -117,7 +117,7 @@ const schema = a.schema({
     .authorization(allow => [allow.authenticated()])
     .handler(
       a.handler.custom({
-        dataSource: "UserStateHxTable",
+        dataSource: "UserTable",
         entry: "./updateStats.js"
       })
     ),
@@ -129,7 +129,7 @@ const schema = a.schema({
     question_id: a.string(),
     question_type: a.string(),
     question_category: a.string(),
-    difficulty: a.integer(),
+    difficulty: a.string(),
     game_time_ms: a.integer(),
     session_id: a.string(),
     session_time_ms: a.integer(),

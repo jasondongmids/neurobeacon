@@ -493,13 +493,13 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
     }
 
     // Database: variables for database updates
-    const difficultyInt = difficulty === "easy" ? 0 : difficulty === "medium" ? 1 : 2;
+    // const difficultyInt = difficulty === "easy" ? 0 : difficulty === "medium" ? 1 : 2;
     const gameCategory = currentProblem.scenario_type;
     const gameData = {
       question_id: currentProblem.id,
       question_type: gameRef.current,
       question_category: gameCategory,
-      difficulty: difficultyInt,
+      difficulty: difficulty,
       // game_time_ms: 100, // placeholder
       session_id: sessionId,
       session_time_ms: 2000, // placeholder before implementing,
@@ -509,7 +509,7 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
     }
     const newUserState = {
       // elapsed_time: Math.min(reaction * 1000, 2147483647),
-      difficulty: difficultyInt,
+      difficulty: difficulty,
       category: gameCategory     
     };
   

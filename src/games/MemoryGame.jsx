@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import UserStateContext from "../context/UserStateContext";
 import GameHxContext from "../context/GameHxContext";
-import { invokeModel } from "../functions/Model";
+import { invokeModel, getDiffString } from "../functions/Model";
 
 const possibleIngredients = [
   "Apple",
@@ -351,11 +351,12 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
     // Database: Variables for database updates
     // const difficultyInt = difficulty === "easy" ? 0 : difficulty === "medium" ? 1 : 2;
     // const gameCategory = currentQuestion.decade; // perhaps create state var
+    const difficultyStr = getDiffString(difficulty)
     const gameData = {
       question_id: "placeholder",
       question_type: gameRef.current,
       question_category: "default",
-      difficulty: difficulty, // already int
+      difficulty: difficultyStr, // already int
       game_time_ms: Math.min(currentAttemptTime * 1000, 2147483647),
       session_id: sessionId,
       session_time_ms: 2000, // placeholder before implementing,
@@ -365,7 +366,7 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
     };
     const newUserState = {
       elapsed_time: Math.min(currentAttemptTime * 1000, 2147483647),
-      difficulty: difficulty,
+      difficulty: difficultyStr,
       category: "default"
     };
 
