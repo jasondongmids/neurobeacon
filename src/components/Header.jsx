@@ -15,7 +15,7 @@ const Header = () => {
       </a>
 
       {/* Title in center */}
-      <h1 className="header-title">Welcome to NeuroBeacon!</h1>
+      <h1>Welcome to NeuroBeacon!</h1>
 
       {/* Hamburger on right */}
       <div className="nav-container" onClick={() => setMenuOpen(!menuOpen)}>
