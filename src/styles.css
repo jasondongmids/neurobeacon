@@ -1123,3 +1123,29 @@ button {
     font-size: 20px;
   }
 }
+@media screen and (max-width: 600px) {
+  .fraction-game {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+  .fraction-game .scenario-text {
+    font-size: 24px;
+    padding: 10px;
+    margin-bottom: 20px;
+  }
+  .fraction-inputs input {
+    font-size: 20px;
+    height: auto;
+    width: 80px;
+  }
+}
+@media screen and (max-width: 600px) {
+  .header-logo {
+    height: 60px;
+    /* Alternatively, you can use max-width and auto height to maintain aspect ratio */
+    /* max-width: 60px; height: auto; */
+  }
+  .header-title {
+    font-size: 20px;
+  }
+}
