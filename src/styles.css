@@ -1123,7 +1123,9 @@ button {
     height: auto;
     width: 80px;
   }
-  
+  .fraction-game input[type="number"] {
+  font-size: 16px;
+  }
   .dboardH2 { font-size: 24px; }
   .betaMessage p { font-size: 14px; line-height: 1.4; }
   
@@ -1131,7 +1133,8 @@ button {
   .panel.closed {
     display: inline-flex;
     width: auto;
-    margin: 0 5px;
+    margin-top: 0 5px;
+    margin-bottom: 0 5px;
   }
 }
 /* On mobile, keep collapsed panel headers horizontal */
