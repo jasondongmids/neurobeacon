@@ -680,7 +680,7 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
 
         {inputMode === "multiple-choice" && (
           <div>
-            <p style={{ fontSize: "40px", marginBottom: "8px", color: "#333" }}>
+            <p style={{ marginBottom: "8px", color: "#333" }}>
               Please choose one answer:
             </p>
             <div className="multiple-choice-options">
