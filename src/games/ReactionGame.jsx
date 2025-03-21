@@ -264,20 +264,22 @@ const ReactionGame = ({ onUpdateStats }) => {
   }, [round, correctClicks, reactionTimes, score]);
 
   //Dynamic resizer for the image canvas
-  useEffect(() => {
+useEffect(() => {
   function handleResize() {
     if (!gameCanvas.current) return;
-    const parentWidth = gameCanvas.current.parentElement.offsetWidth;
-    // Limit canvas width to 800px (or less on smaller screens)
-    const newWidth = Math.min(parentWidth, 800);
+    const parentRect = gameCanvas.current.parentElement.getBoundingClientRect();
+    // Use the container's width or window width (whichever is smaller)
+    const availableWidth = Math.min(parentRect.width, window.innerWidth);
+    const newWidth = Math.min(availableWidth, 800); // never exceed 800px
     const newHeight = (newWidth * 500) / 800; // maintain aspect ratio
     setCanvasWidth(newWidth);
     setCanvasHeight(newHeight);
   }
   window.addEventListener("resize", handleResize);
-  handleResize(); // initialize on mount
+  handleResize(); // run on mount
   return () => window.removeEventListener("resize", handleResize);
 }, []);
+
 
 
   // ────────────────────────────────────────────────────────────────
