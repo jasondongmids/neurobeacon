@@ -45,6 +45,8 @@ const ReactionGame = ({ onUpdateStats }) => {
   const [mistakes, setMistakes] = useState(0);
   const [canvasWidth, setCanvasWidth] = useState(800);
   const [canvasHeight, setCanvasHeight] = useState(500);
+  const [pointerDownPos, setPointerDownPos] = useState(null);
+
 
   // We'll only use message for mistake warnings.
   const [message, setMessage] = useState("");
@@ -327,107 +329,124 @@ useEffect(() => {
   }, [userGameState])
 
   // ────────────────────────────────────────────────────────────────
-  // HANDLE CLICK EVENTS
-  function handleClick(event) {
-    if (!waitingForGreen || !startTime) return;
-    const { offsetX, offsetY } = event.nativeEvent;
-    const isCorrectClick =
-      offsetX >= targetBox.x &&
-      offsetX <= targetBox.x + targetBox.width &&
-      offsetY >= targetBox.y &&
-      offsetY <= targetBox.y + targetBox.height;
-    const reaction = (Date.now() - startTime) / 1000;
+// Step 2a: Pointer Down Handler
+function handlePointerDown(event) {
+  // Record the starting position of the pointer
+  setPointerDownPos({ x: event.clientX, y: event.clientY });
+}
 
-    // Database: variables for database updates
-    const difficultyInt = difficulty === "easy" ? 0 : difficulty === "medium" ? 1 : 2;
-    const gameCategory = usedImagesRef.current.at(-1).replace(/\..*$/, "");
-    const gameData = {
-      question_id: gameCategory,
-      question_type: gameRef.current,
-      question_category: gameCategory,
-      difficulty: difficultyInt,
-      game_time_ms: Math.min(reaction * 1000, 2147483647),
-      session_id: sessionId,
-      session_time_ms: 2000, // placeholder before implementing,
-      attempt: mistakes + 1,
-      user_answer: "not_applicable",
-      is_correct: isCorrectClick,
-    }
-    const newUserState = {
-      elapsed_time: Math.min(reaction * 1000, 2147483647),
-      difficulty: difficultyInt,
-      category: gameCategory     
-    };
+// Step 2b: Pointer Up Handler
+function handlePointerUp(event) {
+  if (!pointerDownPos) return; // Safety check
 
-    if (isCorrectClick) {
-      setReactionTimes(prev => [...prev, reaction]);
-      setCorrectClicks(prev => prev + 1);
+  // Calculate the distance the pointer moved
+  const dx = event.clientX - pointerDownPos.x;
+  const dy = event.clientY - pointerDownPos.y;
+  const distance = Math.sqrt(dx * dx + dy * dy);
+  const threshold = 10; // threshold in pixels
 
-      const timeBonus = Math.max(
-        difficultyLevels[difficulty].reactionTime - reaction,
-        0
-      ) * 100;
-      const finalScore = timeBonus * difficultyLevels[difficulty].speedFactor;
-      setScore(prev => prev + finalScore);
-
-      // Add a success message.
-      setMessage(`✅ Great job! Reaction time: ${reaction.toFixed(2)} sec.`);
-      setWaitingForGreen(false);
-      updateStats(round);
-
-      // Database: Update user state and game hx when correct
-      newUserState.correct = true
-      newUserState.score = Math.round(finalScore)
-      batchWrite(newUserState, gameData)
-
-      // Start new round
-      if (round >= maxRounds) {
-        setTimeout(endGame, 700);
-
-        // DATABASE + MODEL: FINE TUNING PLACEHOLDER
-        // 1) queryModel (last 10 results)
-        // 2) process data?
-        // 3) invoke fine-tuning endpoint
-
-      } else {
-        setTimeout(startNewRound, 1000);
-      
-      }
-    } else {
-      // Database: Update user state and game hx per attempt
-      if (mistakes < 2) {
-        gameData.score = 0
-        addGameHx(gameData)
-      } else {
-        newUserState.correct = false
-        newUserState.score = 0
-        batchWrite(newUserState, gameData)
-      }
-
-      // Incorrect click.
-      setMistakes(prev => {
-        const newMistakes = prev + 1;
-        setScore(prevScore => Math.max(prevScore - 50, 0));
-        if (newMistakes >= 3) {
-          console.warn("🚨 3 Mistakes! Moving to next round.");
-          setMessage("❌ Round ended due to 3 mistakes.");
-          setTimeout(() => {
-            if (round >= maxRounds) {
-              endGame();
-            } else {
-              startNewRound();
-            }
-          }, 1000);
-          return 0;
-        } else if (newMistakes === 1) {
-          setMessage("❌ Incorrect click. Try again!");
-        } else if (newMistakes === 2) {
-          setMessage("⚠️ One more mistake and the round ends!");
-        }
-        return newMistakes;
-      });
-    }
+  // If movement is minimal, treat this as a tap
+  if (distance < threshold) {
+    const rect = gameCanvas.current.getBoundingClientRect();
+    const offsetX = event.clientX - rect.left;
+    const offsetY = event.clientY - rect.top;
+    processClick(offsetX, offsetY);
   }
+  // Clear the pointer down position
+  setPointerDownPos(null);
+}
+
+// Step 3: Refactor Click Processing
+function processClick(offsetX, offsetY) {
+  if (!waitingForGreen || !startTime) return;
+
+  const isCorrectClick =
+    offsetX >= targetBox.x &&
+    offsetX <= targetBox.x + targetBox.width &&
+    offsetY >= targetBox.y &&
+    offsetY <= targetBox.y + targetBox.height;
+  const reaction = (Date.now() - startTime) / 1000;
+
+  // Database: variables for database updates remain unchanged
+  const difficultyInt = difficulty === "easy" ? 0 : difficulty === "medium" ? 1 : 2;
+  const gameCategory = usedImagesRef.current.at(-1).replace(/\..*$/, "");
+  const gameData = {
+    question_id: gameCategory,
+    question_type: gameRef.current,
+    question_category: gameCategory,
+    difficulty: difficultyInt,
+    game_time_ms: Math.min(reaction * 1000, 2147483647),
+    session_id: sessionId,
+    session_time_ms: 2000, // placeholder before implementing,
+    attempt: mistakes + 1,
+    user_answer: "not_applicable",
+    is_correct: isCorrectClick,
+  };
+  const newUserState = {
+    elapsed_time: Math.min(reaction * 1000, 2147483647),
+    difficulty: difficultyInt,
+    category: gameCategory     
+  };
+
+  if (isCorrectClick) {
+    setReactionTimes(prev => [...prev, reaction]);
+    setCorrectClicks(prev => prev + 1);
+
+    const timeBonus = Math.max(
+      difficultyLevels[difficulty].reactionTime - reaction,
+      0
+    ) * 100;
+    const finalScore = timeBonus * difficultyLevels[difficulty].speedFactor;
+    setScore(prev => prev + finalScore);
+
+    setMessage(`✅ Great job! Reaction time: ${reaction.toFixed(2)} sec.`);
+    setWaitingForGreen(false);
+    updateStats(round);
+
+    // Database: Update user state and game hx when correct
+    newUserState.correct = true;
+    newUserState.score = Math.round(finalScore);
+    batchWrite(newUserState, gameData);
+
+    if (round >= maxRounds) {
+      setTimeout(endGame, 700);
+    } else {
+      setTimeout(startNewRound, 1000);
+    }
+  } else {
+    if (mistakes < 2) {
+      gameData.score = 0;
+      addGameHx(gameData);
+    } else {
+      newUserState.correct = false;
+      newUserState.score = 0;
+      batchWrite(newUserState, gameData);
+    }
+
+    setMistakes(prev => {
+      const newMistakes = prev + 1;
+      setScore(prevScore => Math.max(prevScore - 50, 0));
+      if (newMistakes >= 3) {
+        console.warn("🚨 3 Mistakes! Moving to next round.");
+        setMessage("❌ Round ended due to 3 mistakes.");
+        setTimeout(() => {
+          if (round >= maxRounds) {
+            endGame();
+          } else {
+            startNewRound();
+          }
+        }, 1000);
+        return 0;
+      } else if (newMistakes === 1) {
+        setMessage("❌ Incorrect click. Try again!");
+      } else if (newMistakes === 2) {
+        setMessage("⚠️ One more mistake and the round ends!");
+      }
+      return newMistakes;
+    });
+  }
+}
+
 
   // ────────────────────────────────────────────────────────────────
   // RENDER
@@ -467,17 +486,18 @@ useEffect(() => {
         </div>
       ) : (
         <div>
-          <canvas
-            ref={gameCanvas}
-            width={canvasWidth}
-            height={canvasHeight}
-            onClick={handleClick}
-            style={{
-              border: "2px solid black",
-              width: `${canvasWidth}px`,
-              height: `${canvasHeight}px`
-            }}
-          />
+        <canvas
+          ref={gameCanvas}
+          width={canvasWidth}
+          height={canvasHeight}
+          onPointerDown={handlePointerDown}
+          onPointerUp={handlePointerUp}
+          style={{
+            border: "2px solid black",
+            width: `${canvasWidth}px`,
+            height: `${canvasHeight}px`
+          }}
+        />
 
           {/* Display only the round number below the canvas */}
           <p>Round: {round}/{maxRounds}</p>
