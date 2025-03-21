@@ -1160,4 +1160,6 @@ button {
     padding: 8px;      /* Adjust padding for touch */
   }
 }
-
+.fraction-game span {
+  font-size: 20px;
+}
