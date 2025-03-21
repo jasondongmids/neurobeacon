@@ -10,6 +10,7 @@ import GamePage from "./components/GamePage";
 import Dashboard from "./components/Dashboard";
 import TestPage from "./components/TestPage";
 import Redirection from "./components/Redirection";
+import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
     return (
@@ -19,6 +20,7 @@ function App() {
         <GameHxProvider>
         <ModelProvider>
             <Router>
+                <ScrollToTop />
                 <Redirection>
                     <Routes>
                         <Route path="/" element={<WelcomePage />} />
