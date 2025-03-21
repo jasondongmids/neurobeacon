@@ -198,18 +198,80 @@ export const UserStatisticsProvider = ({children}) => {
         })
     };
 
+    // Update current streak and longest streak on initial login
+    const updateStreak = (inputData) => {
+        const newStreak = inputData.current_streak + 1;
+        const longestStreak = inputData.longest_streak;
+
+        return {
+            ...inputData,
+            current_streak: newStreak,
+            longest_streak: newStreak > longestStreak ? newStreak : longestStreak,
+        }
+    }
+
+    // Update totals after game is answered
+    const updateTotals = (inputData, isCorrect, game, difficulty) => {
+        const totalData = incrementCorrect(inputData.total, isCorrect);
+        const gameData = incrementCorrect(inputData[game], isCorrect);
+        const difficultyData = incrementCorrect(inputData[difficulty], isCorrect);
+        return {
+            ...inputData,
+            total: totalData,
+            [game]: gameData,
+            [difficulty]: difficultyData
+        };
+    }
+
+    const incrementCorrect = (inputData, isCorrect) => {
+        const totalQuestions = inputData.total_questions + 1;
+        const totalCorrect = (isCorrect) ? inputData.total_correct + 1 : inputData.total_correct;
+        const currentQuestions = inputData.current_questions + 1;
+        const currentCorrect = (isCorrect) ? inputData.current_correct + 1 : inputData.current_correct;
+
+        return {
+            ...inputData,
+            total_questions: totalQuestions,
+            total_correct: totalCorrect,
+            percent_correct: parseFloat((totalCorrect / totalQuestions).toFixed(3)),
+            current_questions: currentQuestions,
+            current_correct: currentCorrect,
+            current_percent: parseFloat((currentCorrect / currentQuestions).toFixed(3))
+        }
+    }
+
+    const resetTotals = (inputData) => {
+        return {
+            ...inputData,
+            current_streak: 1,
+            total: resetCurrent(inputData.total),
+            math: resetCurrent(inputData.math),
+            visual: resetCurrent(inputData.visual),
+            reaction: resetCurrent(inputData.reaction),
+            easy: resetCurrent(inputData.easy),
+            medium: resetCurrent(inputData.medium),
+            hard: resetCurrent(inputData.hard),
+        };
+    }
+
+    const resetCurrent = (inputData) => {
+        return {
+            ...inputData,
+            current_total: 0,
+            current_correct: 0,
+            current_percent: 0.0
+        }
+    }
+
     // Handle first login
     const handleLoginStats = async () => {
         const stats = await queryStats("", 1)
         const daily = await queryStats("daily", 1)
         const weekly = await queryStats("weekly", 1)
     
-        console.log("STATS", stats)
         if (stats) {
-            console.log("SET STATS")
             setUserStats(stats[0])
         } else {
-            console.log("USER STATS", userStats)
             addStats("", JSON.stringify(schema))
         };
     
@@ -220,11 +282,8 @@ export const UserStatisticsProvider = ({children}) => {
                 const newStats = updateStreak(daily[0])
                 setDailyStats(newStats)
             } else {
-                const resetStreak = {
-                    ...daily[0],
-                    current_streak: 1
-                }    
-                setDailyStats(resetStreak)
+                const newStreak = resetTotals(daily[0]) 
+                setDailyStats(newStreak)
             }
         } else {
           addStats("daily", JSON.stringify(dailySchema))
@@ -237,27 +296,12 @@ export const UserStatisticsProvider = ({children}) => {
                 const newStats = updateStreak(weekly[0])
                 setWeeklyStats(newStats)
             } else {
-                const resetStreak = {
-                    ...weekly[0],
-                    current_streak: 1
-                } 
-                setWeeklyStats(resetStreak)
+                const newStreak = resetTotals(weekly[0]) 
+                setWeeklyStats(newStreak)
             }
         } else {
             addStats("weekly", JSON.stringify(weeklySchema))
         }; 
-    }
- 
-    // Update current streak and longest streak on initial login
-    // Refactor and store streak on totals!!
-    const updateStreak = (inputData) => {
-        const newStreak = inputData.current_streak + 1
-        const longestStreak = inputData.longest_streak
-        return {
-            ...inputData,
-            current_streak: newStreak,
-            longest_streak: newStreak > longestStreak ? newStreak : longestStreak
-        }
     }
 
     // ✅ Add statistics
@@ -358,6 +402,7 @@ export const UserStatisticsProvider = ({children}) => {
             updateStats,
             parseNestedJson,
             handleLoginStats,
+            updateTotals,
         }}>
             { children }
         </UserStatisticsContext.Provider>
