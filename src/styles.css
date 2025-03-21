@@ -1062,7 +1062,7 @@ button {
   .game-content { order: 1; }
   .panel--right { order: 2; }
   .panel--left { order: 3; }
-  
+}  
   .panel {
     width: 100%;
     height: auto;
@@ -1075,7 +1075,7 @@ button {
     flex-direction: column;
     gap: 10px;
   }
-}
+
 
 /* Common adjustments for screens up to 600px */
 @media screen and (max-width: 600px) {
