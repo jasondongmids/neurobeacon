@@ -878,6 +878,9 @@ p {
     color: white;
     border-radius: 5px;
 }
+.paused-overlay p {
+color: black;
+}
 /* ===== Additional Styles for Sudoku Enhancements ===== */
 
 /* Highlight valid number hints in the number selection panel */
@@ -1096,7 +1099,9 @@ button {
   p { font-size: 16px; }
   .input-field { width: 200px; font-size: 16px; }
   .auth-btn { font-size: 16px; padding: 10px 20px; }
-  
+  .game-page {
+    padding-bottom: 100px;  /* extra space to ensure content isn’t hidden by the footer */
+  }
   .header-logo { 
     height: 60px; 
   }
