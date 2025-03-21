@@ -470,7 +470,11 @@ const ReactionGame = ({ onUpdateStats }) => {
             width={canvasWidth}
             height={canvasHeight}
             onClick={handleClick}
-            style={{ border: "2px solid black", width: "100%", height: "auto" }}
+            style={{
+              border: "2px solid black",
+              width: `${canvasWidth}px`,
+              height: `${canvasHeight}px`
+            }}
           />
 
           {/* Display only the round number below the canvas */}
