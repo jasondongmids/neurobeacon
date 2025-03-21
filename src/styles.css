@@ -1129,4 +1129,27 @@ button {
     margin: 0 5px;
   }
 }
+/* On mobile, keep collapsed panel headers horizontal */
+@media screen and (max-width: 600px) {
+  .panel.closed .panel-header {
+    writing-mode: horizontal-tb; /* Normal horizontal text */
+    transform: none;             /* Remove rotation */
+    font-size: 18px;             /* Adjust font size if needed */
+    padding: 5px;                /* Optional: adjust padding */
+  }
+}
+/* Make fraction game inputs resize more fluidly on mobile */
+@media screen and (max-width: 600px) {
+  .fraction-inputs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  .fraction-inputs input {
+    flex: 1 1 auto;
+    max-width: 100px;  /* Increase the max-width for easier tapping */
+    font-size: 18px;   /* Adjust font size if needed */
+    padding: 8px;      /* Adjust padding for touch */
+  }
+}
 
