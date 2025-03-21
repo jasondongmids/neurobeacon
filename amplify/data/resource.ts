@@ -154,54 +154,6 @@ const schema = a.schema({
         entry: "./addGameHx.js",
       })
     ),
-
-  // Jason 3/18 - user data model might not be needed
-  UserEmbed: a.customType({
-    user_pk: a.string().required(),
-    user_embedding: a.json(),
-    created_at: a.integer(),
-    updated_at: a.integer()
-  }),
-  
-  addUserEmbed: a
-    .mutation()
-    .arguments({
-      data: a.json(),
-    })
-    .returns(a.ref("UserEmbed"))
-    .authorization(allow => [allow.authenticated()])
-    .handler(
-      a.handler.custom({
-        dataSource: "UserTable",
-        entry: "./addUserEmbed.js",
-      })
-    ),
-  
-    getUserEmbed: a
-    .query()
-    .returns(a.ref("UserEmbed"))
-    .authorization(allow => [allow.authenticated()])
-    .handler(
-      a.handler.custom({
-        dataSource: "UserTable",
-        entry: "./getUserEmbed.js",
-      })
-    ),
-//   transactData: a
-//   .mutation()
-//   .arguments({
-//     gameType: a.string().required(),
-//     category: a.string(),
-//     gameData: a.json(),
-//     categoryData: a.json(),
-//   })
-//   .returns(a.string())
-//   .authorization(allow => [allow.authenticated()])
-//   .handler(
-//     a.handler.custom({
-//       entry: "./transactData.js"
-//     })
-//   ),
 });
 
 export type Schema = ClientSchema<typeof schema>;
