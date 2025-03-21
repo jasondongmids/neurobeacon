@@ -69,6 +69,31 @@ body {
     padding: 10px 20px;
   }
 }
+/* Stack the dashboard panels on smaller screens */
+@media screen and (max-width: 768px) {
+  .dashboard-container {
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+  }
+
+  .panel {
+    width: 90%;
+    margin: 10px 0;
+  }
+}
+
+/* Further reduce text size on very small phones */
+@media screen and (max-width: 600px) {
+  .dboardH2 {
+    font-size: 24px;
+  }
+
+  .betaMessage p {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+}
 
 /* ====== Navigation Bar (Hamburger Menu) ====== */
 .nav-container {
