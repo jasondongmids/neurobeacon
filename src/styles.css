@@ -1052,78 +1052,45 @@ button {
     to { opacity: 1; transform: scale(1); }
 }
    
-/* ====== Responsive Design Adjustments ====== */
+/* Responsive adjustments for main container & ordering on smaller screens */
 @media screen and (max-width: 1024px) {
-    .main-container {
-        flex-direction: column;
-        height: auto;
-    }
-
-    .panel {
-        width: 100%;
-        height: auto;
-        margin-bottom: 10px;
-    }
-
-    .game-area {
-        padding: 50px;
-    }
-
-    .controls {
-        flex-direction: column;
-        gap: 10px;
-    }
-}
-@media screen and (max-width: 600px) {
-  h1 {
-    font-size: 28px;
-  }
-  p {
-    font-size: 16px;
-  }
-  .input-field {
-    width: 200px;
-    font-size: 16px;
-  }
-  .auth-btn {
-    font-size: 16px;
-    padding: 10px 20px;
-  }
-}
-/* Stack the dashboard panels on smaller screens */
-@media screen and (max-width: 768px) {
-  .dashboard-container {
+  .main-container {
     flex-direction: column;
-    align-items: center;
-    padding: 10px;
+    height: auto;
   }
-
+  /* Change display order */
+  .game-content { order: 1; }
+  .panel--right { order: 2; }
+  .panel--left { order: 3; }
+  
   .panel {
-    width: 90%;
-    margin: 10px 0;
+    width: 100%;
+    height: auto;
+    margin-bottom: 10px;
+  }
+  .game-area {
+    padding: 50px;
+  }
+  .controls {
+    flex-direction: column;
+    gap: 10px;
   }
 }
 
-/* Further reduce text size on very small phones */
+/* Common adjustments for screens up to 600px */
 @media screen and (max-width: 600px) {
-  .dboardH2 {
-    font-size: 24px;
-  }
+  h1 { font-size: 28px; }
+  p { font-size: 16px; }
+  .input-field { width: 200px; font-size: 16px; }
+  .auth-btn { font-size: 16px; padding: 10px 20px; }
 
-  .betaMessage p {
-    font-size: 14px;
-    line-height: 1.4;
-  }
-}
-@media screen and (max-width: 600px) {
-  .header-logo {
-    height: 60px;    /* or set max-width: 60px; height: auto; */
+  .header-logo { 
+    height: 60px; /* or use max-width with auto height */
   }
   .header-title {
     font-size: 20px;
   }
-}
-@media screen and (max-width: 600px) {
+  
   .fraction-game {
     padding-top: 20px;
     padding-bottom: 20px;
@@ -1138,14 +1105,15 @@ button {
     height: auto;
     width: 80px;
   }
-}
-@media screen and (max-width: 600px) {
-  .header-logo {
-    height: 60px;
-    /* Alternatively, you can use max-width and auto height to maintain aspect ratio */
-    /* max-width: 60px; height: auto; */
-  }
-  .header-title {
-    font-size: 20px;
+  
+  /* Further reduce text size */
+  .dboardH2 { font-size: 24px; }
+  .betaMessage p { font-size: 14px; line-height: 1.4; }
+  
+  /* When panels are closed, align horizontally */
+  .panel.closed {
+    display: inline-flex;
+    width: auto;
+    margin: 0 5px;
   }
 }
