@@ -16,6 +16,10 @@ export const UserStatisticsProvider = ({children}) => {
     const [weeklyStats, setWeeklyStats] = useState("")
     const [queryStatistics, setQueryStatistics] = useState('')
 
+    useEffect(() => {
+        console.log("Updated query statistics:", queryStatistics);
+    }, [queryStatistics]);    
+
     // Initial Stats
     const schema = {
         yyyymmdd: '',
@@ -89,6 +93,7 @@ export const UserStatisticsProvider = ({children}) => {
         current_streak: 1,
         longest_streak: 1,           
     }
+    
     // Write to database before tab closes or refreshed 
     // Beyond MVP; need to wrap graphQL query into JSON message instead of using function
     // useEffect(() => {
@@ -202,7 +207,7 @@ export const UserStatisticsProvider = ({children}) => {
         console.log("STATS", stats)
         if (stats) {
             console.log("SET STATS")
-            setUserStats(parseNestedJson(stats[0]))
+            setUserStats(stats[0])
         } else {
             console.log("USER STATS", userStats)
             addStats("", JSON.stringify(schema))
@@ -213,13 +218,13 @@ export const UserStatisticsProvider = ({children}) => {
             const unix2 = Math.floor(Date.now() / 1000)
             if (dateDiffInDays(unix1, unix2) === 1) {
                 const newStats = updateStreak(daily[0])
-                setDailyStats(parseNestedJson(newStats))
+                setDailyStats(newStats)
             } else {
                 const resetStreak = {
                     ...daily[0],
                     current_streak: 1
                 }    
-                setDailyStats(parseNestedJson(resetStreak))
+                setDailyStats(resetStreak)
             }
         } else {
           addStats("daily", JSON.stringify(dailySchema))
@@ -230,13 +235,13 @@ export const UserStatisticsProvider = ({children}) => {
             const unix2 = Math.floor(Date.now() / 1000)
             if (dateDiffInDays(unix1, unix2) <= 7) {
                 const newStats = updateStreak(weekly[0])
-                setWeeklyStats(parseNestedJson(newStats))
+                setWeeklyStats(newStats)
             } else {
                 const resetStreak = {
                     ...weekly[0],
                     current_streak: 1
                 } 
-                setWeeklyStats(parseNestedJson(resetStreak))
+                setWeeklyStats(resetStreak)
             }
         } else {
             addStats("weekly", JSON.stringify(weeklySchema))
@@ -308,9 +313,10 @@ export const UserStatisticsProvider = ({children}) => {
             if (errors) {
                 console.error('Check inputs or CloudWatch logs:', errors);
             } else {
-                console.log(`Successful ${frequency} query`, data);
-                setQueryStatistics(data)
-                return data
+                const parsedData = data.map(parseNestedJson)
+                console.log(`Successful ${frequency} query`, parsedData);
+                setQueryStatistics(parsedData)
+                return parsedData
             }
         } catch (error) {
             console.error('Error with function in UserStateContext.jsx:', error)
