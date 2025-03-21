@@ -1167,7 +1167,12 @@ button {
     font-size: 18px;   /* Adjust font size if needed */
     padding: 8px;      /* Adjust padding for touch */
   }
-}
+  .break-at-mobile {
+    display: block;   /* moves it to the next line */
+    margin-top: 0.25rem; /* optional spacing if you want a bit of gap */
+  }
+
 .fraction-game span {
   font-size: 20px;
+}
 }
