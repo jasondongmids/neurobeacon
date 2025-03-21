@@ -954,6 +954,8 @@ color: black;
     flex-direction: column;
     align-items: center;
     margin-top: 20px;
+    max-width: 100%;
+    overflow-x: hidden;
 }
 
 .reaction-game button {
