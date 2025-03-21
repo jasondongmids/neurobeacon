@@ -53,32 +53,6 @@ const Panel = ({ title, position, stats }) => {
                 <li>🔍 Use logic to deduce correct placements.</li>
                 <li>⚠️ Too many mistakes may end the game!</li>
               </ul>
-              <div className="bottom-buttons">
-                <button
-                  className="nav-btn"
-                  onClick={() =>
-                    window.handleSudokuPause && window.handleSudokuPause()
-                  }
-                >
-                  Pause/Resume
-                </button>
-                <button
-                  className="nav-btn"
-                  onClick={() =>
-                    window.handleSudokuRestart && window.handleSudokuRestart()
-                  }
-                >
-                  Restart
-                </button>
-                <button
-                  className="nav-btn"
-                  onClick={() =>
-                    window.handleSudokuQuit && window.handleSudokuQuit()
-                  }
-                >
-                  Quit Game
-                </button>
-              </div>
             </>
           ) : window.location.pathname.includes("reaction") ? (
             <ul className="reaction-hints">
