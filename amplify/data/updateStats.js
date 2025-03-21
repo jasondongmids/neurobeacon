@@ -12,10 +12,11 @@ export function request(ctx) {
     const timestamp = util.time.nowEpochSeconds()
     const data = ctx.arguments.data;
 
+    console.log("SK", sk, typeof(sk))
+    console.log("PK", pk, typeof(pk))
+
     return ddb.update({
         key: { user_stats_pk: pk, sk: `${sk}` },
-        // condition: { total_questions: { lt: data.total.total_questions }}, // comment out for testing
-        // can add another condition to check sum(data.game.total_questions) == data.total_questions
         update: { 
             current_streak: data.current_streak,
             longest_streak: data.longest_streak,
@@ -24,21 +25,57 @@ export function request(ctx) {
                 total_questions: data.total.total_questions,
                 total_correct: data.total.total_correct,
                 percent_correct: data.total.percent_correct,
+                current_question: data.total.current_question,
+                current_correct: data.total.current_correct,
+                current_percent: data.total.current_percent,
             },
             math: {
                 total_questions: data.math.total_questions,
                 total_correct: data.math.total_correct,
                 percent_correct: data.math.percent_correct,
+                current_question: data.math.current_question,
+                current_correct: data.math.current_correct,
+                current_percent: data.math.current_percent,
             },
             visual: {
                 total_questions: data.visual.total_questions,
                 total_correct: data.visual.total_correct,
                 percent_correct: data.visual.percent_correct,
+                current_question: data.visual.current_question,
+                current_correct: data.visual.current_correct,
+                current_percent: data.visual.current_percent,
             },
             reaction: {
                 total_questions: data.reaction.total_questions,
                 total_correct: data.reaction.total_correct,
                 percent_correct: data.reaction.percent_correct,
+                current_question: data.reaction.current_question,
+                current_correct: data.reaction.current_correct,
+                current_percent: data.reaction.current_percent,
+            },
+            easy: {
+                total_questions: data.easy.total_questions,
+                total_correct: data.easy.total_correct,
+                percent_correct: data.easy.percent_correct,
+                current_total: data.easy.current_total,
+                current_correct: data.easy.current_correct,
+                current_percent: data.easy.current_percent, 
+            },
+            medium: {
+                total_questions: data.medium.total_questions,
+                total_correct: data.medium.total_correct,
+                percent_correct: data.medium.percent_correct,
+                current_total: data.medium.current_total,
+                current_correct: data.medium.current_correct,
+                current_percent: data.medium.current_percent, 
+            },
+            hard: {
+                total_questions: data.hard.total_questions,
+                total_correct: data.hard.total_correct,
+                percent_correct: data.hard.percent_correct,
+                current_total: data.hard.current_total,
+                current_correct: data.hard.current_correct,
+                current_percent: data.hard.current_percent, 
             },
             updated_at: timestamp
          }

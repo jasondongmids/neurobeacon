@@ -82,6 +82,12 @@ export const UserStatisticsProvider = ({children}) => {
         },
     }
 
+    const userSchema = {
+        ...schema,
+        current_streak: 0,
+        longest_streak: 0
+    }
+
     const dailySchema = {
         ...schema,
         current_streak: 1,
@@ -199,12 +205,13 @@ export const UserStatisticsProvider = ({children}) => {
     };
 
     // Update current streak and longest streak on initial login
-    const updateStreak = (inputData) => {
+    const updateStreak = (frequency, inputData) => {
         const newStreak = inputData.current_streak + 1;
         const longestStreak = inputData.longest_streak;
 
         return {
             ...inputData,
+            yyyymmdd: String(getYearMonthDate(frequency)),
             current_streak: newStreak,
             longest_streak: newStreak > longestStreak ? newStreak : longestStreak,
         }
@@ -272,17 +279,18 @@ export const UserStatisticsProvider = ({children}) => {
         if (stats) {
             setUserStats(stats[0])
         } else {
-            addStats("", JSON.stringify(schema))
+            addStats("", JSON.stringify(userSchema))
         };
     
         if (daily) {
             const unix1 = daily[0].updated_at;
             const unix2 = Math.floor(Date.now() / 1000)
-            if (dateDiffInDays(unix1, unix2) === 1) {
-                const newStats = updateStreak(daily[0])
+            if (dateDiffInDays(unix1, unix2) === 1) { // need to redo logic
+                const newStats = updateStreak("daily", daily[0])
                 setDailyStats(newStats)
             } else {
-                const newStreak = resetTotals(daily[0]) 
+                const newStreak = resetTotals(daily[0])
+                // addStats("daily", JSON.stringify(newStreak)) 
                 setDailyStats(newStreak)
             }
         } else {
@@ -292,11 +300,12 @@ export const UserStatisticsProvider = ({children}) => {
         if (weekly) {
             const unix1 = weekly[0].updated_at;
             const unix2 = Math.floor(Date.now() / 1000)
-            if (dateDiffInDays(unix1, unix2) <= 7) {
-                const newStats = updateStreak(weekly[0])
+            if (dateDiffInDays(unix1, unix2) <= 7) { // need to redo logic
+                const newStats = updateStreak("weekly", weekly[0])
                 setWeeklyStats(newStats)
             } else {
-                const newStreak = resetTotals(weekly[0]) 
+                const newStreak = resetTotals(weekly[0])
+                // addStats("weekly", JSON.stringify(newStreak)) 
                 setWeeklyStats(newStreak)
             }
         } else {
@@ -357,10 +366,13 @@ export const UserStatisticsProvider = ({children}) => {
             if (errors) {
                 console.error('Check inputs or CloudWatch logs:', errors);
             } else {
-                const parsedData = data.map(parseNestedJson)
-                console.log(`Successful ${frequency} query`, parsedData);
-                setQueryStatistics(parsedData)
-                return parsedData
+
+                // const parsedData = (data) ? data.map(parseNestedJson) : data
+                // console.log(`Successful ${frequency} query`, parsedData);
+                // setQueryStatistics(parsedData)
+                // return parsedData
+                console.log(`Successful ${frequency} query`, data);
+                return data
             }
         } catch (error) {
             console.error('Error with function in UserStateContext.jsx:', error)
@@ -387,11 +399,30 @@ export const UserStatisticsProvider = ({children}) => {
         }
     }
 
+    const transactStatsData = async(userStatsData, dailyStatsData, weeklyStatsData) => {
+        try {
+            const userData = JSON.stringify(userStatsData);
+            const dailyData = JSON.stringify(dailyStatsData);
+            const weeklyData = JSON.stringify(weeklyStatsData);
+
+            const userResult = await updateStats("", userData);
+            const dailyResult = await updateStats("daily", dailyData);
+            const weeklyResult = await updateStats("weekly", weeklyData);
+            console.log("Transaction states successful", { userResult, dailyResult, weeklyResult})
+            return "DONE"
+        } catch (error) {
+            console.log("Error with function in UserStatisticsContext.jsx")
+        }
+    }
+
     return (
         <UserStatisticsContext.Provider value ={{
             dailyStats,
+            setDailyStats,
             weeklyStats,
+            setWeeklyStats,
             userStats,
+            setUserStats,
             queryStatistics,
             setQueryStatistics,
             updateStatsState,
@@ -403,6 +434,7 @@ export const UserStatisticsProvider = ({children}) => {
             parseNestedJson,
             handleLoginStats,
             updateTotals,
+            transactStatsData,
         }}>
             { children }
         </UserStatisticsContext.Provider>

@@ -16,8 +16,8 @@ export function request(ctx) {
     const timestamp = util.time.nowEpochSeconds()
     const data = ctx.arguments.data;
 
-    console.log("pk:", pk)
-    console.log("sk:", sk)
+    console.log("pk:", pk, typeof(pk))
+    console.log("sk:", sk, typeof(sk))
 
     const item = {
         yyyymmdd: sk,
