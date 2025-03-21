@@ -43,6 +43,9 @@ const ReactionGame = ({ onUpdateStats }) => {
   const [difficulty, setDifficulty] = useState("medium");
   const [maxScore, setMaxScore] = useState(0);
   const [mistakes, setMistakes] = useState(0);
+  const [canvasWidth, setCanvasWidth] = useState(800);
+  const [canvasHeight, setCanvasHeight] = useState(500);
+
   // We'll only use message for mistake warnings.
   const [message, setMessage] = useState("");
   // New state for color scheme selection.
@@ -118,12 +121,13 @@ const ReactionGame = ({ onUpdateStats }) => {
 
   function generateRandomBoxes(count) {
     return Array.from({ length: count }, () => ({
-      x: Math.random() * 600 + 50,
-      y: Math.random() * 400 + 50,
+      x: Math.random() * (canvasWidth - 100) + 50, // ensures 50px margin on sides
+      y: Math.random() * (canvasHeight - 100) + 50, // ensures 50px margin on top/bottom
       width: 50,
       height: 50,
     }));
   }
+
 
   function startNewRound() {
     if (round >= maxRounds) {
@@ -222,29 +226,30 @@ const ReactionGame = ({ onUpdateStats }) => {
   // When the current image changes, load it, apply the darkness overlay, and increment the round.
   useEffect(() => {
     if (!currentImage || !gameCanvas.current) return;
-
+    
     const ctx = gameCanvas.current.getContext("2d");
     ctxRef.current = ctx;
-    const canvasWidth = gameCanvas.current.width;
-    const canvasHeight = gameCanvas.current.height;
+    
+    // Clear using dynamic dimensions
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     const img = new Image();
     img.src = `/images/${currentImage}`;
-
+    
     img.onload = () => {
-      ctx.clearRect(0, 0, canvasWidth, canvasHeight);
       ctx.drawImage(img, 0, 0, canvasWidth, canvasHeight);
-
+      
       const { darkness } = difficultyLevels[difficulty];
       ctx.fillStyle = `rgba(0, 0, 0, ${darkness / 255})`;
       ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-
+      
       drawBoxes(ctx);
       setRound(prev => prev + 1);
     };
-
+    
     img.onerror = err =>
       console.error("❌ Image failed to load:", img.src, err);
-  }, [currentImage, difficulty]);
+  }, [currentImage, difficulty, canvasWidth, canvasHeight]);
+
 
   // Redraw boxes when waitingForGreen, boxes, or targetBox change.
   useEffect(() => {
@@ -257,6 +262,23 @@ const ReactionGame = ({ onUpdateStats }) => {
   useEffect(() => {
     updateStats(round);
   }, [round, correctClicks, reactionTimes, score]);
+
+  //Dynamic resizer for the image canvas
+  useEffect(() => {
+  function handleResize() {
+    if (!gameCanvas.current) return;
+    const parentWidth = gameCanvas.current.parentElement.offsetWidth;
+    // Limit canvas width to 800px (or less on smaller screens)
+    const newWidth = Math.min(parentWidth, 800);
+    const newHeight = (newWidth * 500) / 800; // maintain aspect ratio
+    setCanvasWidth(newWidth);
+    setCanvasHeight(newHeight);
+  }
+  window.addEventListener("resize", handleResize);
+  handleResize(); // initialize on mount
+  return () => window.removeEventListener("resize", handleResize);
+}, []);
+
 
   // ────────────────────────────────────────────────────────────────
   // DATABASE: FUNCTIONS AND EFFECTS
@@ -445,11 +467,12 @@ const ReactionGame = ({ onUpdateStats }) => {
         <div>
           <canvas
             ref={gameCanvas}
-            width={800}
-            height={500}
+            width={canvasWidth}
+            height={canvasHeight}
             onClick={handleClick}
-            style={{ border: "2px solid black" }}
+            style={{ border: "2px solid black", width: "100%", height: "auto" }}
           />
+
           {/* Display only the round number below the canvas */}
           <p>Round: {round}/{maxRounds}</p>
           {/* Show any warning or mistake messages immediately */}
