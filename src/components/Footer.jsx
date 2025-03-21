@@ -1,29 +1,50 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import "../styles.css";
 
 const Footer = () => {
   const location = useLocation();
+  const { gameType } = useParams();
 
-  // Flag to hide both Submit & Next (Reaction or Sudoku)
-  const hideBothButtons =
-    location.pathname.includes("/game/reaction") ||
-    location.pathname.includes("/game/sudoku");
+  // For the Sudoku game, render its specific buttons in the footer.
+  if (gameType === "sudoku") {
+    return (
+      <div className="footer">
+        <div className="sudoku-footer-buttons">
+          <button
+            className="nav-btn"
+            onClick={() => window.handleSudokuPause && window.handleSudokuPause()}
+          >
+            Pause/Resume
+          </button>
+          <button
+            className="nav-btn"
+            onClick={() => window.handleSudokuRestart && window.handleSudokuRestart()}
+          >
+            Restart
+          </button>
+          <button
+            className="nav-btn"
+            onClick={() => window.handleSudokuQuit && window.handleSudokuQuit()}
+          >
+            Quit Game
+          </button>
+        </div>
+      </div>
+    );
+  }
 
-  // Flag to hide only Next (Memory)
+  // For other games, you might have different button logic.
+  const hideBothButtons = location.pathname.includes("/game/reaction");
   const hideNextButton = location.pathname.includes("/game/memory");
 
   return (
     <div className="footer">
-      {/* If it's Reaction or Sudoku, we hide everything inside. */}
       {!hideBothButtons && (
         <>
-          {/* Show Submit button for all except Reaction/Sudoku */}
           <button className="btn submit" onClick={() => window.handleSubmit?.()}>
             Submit Answer
           </button>
-
-          {/* Hide Next button only if it’s Memory. */}
           {!hideNextButton && (
             <button className="btn next" onClick={() => window.handleNextTask?.()}>
               Next Question
@@ -36,5 +57,6 @@ const Footer = () => {
 };
 
 export default Footer;
+
 
 
