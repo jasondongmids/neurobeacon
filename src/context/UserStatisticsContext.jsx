@@ -14,45 +14,66 @@ export const UserStatisticsProvider = ({children}) => {
 
     const schema = {
         yyyymmdd: '',
-        current_streak: 0,
-        longest_streak: 0,
+        current_streak: 1,
+        longest_streak: 1,
         // days_on_platform: a.integer(),
         // sk: "",
         // total_sessions: 0,
         total: {
             total_questions: 0,
             total_correct: 0,
-            percent_correct: 0.0,            
+            percent_correct: 0.0,
+            current_total: 0,
+            current_correct: 0,
+            current_percent: 0.0,            
         },
         math: {
             total_questions: 0,
             total_correct: 0,
             percent_correct: 0.0,
+            current_total: 0,
+            current_correct: 0,
+            current_percent: 0.0, 
         },
         visual: {
             total_questions: 0,
             total_correct: 0,
-            percent_correct: 0.0, 
+            percent_correct: 0.0,
+            current_total: 0,
+            current_correct: 0,
+            current_percent: 0.0,  
         },
         reaction: {
             total_questions: 0,
             total_correct: 0,
-            percent_correct: 0.0,             
+            percent_correct: 0.0,
+            current_total: 0,
+            current_correct: 0,
+            current_percent: 0.0,              
         },        
         easy: {
             total_questions: 0,
             total_correct: 0,
             percent_correct: 0.0,
+            current_total: 0,
+            current_correct: 0,
+            current_percent: 0.0, 
         },
         medium: {
             total_questions: 0,
             total_correct: 0,
             percent_correct: 0.0,
+            current_total: 0,
+            current_correct: 0,
+            current_percent: 0.0, 
         },
         hard: {
             total_questions: 0,
             total_correct: 0,
             percent_correct: 0.0,
+            current_total: 0,
+            current_correct: 0,
+            current_percent: 0.0, 
         },
     }
 
@@ -102,6 +123,11 @@ export const UserStatisticsProvider = ({children}) => {
                 : formatDate(Date.now())
 
         return yyyymmdd
+    }
+
+    function dateDiffInDays(unix1, unix2) {
+        const diffTime = Math.abs(unix2 - unix1); // Get absolute difference in milliseconds
+        return Math.floor(diffTime / (1000 * 60 * 60 * 24)); // Convert ms to days
     }
 
     // parse JSON response
@@ -173,30 +199,42 @@ export const UserStatisticsProvider = ({children}) => {
         };
     
         if (daily) {
-            if (formatDate(daily[0].updated_at) < formatDate(Date.now())) {
+            const unix1 = daily[0].updated_at;
+            const unix2 = Math.floor(Date.now() / 1000)
+            if (dateDiffInDays(unix1, unix2) === 1) {
                 const newStats = updateStreak(daily[0])
                 setDailyStats(parseNestedJson(newStats))
             } else {
-            setDailyStats(parseNestedJson(daily[0]))
+                const resetStreak = {
+                    ...daily[0],
+                    current_streak: 1
+                }    
+                setDailyStats(parseNestedJson(resetStreak))
             }
         } else {
           addStats("daily", JSON.stringify(dailyStats))
         }; 
     
         if (weekly) {
-            if (formatDate(daily[0].updated_at) < formatDate(Date.now())) {
+            const unix1 = weekly[0].updated_at;
+            const unix2 = Math.floor(Date.now() / 1000)
+            if (dateDiffInDays(unix1, unix2) <= 7) {
                 const newStats = updateStreak(weekly[0])
                 setWeeklyStats(parseNestedJson(newStats))
             } else {
-                setWeeklyStats(parseNestedJson(weekly[0]))
+                const resetStreak = {
+                    ...weekly[0],
+                    current_streak: 1
+                } 
+                setWeeklyStats(parseNestedJson(resetStreak))
             }
         } else {
             addStats("weekly", JSON.stringify(weeklyStats))
         }; 
     }
  
-
     // Update current streak and longest streak on initial login
+    // Refactor and store streak on totals!!
     const updateStreak = (inputData) => {
         const newStreak = inputData.current_streak + 1
         const longestStreak = inputData.longest_streak
