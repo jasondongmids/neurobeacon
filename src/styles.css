@@ -28,8 +28,8 @@ body {
 
 .header-title {
     font-size: 35px;
-    margin: 0;
-    text-align: center;
+    margin: -20;
+    text-align: left;
 }
 
 /* ====== Navigation Bar (Hamburger Menu) ====== */
