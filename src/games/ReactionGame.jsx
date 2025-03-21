@@ -121,14 +121,37 @@ const ReactionGame = ({ onUpdateStats }) => {
     updateStats(round);
   }
 
-  function generateRandomBoxes(count) {
-    return Array.from({ length: count }, () => ({
-      x: Math.random() * (canvasWidth - 100) + 50, // ensures 50px margin on sides
-      y: Math.random() * (canvasHeight - 100) + 50, // ensures 50px margin on top/bottom
-      width: 50,
-      height: 50,
-    }));
+function generateRandomBoxes(count) {
+  const boxWidth = 50;
+  const boxHeight = 50;
+  // Set margins to 10% of the canvas size but ensure they don't push the box off the canvas.
+  const marginX = Math.min(canvasWidth * 0.1, (canvasWidth - boxWidth) / 2);
+  const marginY = Math.min(canvasHeight * 0.1, (canvasHeight - boxHeight) / 2);
+  // Determine the valid range for x and y
+  const minX = marginX;
+  const maxX = canvasWidth - boxWidth - marginX;
+  const minY = marginY;
+  const maxY = canvasHeight - boxHeight - marginY;
+  
+  return Array.from({ length: count }, () => ({
+    x: Math.random() * (maxX - minX) + minX,
+    y: Math.random() * (maxY - minY) + minY,
+    width: boxWidth,
+    height: boxHeight,
+  }));
+}
+
+function handlePointerMove(event) {
+  if (!pointerDownPos) return;
+  const dx = event.clientX - pointerDownPos.x;
+  const dy = event.clientY - pointerDownPos.y;
+  const distance = Math.sqrt(dx * dx + dy * dy);
+  const threshold = 10; // same threshold as before
+  if (distance >= threshold) {
+    // Cancel the tap if movement exceeds threshold
+    setPointerDownPos(null);
   }
+}
 
 
   function startNewRound() {
@@ -492,6 +515,7 @@ function processClick(offsetX, offsetY) {
           height={canvasHeight}
           onPointerDown={handlePointerDown}
           onPointerUp={handlePointerUp}
+          onPointerMove={handlePointerMove}
           style={{
             border: "2px solid black",
             width: `${canvasWidth}px`,
