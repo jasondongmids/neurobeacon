@@ -12,19 +12,19 @@ const Footer = () => {
       <div className="footer">
         <div className="sudoku-footer-buttons">
           <button
-            className="nav-btn"
+            className="btn next"
             onClick={() => window.handleSudokuPause && window.handleSudokuPause()}
           >
             Pause/Resume
           </button>
           <button
-            className="nav-btn"
+            className="btn next"
             onClick={() => window.handleSudokuRestart && window.handleSudokuRestart()}
           >
             Restart
           </button>
           <button
-            className="nav-btn"
+            className="btn next"
             onClick={() => window.handleSudokuQuit && window.handleSudokuQuit()}
           >
             Quit Game
