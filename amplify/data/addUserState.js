@@ -45,11 +45,11 @@ export function request(ctx) {
             total_correct: data.category.total_correct,
             percent_correct: data.category.percent_correct,
         },
-        // user_embedding: {
-        //     easy_percent: data.user_embedding.easy_percent,
-        //     medium_percent: data.user_embedding.medium_percent,
-        //     hard_percent: data.user_embedding.hard_percent,
-        // },
+        user_embedding: {
+            easy_percent: data.user_embedding.easy_percent,
+            medium_percent: data.user_embedding.medium_percent,
+            hard_percent: data.user_embedding.hard_percent,
+        },
         // user_embedding: {
         //     easy: {
         //         total_questions: 0,

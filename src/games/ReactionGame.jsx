@@ -331,7 +331,12 @@ useEffect(() => {
        ...prepState,
        score: newUserState.score,
        predicted_difficulty: primaryPrediction,
-       target_difficulty: targetPrediction 
+       target_difficulty: targetPrediction,
+       user_embedding: {
+        easy_percent: userStats.easy.percent_correct,
+        medium_percent: userStats.medium.percent_correct,
+        hard_percent: userStats.hard.percent_correct,
+       } 
       };
       const finalGameData = {
         ...gameData,

@@ -255,7 +255,7 @@ export const UserStatisticsProvider = ({children}) => {
         console.log("INCREMENT CORRECT DATA", inputData)
         const totalQuestions = inputData.total_questions + 1;
         const totalCorrect = (isCorrect) ? inputData.total_correct + 1 : inputData.total_correct;
-        const currentQuestions = inputData.current_questions + 1;
+        const currentQuestions = inputData.current_total + 1;
         const currentCorrect = (isCorrect) ? inputData.current_correct + 1 : inputData.current_correct;
 
         return {
