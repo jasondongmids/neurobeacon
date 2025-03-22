@@ -342,6 +342,45 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
     // handle difficulty changes here?
   }
 
+  const nextRound = () => {
+    setCorrectAns("");
+    if (round < maxRounds) {
+      setRound((prev) => prev + 1);
+      setKitchen(getRandomIngredients(difficulty));
+      setFridge(getRandomIngredients(difficulty));
+      setTarget(possibleIngredients[Math.floor(Math.random() * possibleIngredients.length)]);
+      setGamePhase("intro");
+      setSelectedChoice("");
+      setMessage("");
+      setNumAttempts(0);
+    } else {
+      setGamePhase("end");
+    }
+  };
+
+  const restartGame = () => {
+    // Reset all state to the initial values without incrementing round.
+    setGamePhase("intro");
+    setRound(1);
+    setScore(0);
+    setSessionCorrectCount(0);
+    setElapsedTime(0);
+    setAllAttemptTimes([]);
+    setKitchen(getRandomIngredients(difficulty));
+    setFridge(getRandomIngredients(difficulty));
+    setTarget(possibleIngredients[Math.floor(Math.random() * possibleIngredients.length)]);
+    setSelectedChoice("");
+    setMessage("");
+    setNumAttempts(0);
+    // No call to nextRound here.
+
+    // Database: Create new session id
+    setSessionId(crypto.randomUUID());
+  };
+  
+
+
+  
   const handleSubmit = useCallback(() => {
     // Check if the user has selected an answer.
     if (!selectedChoice) {
@@ -432,44 +471,7 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
       delete window.handleSubmit;
     };
   }, [handleSubmit]);
-
-  const nextRound = () => {
-    setCorrectAns("");
-    if (round < maxRounds) {
-      setRound((prev) => prev + 1);
-      setKitchen(getRandomIngredients(difficulty));
-      setFridge(getRandomIngredients(difficulty));
-      setTarget(possibleIngredients[Math.floor(Math.random() * possibleIngredients.length)]);
-      setGamePhase("intro");
-      setSelectedChoice("");
-      setMessage("");
-      setNumAttempts(0);
-    } else {
-      setGamePhase("end");
-    }
-  };
-
-  const restartGame = () => {
-    // Reset all state to the initial values without incrementing round.
-    setGamePhase("intro");
-    setRound(1);
-    setScore(0);
-    setSessionCorrectCount(0);
-    setElapsedTime(0);
-    setAllAttemptTimes([]);
-    setKitchen(getRandomIngredients(difficulty));
-    setFridge(getRandomIngredients(difficulty));
-    setTarget(possibleIngredients[Math.floor(Math.random() * possibleIngredients.length)]);
-    setSelectedChoice("");
-    setMessage("");
-    setNumAttempts(0);
-    // No call to nextRound here.
-
-    // Database: Create new session id
-    setSessionId(crypto.randomUUID());
-  };
   
-
   const getBackgroundImage = () => {
     switch (gamePhase) {
       case "showFridge":
