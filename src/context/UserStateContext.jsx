@@ -260,7 +260,7 @@ export const UserStateProvider = ({ children }) => {
             })
             const gameStateResult = await addUserState(gameType, "", gameData)
             const categoryStateResult = await addUserState(gameType, category, categoryData)
-            console.log("Transaction successful", { gameStateResult, categoryStateResult })
+            console.log("Transaction states successful", { gameStateResult, categoryStateResult })
             return { gameStateResult, categoryStateResult }
         } catch (error) {
             console.error('Error with function in UserStateContext.jsx:', error)

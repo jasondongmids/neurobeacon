@@ -13,6 +13,7 @@ export function request(ctx) {
     const sk = util.time.nowEpochSeconds(); // https://docs.aws.amazon.com/appsync/latest/devguide/time-helpers-in-util-time-js.html
     const data = ctx.arguments.data;
 // review logs in CloudWatch
+    // console.log("USER EMBEDDING", data.user_embedding)
 
     const item = (ctx.arguments.category) 
         ? {

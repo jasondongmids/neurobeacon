@@ -234,14 +234,12 @@ export const UserStatisticsProvider = ({children}) => {
 
     // Update totals after game is answered
     const updateTotals = (inputData, isCorrect, game, difficulty) => {
-        console.log("INPUT DATA", inputData)
         const totalData = incrementCorrect(inputData.total, isCorrect);
         const gameData = incrementCorrect(inputData[game], isCorrect);
         const diffStr = (typeof(difficulty) === "number") 
         ? getDiffString(difficulty) 
         : difficulty
 
-        console.log("DIFFICULTY", diffStr, inputData[diffStr])
         const difficultyData = incrementCorrect(inputData[diffStr], isCorrect);
         return {
             ...inputData,
@@ -252,7 +250,7 @@ export const UserStatisticsProvider = ({children}) => {
     }
 
     const incrementCorrect = (inputData, isCorrect) => {
-        console.log("INCREMENT CORRECT DATA", inputData)
+        // console.log("INCREMENT CORRECT DATA", inputData)
         const totalQuestions = inputData.total_questions + 1;
         const totalCorrect = (isCorrect) ? inputData.total_correct + 1 : inputData.total_correct;
         const currentQuestions = inputData.current_total + 1;
@@ -432,7 +430,7 @@ export const UserStatisticsProvider = ({children}) => {
             const userResult = await updateStats("", userData);
             const dailyResult = await updateStats("daily", dailyData);
             const weeklyResult = await updateStats("weekly", weeklyData);
-            console.log("Transaction states successful", { userResult, dailyResult, weeklyResult})
+            console.log("Transaction stats successful", { userResult, dailyResult, weeklyResult})
             return "DONE"
         } catch (error) {
             console.log("Error with function in UserStatisticsContext.jsx")

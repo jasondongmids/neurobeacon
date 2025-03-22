@@ -208,7 +208,6 @@ function handlePointerMove(event) {
 
     const availableImages = imageFiles.filter(img => !usedImagesRef.current.includes(img));
     const newImage = availableImages[Math.floor(Math.random() * availableImages.length)];
-    console.log("NEW IMAGE", newImage)
 
     usedImagesRef.current.push(newImage);
 
@@ -318,7 +317,6 @@ useEffect(() => {
       // update react states
       const isCorrect = newUserState.correct
       const difficulty = newUserState.difficulty
-      console.log("USER STATS", userStats)
       setUserStats(updateTotals(userStats, isCorrect, gameRef.current, difficulty));
       setDailyStats(updateTotals(dailyStats, isCorrect, gameRef.current, difficulty));
       setWeeklyStats(updateTotals(weeklyStats, isCorrect, gameRef.current, difficulty))     
@@ -359,7 +357,6 @@ useEffect(() => {
           userCategoryState != null &&
           initGameStateRef.current == false
       ) {
-          console.log("dailyStats", dailyStats)
           transactGameData(gameRef.current, usedImagesRef.current.at(-1).replace(/\..*$/, ""), userGameState, userCategoryState)
           transactStatsData(userStats, dailyStats, weeklyStats)
       }
