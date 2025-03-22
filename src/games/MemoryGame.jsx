@@ -5,6 +5,7 @@ import React, {
   forwardRef,
   useImperativeHandle,
   useRef,
+  useCallback,
 } from "react";
 import UserStateContext from "../context/UserStateContext";
 import GameHxContext from "../context/GameHxContext";
@@ -303,14 +304,6 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
     }
   }, [score, round, sessionCorrectCount, allAttemptTimes, onUpdateStats]);
 
-  useEffect(() => {
-    window.handleSubmit = handleSubmit;
-    return () => {
-      // Clean up when component unmounts
-      delete window.handleSubmit;
-    };
-  }, [handleSubmit]);
-
   
   // Phase transitions for image display
   useEffect(() => {
@@ -348,8 +341,8 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
     // handle difficulty changes here?
   }
 
-  const handleSubmit = () => {
-      // Check if the user has selected an answer.
+  const handleSubmit = useCallback(() => {
+    // Check if the user has selected an answer.
     if (!selectedChoice) {
       setMessage("❌ Please select an answer!");
       return;
@@ -365,21 +358,17 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
     const newAttempts = numAttempts + 1;
     setNumAttempts(newAttempts);
 
-    // Database: Variables for database updates
-    // const difficultyInt = difficulty === "easy" ? 0 : difficulty === "medium" ? 1 : 2;
-    // const gameCategory = currentQuestion.decade; // perhaps create state var
-    const difficultyStr = getDiffString(difficulty)
+    const difficultyStr = getDiffString(difficulty);
     const gameData = {
       question_id: "placeholder",
       question_type: gameRef.current,
       question_category: "default",
-      difficulty: difficultyStr, // already int
+      difficulty: difficultyStr,
       game_time_ms: Math.min(currentAttemptTime * 1000, 2147483647),
       session_id: sessionId,
       session_time_ms: 2000, // placeholder before implementing,
       attempt: newAttempts,
       user_answer: selectedChoice,
-      // is_correct: isCorrect,
     };
     const newUserState = {
       elapsed_time: Math.min(currentAttemptTime * 1000, 2147483647),
@@ -398,10 +387,9 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
       setTimeout(() => nextRound(), 1500);
 
       // Database: Update user state and game hx when correct
-      newUserState.correct = true
-      newUserState.score = score
-      batchWrite(newUserState, gameData)
-
+      newUserState.correct = true;
+      newUserState.score = score;
+      batchWrite(newUserState, gameData);
     } else {
       if (newAttempts >= 3) {
         setMessage(`❌ Nice try! The correct answer was ${correctAnswer}.`);
@@ -409,21 +397,40 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
         setTimeout(() => nextRound(), 2500);
 
         // Database: Update user state when incorrect after three attempts
-        newUserState.correct = false
-        newUserState.score = 0
-        batchWrite(newUserState, gameData)
-
+        newUserState.correct = false;
+        newUserState.score = 0;
+        batchWrite(newUserState, gameData);
       } else {
         setMessage(
           `❌ Try Again! (${3 - newAttempts} attempt${3 - newAttempts === 1 ? "" : "s"} left)`
         );
-
         // Database: Update game hx per attempt
-        gameData.score = 0
-        addGameHx(gameData)
+        gameData.score = 0;
+        addGameHx(gameData);
       }
     }
-  };
+  }, [
+    selectedChoice,
+    startTime,
+    numAttempts,
+    difficulty,
+    scoreModifier,
+    score,
+    sessionId,
+    correctAnswer,
+    getDiffString,
+    nextRound,
+    batchWrite,
+    addGameHx
+  ]);
+
+  // Expose handleSubmit on the window so Footer can call it.
+  useEffect(() => {
+    window.handleSubmit = handleSubmit;
+    return () => {
+      delete window.handleSubmit;
+    };
+  }, [handleSubmit]);
 
   const nextRound = () => {
     setCorrectAns("");
