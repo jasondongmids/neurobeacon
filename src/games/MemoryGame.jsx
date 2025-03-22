@@ -82,7 +82,7 @@ const IngredientItem = ({ name }) => {
   return (
     <div
       style={{
-        margin: "10px",
+        margin: "5px",
         position: "relative",
         backgroundColor: "#eee",
         display: "flex",
@@ -97,8 +97,8 @@ const IngredientItem = ({ name }) => {
             position: "absolute",
             top: 0,
             left: 0,
-            width: "150px",
-            height: "150px",
+            width: "120px",
+            height: "120px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -115,7 +115,7 @@ const IngredientItem = ({ name }) => {
         style={{
           display: loaded ? "block" : "none",
           width: "100%",          // make it fill the container
-          maxWidth: "150px",       // but never exceed 150px
+          maxWidth: "120px",       // but never exceed 150px
           height: "auto",
           objectFit: "cover",
         }}
@@ -133,12 +133,13 @@ const IngredientGrid = ({ ingredients }) => {
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
-        gap: "10px",
+        gridTemplateColumns: "repeat(auto-fit, minmax(80px, 1fr))",
+        gap: "8px",
         justifyContent: "center",
         alignItems: "center",
-        maxWidth: "600px",
+        maxWidth: "100%",
         margin: "0 auto",
+        padding: "0 10px",
       }}
     >
       {gridItems.map((item, index) => (
