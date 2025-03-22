@@ -18,6 +18,7 @@ export function request(ctx) {
     const item = (ctx.arguments.category) 
         ? {
         state_type: "category",
+        game: data.game,
         category: {
             category: data.category.category,
             total_questions: data.category.total_questions,
@@ -45,6 +46,7 @@ export function request(ctx) {
         difficulty: data.difficulty,
         predicted_difficulty: data.predicted_difficulty,
         target_difficulty: data.target_difficulty,
+        game_type: data.game,
         category: {
             category: data.category.category,
             total_questions: data.category.total_questions,

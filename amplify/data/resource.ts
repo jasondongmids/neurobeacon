@@ -22,6 +22,7 @@ const schema = a.schema({
       difficulty: a.string(), // difficulty of previous prediction / current question
       predicted_difficulty: a.string(), // difficulty of next question (primary model)
       target_difficulty: a.string(), // target difficulty of current question (target model)
+      game_type: a.string(),
       category: a.json(),
       user_embedding: a.json(),
       created_at: a.integer(),
@@ -133,6 +134,7 @@ const schema = a.schema({
   UserGameHx: a.customType({
     user_game_pk: a.string().required(),
     sk: a.string().required(),
+    game_type: a.string(),
     question_id: a.string(),
     question_type: a.string(),
     question_category: a.string(),
