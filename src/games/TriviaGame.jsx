@@ -2,7 +2,8 @@ import React, { useState, useEffect, useContext, useRef, forwardRef, useImperati
 import triviaQuestions from "../data/final_trivia_questions.json";
 import UserStateContext from "../context/UserStateContext";
 import GameHxContext from "../context/GameHxContext";
-import { invokeModel } from "../functions/Model";
+import UserStatisticsContext from "../context/UserStatisticsContext";
+import { invokeModel, getDiffString } from "../functions/Model";
 
 const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
     const [questionIndex, setQuestionIndex] = useState(0);
@@ -29,6 +30,8 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
       updateUserGameState, updateUserCategoryState, transactGameData 
       } = useContext(UserStateContext);
     const { addGameHx } = useContext(GameHxContext)
+    const { dailyStats, setDailyStats, weeklyStats, setWeeklyStats,
+      userStats, setUserStats, updateTotals, transactStatsData } = useContext(UserStatisticsContext)
     const [gameStartTime, setGameStartTime] = useState(0)
     const [sessionId, setSessionId] = useState("");
 
@@ -44,6 +47,13 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
         initGameStateRef.current = false;
       }
       try {
+        // update react states
+        const isCorrect = newUserState.correct
+        const difficulty = newUserState.difficulty
+        setUserStats(updateTotals(userStats, isCorrect, gameRef.current, difficulty));
+        setDailyStats(updateTotals(dailyStats, isCorrect, gameRef.current, difficulty));
+        setWeeklyStats(updateTotals(weeklyStats, isCorrect, gameRef.current, difficulty)); 
+
         updateUserCategoryState(newUserState);
         const prepState = prepareUserGameState(newUserState, userGameState, userCategoryState);
         const primaryPrediction = await invokeModel(prepState, 'primary');
@@ -51,8 +61,13 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
         const finalState = {
         ...prepState,
         score: newUserState.score,
-        predicted_difficulty: primaryPrediction,
-        target_difficulty: targetPrediction 
+        predicted_difficulty: getDiffString(primaryPrediction),
+        target_difficulty: getDiffString(targetPrediction),
+        user_embedding: {
+          easy_percent: userStats.easy.percent_correct,
+          medium_percent: userStats.medium.percent_correct,
+          hard_percent: userStats.hard.percent_correct,
+        }
         };
         const finalGameData = {
           ...gameData,
@@ -74,7 +89,8 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
             userCategoryState != null &&
             initGameStateRef.current == false
         ) {
-            transactGameData(gameRef.current, questions[questionIndex].decade, userGameState, userCategoryState)
+            transactGameData(gameRef.current, questions[questionIndex].decade, userGameState, userCategoryState);
+            transactStatsData(userStats, dailyStats, weeklyStats)
         }
         prevGameStateRef.current = userGameState;
         prevCategoryStateRef.current = userCategoryState;
@@ -134,7 +150,6 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
         }
 
         const randomizedQuestions = filteredQuestions.sort(() => Math.random() - 0.5).slice(0, 35);
-
         console.log("✅ Final Question Set:", randomizedQuestions);
         setQuestions([...randomizedQuestions]);  // ✅ Ensures state update triggers re-render
         setQuestionIndex(0);
@@ -214,13 +229,13 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
         let isCorrect = selectedAnswer === correctAnswer;
 
         // Database: Variables for database updates
-        const difficultyInt = difficulty === "easy" ? 0 : difficulty === "medium" ? 1 : 2;
+        // const difficultyInt = difficulty === "easy" ? 0 : difficulty === "medium" ? 1 : 2;
         const gameCategory = currentQuestion.decade; // perhaps create state var
         const gameData = {
           question_id: "placeholder",
           question_type: gameRef.current,
           question_category: gameCategory,
-          difficulty: difficultyInt,
+          difficulty: difficulty,
           game_time_ms: Math.min(totalGameTimeMs, 2147483647),
           session_id: sessionId,
           session_time_ms: 2000, // placeholder before implementing,
@@ -230,7 +245,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
         };
         const newUserState = {
           elapsed_time: Math.min(totalGameTimeMs, 2147483647),
-          difficulty: difficultyInt,
+          difficulty: difficulty,
           category: gameCategory     
         };
     
@@ -321,6 +336,8 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
             setMessage("⚠️ No more questions available!");
             return;
         }
+
+        // UPDATE DIFFICULTY LOGIC HERE
     
         const nextIndex = questionIndex + 1;
         
