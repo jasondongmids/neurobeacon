@@ -130,7 +130,7 @@ const IngredientGrid = ({ ingredients }) => {
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "repeat(3, 1fr)",
+        gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
         gap: "10px",
         justifyContent: "center",
         alignItems: "center",
@@ -139,7 +139,15 @@ const IngredientGrid = ({ ingredients }) => {
       }}
     >
       {gridItems.map((item, index) => (
-        <div key={index} style={{ minWidth: "100px", display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <div
+          key={index}
+          style={{
+            minWidth: "100px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           {item && <IngredientItem name={item} />}
         </div>
       ))}
@@ -295,6 +303,15 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
     }
   }, [score, round, sessionCorrectCount, allAttemptTimes, onUpdateStats]);
 
+  useEffect(() => {
+    window.handleSubmit = handleSubmit;
+    return () => {
+      // Clean up when component unmounts
+      delete window.handleSubmit;
+    };
+  }, [handleSubmit]);
+
+  
   // Phase transitions for image display
   useEffect(() => {
     if (gamePhase === "showFridge") {
