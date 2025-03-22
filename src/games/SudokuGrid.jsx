@@ -1,5 +1,8 @@
-import React, { useState, useEffect, useCallback } from "react";
-
+import React, { useState, useEffect, useRef, useCallback, useContext } from "react";
+import UserStateContext from "../context/UserStateContext";
+import GameHxContext from "../context/GameHxContext";
+import UserStatisticsContext from "../context/UserStatisticsContext";
+import { invokeModel, getDiffString } from "../functions/Model";
 
 // ---------- Pre-generated puzzles for each difficulty level ----------
 
@@ -27,6 +30,22 @@ const SudokuGrid = ({ onUpdateStats }) => {
   const [showEndModal, setShowEndModal] = useState(false);
   const [bonusAward, setBonusAward] = useState(0);
   const [boardsData, setBoardsData] = useState(null);
+
+  // Database: State and reference variables
+  const { 
+      userGameState, userCategoryState, getUserState, prepareUserGameState,
+      updateUserGameState, updateUserCategoryState, transactGameData 
+      } = useContext(UserStateContext);
+  const { addGameHx } = useContext(GameHxContext)
+  const { dailyStats, setDailyStats, weeklyStats, setWeeklyStats,
+    userStats, setUserStats, updateTotals, transactStatsData } = useContext(UserStatisticsContext)
+  const [sessionId, setSessionId] = useState("");  
+
+  const initGameStateRef = useRef(true)
+  const gameRef = useRef("sudoku")
+  const categoryRef = useRef("def")
+  const prevGameStateRef = useRef(userGameState)
+  const prevCategoryStateRef = useRef(userCategoryState)
 
   // Add a mount/unmount log.
   useEffect(() => {
@@ -86,6 +105,13 @@ const SudokuGrid = ({ onUpdateStats }) => {
       setConflictCells([]);
       setShowEndModal(false);
       setIsPaused(false);
+      setSessionId(crypto.randomUUID()); // Database: generate sessionId
+
+      // Database: Load initial states
+      if (initGameStateRef.current) {
+        getUserState(gameRef.current, categoryRef.current)
+        getUserState(gameRef.current, "");
+      }
     }
   }, [gameStarted, difficulty, boardsData]);
 
@@ -234,6 +260,63 @@ const SudokuGrid = ({ onUpdateStats }) => {
     }
   };
 
+  // Database: Functions and Effects
+  const batchWrite = async (newUserState, gameData) => {
+    // enable ddb writes
+    if (initGameStateRef.current) {
+      initGameStateRef.current = false;
+    }
+    try {
+      // update react states
+      const isCorrect = newUserState.correct
+      const difficulty = newUserState.difficulty
+      setUserStats(updateTotals(userStats, isCorrect, gameRef.current, difficulty));
+      setDailyStats(updateTotals(dailyStats, isCorrect, gameRef.current, difficulty));
+      setWeeklyStats(updateTotals(weeklyStats, isCorrect, gameRef.current, difficulty));   
+
+      updateUserCategoryState(newUserState);
+      const prepState = prepareUserGameState(newUserState, userGameState, userCategoryState);
+      const primaryPrediction = await invokeModel(prepState, 'primary');
+      const targetPrediction = await invokeModel(prepState, 'target');
+      const finalState = {
+        ...prepState,
+        score: newUserState.score,
+        predicted_difficulty: getDiffString(primaryPrediction),
+        target_difficulty: getDiffString(targetPrediction),
+        user_embedding: {
+        easy_percent: userStats.easy.percent_correct,
+        medium_percent: userStats.medium.percent_correct,
+        hard_percent: userStats.hard.percent_correct,
+        } 
+      };
+      const finalGameData = {
+        ...gameData,
+        score: newUserState.score
+      }
+      updateUserGameState(finalState);
+      addGameHx(finalGameData);
+      setDifficulty(getDiffString(primaryPrediction))
+      return "complete"
+    } catch (error) {
+      console.error("Error with batch write", error)
+    }
+  }
+
+  useEffect(() => {
+    if (
+        prevGameStateRef.current !== userGameState &&
+        prevCategoryStateRef.current !== userCategoryState &&
+        userGameState != null &&
+        userCategoryState != null &&
+        initGameStateRef.current == false
+    ) {
+        transactGameData(gameRef.current, categoryRef.current, userGameState, userCategoryState);
+        transactStatsData(userStats, dailyStats, weeklyStats)
+    }
+    prevGameStateRef.current = userGameState;
+    prevCategoryStateRef.current = userCategoryState;
+  }, [userGameState])  
+
   // Handle number input.
   const handleNumberClick = (num) => {
     if (isPaused) return; // Prevent number inputs when paused.
@@ -261,6 +344,33 @@ const SudokuGrid = ({ onUpdateStats }) => {
       const bonus = 50 * difficultyMultiplier;
       setBonusAward(bonus);
       setScore(prev => prev + bonus);
+
+      // Database: variables for database updates
+      const finalTime = timer * 1000
+      const gameData = {
+        question_id: "placeholder",
+        question_type: gameRef.current,
+        question_category: categoryRef.current,
+        difficulty: difficulty,
+        session_id: sessionId,
+        session_time_ms: 2000, // placeholder before implementing,
+        attempt: 1,
+        user_answer: selectedChoice,
+        is_correct: isCorrect,
+      }
+      const newUserState = {
+        // elapsed_time: Math.min(reaction * 1000, 2147483647),
+        difficulty: difficulty,
+        category: categoryRef.current     
+      };
+      
+      // Database: Update user state and game hx when correct
+      newUserState.correct = true;
+      newUserState.score = score;
+      newUserState.elapsed_time = Math.min(finalTime, 2147483647);
+      gameData.game_time_ms = Math.min(finalTime, 2147483647);
+      batchWrite(newUserState, gameData)
+
       setTimeout(() => {
         setShowEndModal(true);
       }, 500);
