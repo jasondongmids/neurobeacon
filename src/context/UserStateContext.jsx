@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from "react";
 import { dataClient } from "../index";
-import { calculateRewardWeight, calculateReward } from "../functions/Model";
+import { calculateRewardWeight, calculateReward, calculateIsSlow } from "../functions/Model";
 
 const UserStateContext = createContext();
 
@@ -184,9 +184,12 @@ export const UserStateProvider = ({ children }) => {
             ? gameState.reward_cumulative + reward
             : reward
 
+        const isSlow = calculateIsSlow(game_type, elapsed_time)
+
         const prepState = {
             // ...gameState,
             game_type: game_type,
+            prev_is_slow: isSlow,
             prev_is_correct: correct,
             total_questions: totalQuestions,
             total_correct: totalCorrect,

@@ -8,11 +8,11 @@ const difficultyMapping = {
 }
 
 const isSlowThresholds = {
-    math: 1000,
-    memory: 1000,
+    math: 5000, // review
+    memory: 2000,
     reaction: 1000,
-    sudoku: 1000,
-    trivia: 1000
+    sudoku: 100000, // review
+    trivia: 5000, // review
 }
 
 const gameTypeEmbed = {
@@ -27,7 +27,6 @@ const minMaxThresholds = {
     total_questions: {min: 1, max: 1750},
     total_correct: {min: 1, max: 1530},
     average_user_time: {min: 0, max: 45000000},
-
     }
 
 // FUNCTIONS FOR REWARDS
@@ -46,6 +45,15 @@ export function calculateRewardWeight(difficultyStr, isCorrect) {
 
 export function calculateReward(rewardWeight, isCorrect) {
     return rewardWeight * isCorrect
+}
+
+export function calculateIsSlow(gameType, elapsedTime) {
+    console.log("IS SLOW", elapsedTime, isSlowThresholds[gameType], elapsedTime > isSlowThresholds[gameType])
+    if (elapsedTime > isSlowThresholds[gameType] ) {
+        return true
+    } else {
+        return false
+    }
 }
 
 // HELPER FUNCTIONS FOR MODEL
@@ -73,14 +81,14 @@ function applyMinMaxScaling(data, variable) {
 const prepRequest = (data) => {
     console.log("PREP REQUEST DATA", data)
     const modelInput = [
-        Number(0), // placeholder for prev_is_slow
+        Number(data.prev_is_slow),
         Number(data.prev_is_correct),
-        applyMinMaxScaling(data.total_questions, "total_questions"), // placeholder
-        applyMinMaxScaling(data.total_correct, "total_correct"), // placeholder
+        applyMinMaxScaling(data.total_questions, "total_questions"),
+        applyMinMaxScaling(data.total_correct, "total_correct"),
         data.percent_correct,
         data.category.percent_correct,
-        applyMinMaxScaling(data.average_user_time, "average_user_time"), // placeholder
-        data.total_weighted_reward, // placeholder for reward
+        applyMinMaxScaling(data.average_user_time, "average_user_time"),
+        data.total_weighted_reward,
     ]
 
     console.log("MODEL INPUT", modelInput)
