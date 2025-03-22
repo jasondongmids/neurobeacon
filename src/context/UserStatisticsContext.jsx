@@ -240,6 +240,8 @@ export const UserStatisticsProvider = ({children}) => {
         const newStreak = inputData.current_streak + 1;
         const longestStreak = inputData.longest_streak;
 
+        console.log("CHECK STREAK", inputData, newStreak, longestStreak)
+
         return {
             ...inputData,
             yyyymmdd: String(getYearMonthDate(frequency)),

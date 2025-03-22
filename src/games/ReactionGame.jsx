@@ -4,6 +4,7 @@ import UserStateContext from "../context/UserStateContext";
 import UserStatisticsContext from "../context/UserStatisticsContext";
 import GameHxContext from "../context/GameHxContext";
 import { invokeModel, getDiffString } from "../functions/Model";
+import { CfnIPAMScope } from "aws-cdk-lib/aws-ec2";
 // import ModelContext from "../context/ModelContext"
 
 // Difficulty configuration remains the same.
@@ -247,6 +248,11 @@ function handlePointerMove(event) {
       .catch(error => console.error("❌ Failed to load image list", error));
   }, []);
 
+  // UPDATE DIFFICULTY
+    useEffect(() => {
+        console.log("Updated difficulty", difficulty);
+    }, [difficulty]);
+
   // When the current image changes, load it, apply the darkness overlay, and increment the round.
   useEffect(() => {
     if (!currentImage || !gameCanvas.current) return;
@@ -325,10 +331,11 @@ useEffect(() => {
       const prepState = prepareUserGameState(newUserState, userGameState, userCategoryState);
       const primaryPrediction = await invokeModel(prepState, 'primary');
       const targetPrediction = await invokeModel(prepState, 'target');
+      const pPredStr = getDiffString(primaryPrediction)
       const finalState = {
        ...prepState,
        score: newUserState.score,
-       predicted_difficulty: getDiffString(primaryPrediction),
+       predicted_difficulty: pPredStr,
        target_difficulty: getDiffString(targetPrediction),
        user_embedding: {
         easy_percent: userStats.easy.percent_correct,
@@ -342,7 +349,7 @@ useEffect(() => {
       }
       updateUserGameState(finalState);
       addGameHx(finalGameData);
-      setDifficulty(getDiffString(primaryPrediction))
+      setDifficulty(pPredStr)
       return "complete"
     } catch (error) {
       console.error("Error with batch write", error)
