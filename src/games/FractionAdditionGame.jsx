@@ -529,6 +529,7 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
     const newUserState = {
       // elapsed_time: Math.min(reaction * 1000, 2147483647),
       difficulty: difficulty,
+      game_type: gameRef.current,
       category: gameCategory     
     };
   

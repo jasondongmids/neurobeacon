@@ -167,7 +167,7 @@ export const UserStateProvider = ({ children }) => {
 
     // ✅ Prepare GAME# state for model invokation prior updating UserGameState and ddb add
     const prepareUserGameState = (newUserState, gameState, categoryState) => {
-        const { correct, elapsed_time, score, difficulty } = newUserState;
+        const { correct, elapsed_time, score, difficulty, game_type } = newUserState;
         const category = categoryState.category
 
         // const prepState = {...userGameState}
@@ -186,6 +186,7 @@ export const UserStateProvider = ({ children }) => {
 
         const prepState = {
             // ...gameState,
+            game_type: game_type,
             prev_is_correct: correct,
             total_questions: totalQuestions,
             total_correct: totalCorrect,

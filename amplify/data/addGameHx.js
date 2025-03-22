@@ -10,9 +10,8 @@ export function request(ctx) {
     const data = ctx.arguments.data;
 
     const item = {
-        game_type: data.game,
         question_id: data.question_id,
-        question_type: data.question_type,
+        question_type: data.question_type, // same as game_type
         question_category: data.question_category,
         difficulty: data.difficulty,
         game_time_ms: data.game_time_ms,

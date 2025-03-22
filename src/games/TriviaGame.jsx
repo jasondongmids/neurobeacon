@@ -246,6 +246,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
         const newUserState = {
           elapsed_time: Math.min(totalGameTimeMs, 2147483647),
           difficulty: difficulty,
+          game_type: gameRef.current,
           category: gameCategory     
         };
     

@@ -429,6 +429,7 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
     const newUserState = {
       elapsed_time: Math.min(currentAttemptTime * 1000, 2147483647),
       difficulty: difficultyStr,
+      game_type: gameRef.current,
       category: "default"
     };
 

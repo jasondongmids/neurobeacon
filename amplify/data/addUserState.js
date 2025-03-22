@@ -46,7 +46,7 @@ export function request(ctx) {
         difficulty: data.difficulty,
         predicted_difficulty: data.predicted_difficulty,
         target_difficulty: data.target_difficulty,
-        game_type: data.game,
+        game_type: data.game_type,
         category: {
             category: data.category.category,
             total_questions: data.category.total_questions,

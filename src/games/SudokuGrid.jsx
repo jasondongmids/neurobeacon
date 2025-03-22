@@ -357,18 +357,19 @@ const SudokuGrid = ({ onUpdateStats }) => {
         attempt: 1,
         user_answer: selectedChoice,
         is_correct: isCorrect,
+        game_time_ms: Math.min(finalTime, 2147483647),
       }
       const newUserState = {
         // elapsed_time: Math.min(reaction * 1000, 2147483647),
         difficulty: difficulty,
-        category: categoryRef.current     
+        game_type: gameRef.current,
+        category: categoryRef.current,
+        correct: true,
+        score: score,
+        elapsed_time: Math.min(finalTime, 2147483647),   
       };
       
       // Database: Update user state and game hx when correct
-      newUserState.correct = true;
-      newUserState.score = score;
-      newUserState.elapsed_time = Math.min(finalTime, 2147483647);
-      gameData.game_time_ms = Math.min(finalTime, 2147483647);
       batchWrite(newUserState, gameData)
 
       setTimeout(() => {

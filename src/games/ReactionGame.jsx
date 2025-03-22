@@ -342,6 +342,8 @@ useEffect(() => {
         hard_percent: userStats.hard.percent_correct,
        } 
       };
+
+      console.log("FINAL STATE", finalState)
       const finalGameData = {
         ...gameData,
         score: newUserState.score
@@ -427,8 +429,11 @@ function processClick(offsetX, offsetY) {
   const newUserState = {
     elapsed_time: Math.min(reaction * 1000, 2147483647),
     difficulty: difficulty,
+    game_type: gameRef.current,
     category: gameCategory     
   };
+
+  console.log("newUserState", newUserState)
 
   if (isCorrectClick) {
     setReactionTimes(prev => [...prev, reaction]);
