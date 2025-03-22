@@ -328,8 +328,8 @@ useEffect(() => {
       const finalState = {
        ...prepState,
        score: newUserState.score,
-       predicted_difficulty: primaryPrediction,
-       target_difficulty: targetPrediction,
+       predicted_difficulty: getDiffString(primaryPrediction),
+       target_difficulty: getDiffString(targetPrediction),
        user_embedding: {
         easy_percent: userStats.easy.percent_correct,
         medium_percent: userStats.medium.percent_correct,

@@ -1,7 +1,8 @@
 import { useRef, useEffect, useState, forwardRef, useImperativeHandle, useContext } from "react";
 import UserStateContext from "../context/UserStateContext";
 import GameHxContext from "../context/GameHxContext";
-import { invokeModel } from "../functions/Model";
+import UserStatisticsContext from "../context/UserStatisticsContext";
+import { invokeModel, getDiffString } from "../functions/Model";
 
 // ─────────────────────────────────────────────────────────────────────────────
 //                           HELPER FUNCTIONS
@@ -147,6 +148,8 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
       updateUserGameState, updateUserCategoryState, transactGameData 
       } = useContext(UserStateContext);
   const { addGameHx } = useContext(GameHxContext)
+  const { dailyStats, setDailyStats, weeklyStats, setWeeklyStats,
+    userStats, setUserStats, updateTotals, transactStatsData } = useContext(UserStatisticsContext)
   const [sessionId, setSessionId] = useState("");  
 
   const initGameStateRef = useRef(true)
@@ -197,6 +200,13 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
       initGameStateRef.current = false;
     }
     try {
+      // update react states
+      const isCorrect = newUserState.correct
+      const difficulty = newUserState.difficulty
+      setUserStats(updateTotals(userStats, isCorrect, gameRef.current, difficulty));
+      setDailyStats(updateTotals(dailyStats, isCorrect, gameRef.current, difficulty));
+      setWeeklyStats(updateTotals(weeklyStats, isCorrect, gameRef.current, difficulty));   
+
       updateUserCategoryState(newUserState);
       const prepState = prepareUserGameState(newUserState, userGameState, userCategoryState);
       const primaryPrediction = await invokeModel(prepState, 'primary');
@@ -204,8 +214,13 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
       const finalState = {
        ...prepState,
        score: newUserState.score,
-       predicted_difficulty: primaryPrediction,
-       target_difficulty: targetPrediction 
+       predicted_difficulty: getDiffString(primaryPrediction),
+       target_difficulty: getDiffString(targetPrediction),
+       user_embedding: {
+        easy_percent: userStats.easy.percent_correct,
+        medium_percent: userStats.medium.percent_correct,
+        hard_percent: userStats.hard.percent_correct,
+       } 
       };
       const finalGameData = {
         ...gameData,
@@ -213,9 +228,10 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
       }
       updateUserGameState(finalState);
       addGameHx(finalGameData);
+      setDifficulty(getDiffString(primaryPrediction))
       return "complete"
     } catch (error) {
-      console.error("Error with batch write")
+      console.error("Error with batch write", error)
     }
   }
 
@@ -227,7 +243,8 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
         userCategoryState != null &&
         initGameStateRef.current == false
     ) {
-        transactGameData(gameRef.current, currentProblem.scenario_type, userGameState, userCategoryState)
+        transactGameData(gameRef.current, currentProblem.scenario_type, userGameState, userCategoryState);
+        transactStatsData(userStats, dailyStats, weeklyStats)
     }
     prevGameStateRef.current = userGameState;
     prevCategoryStateRef.current = userCategoryState;
@@ -255,6 +272,7 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
     setTimeout(() => {
       console.log("🆕 Generating first problem...");
       generateNewProblem(loadedData);
+      // generateNewProblem(loadedData.filter(problem => problem.difficulty === difficulty))
     }, 200);
   };
 
@@ -282,6 +300,7 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
     if (initGameStateRef.current) {
       getUserState(gameRef.current, randomProblem.scenario_type)
       getUserState(gameRef.current, "");
+      setDifficulty(userGameState.difficulty)
     }
     if (userCategoryState.category.category != randomProblem.scenario_type) {
       getUserState(gameRef.current, randomProblem.scenario_type)
