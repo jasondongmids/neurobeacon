@@ -110,15 +110,16 @@ const IngredientItem = ({ name }) => {
       <img
         src={`/memory-images/${name}.png`}
         alt={name}
-        width="150"
-        height="150"
         onLoad={() => setLoaded(true)}
         style={{
           display: loaded ? "block" : "none",
+          width: "100%",          // make it fill the container
+          maxWidth: "150px",       // but never exceed 150px
+          height: "auto",
           objectFit: "cover",
         }}
-
       />
+
       <span style={{ marginTop: "4px" }}>{name}</span>
     </div>
   );
