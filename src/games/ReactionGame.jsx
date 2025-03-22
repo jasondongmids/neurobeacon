@@ -1,8 +1,9 @@
 import React, { useRef, useEffect, useContext, useState } from "react";
 // import React, { useRef, useEffect, useState } from "react";
 import UserStateContext from "../context/UserStateContext";
+import UserStatisticsContext from "../context/UserStatisticsContext";
 import GameHxContext from "../context/GameHxContext";
-import { invokeModel } from "../functions/Model";
+import { invokeModel, getDiffString } from "../functions/Model";
 // import ModelContext from "../context/ModelContext"
 
 // Difficulty configuration remains the same.
@@ -70,6 +71,8 @@ const ReactionGame = ({ onUpdateStats }) => {
       updateUserGameState, updateUserCategoryState, transactGameData 
       } = useContext(UserStateContext);
   const { addGameHx } = useContext(GameHxContext)
+  const { dailyStats, setDailyStats, weeklyStats, setWeeklyStats,
+    userStats, setUserStats, updateTotals, transactStatsData } = useContext(UserStatisticsContext)
   const [sessionId, setSessionId] = useState("");  
 
   const initGameStateRef = useRef(true)
@@ -203,12 +206,9 @@ function handlePointerMove(event) {
       usedImagesRef.current = [];
     }
 
-    // Model: Invoke Model
-    // const nextDifficulty = invokeModel(userGameState, "primary")
-    // console.log("Next Difficulty (placeholder):", nextDifficulty)
-
     const availableImages = imageFiles.filter(img => !usedImagesRef.current.includes(img));
     const newImage = availableImages[Math.floor(Math.random() * availableImages.length)];
+    console.log("NEW IMAGE", newImage)
 
     usedImagesRef.current.push(newImage);
 
@@ -315,6 +315,13 @@ useEffect(() => {
       initGameStateRef.current = false;
     }
     try {
+      // update react states
+      const isCorrect = newUserState.correct
+      const difficulty = newUserState.difficulty
+      setUserStats(updateTotals(userStats, isCorrect, gameRef.current, difficulty));
+      setDailyStats(updateTotals(dailyStats, isCorrect, gameRef.current, difficulty));
+      setWeeklyStats(updateTotals(weeklyStats, isCorrect, gameRef.current, difficulty))     
+
       updateUserCategoryState(newUserState);
       const prepState = prepareUserGameState(newUserState, userGameState, userCategoryState);
       const primaryPrediction = await invokeModel(prepState, 'primary');
@@ -331,6 +338,7 @@ useEffect(() => {
       }
       updateUserGameState(finalState);
       addGameHx(finalGameData);
+      setDifficulty(getDiffString(primaryPrediction))
       return "complete"
     } catch (error) {
       console.error("Error with batch write")
@@ -345,7 +353,9 @@ useEffect(() => {
           userCategoryState != null &&
           initGameStateRef.current == false
       ) {
+          console.log("dailyStats", dailyStats)
           transactGameData(gameRef.current, usedImagesRef.current.at(-1).replace(/\..*$/, ""), userGameState, userCategoryState)
+          transactStatsData(userStats, dailyStats, weeklyStats)
       }
       prevGameStateRef.current = userGameState;
       prevCategoryStateRef.current = userCategoryState;
@@ -391,13 +401,13 @@ function processClick(offsetX, offsetY) {
   const reaction = (Date.now() - startTime) / 1000;
 
   // Database: variables for database updates remain unchanged
-  const difficultyInt = difficulty === "easy" ? 0 : difficulty === "medium" ? 1 : 2;
+  // const difficultyInt = difficulty === "easy" ? 0 : difficulty === "medium" ? 1 : 2;
   const gameCategory = usedImagesRef.current.at(-1).replace(/\..*$/, "");
   const gameData = {
     question_id: gameCategory,
     question_type: gameRef.current,
     question_category: gameCategory,
-    difficulty: difficultyInt,
+    difficulty: difficulty,
     game_time_ms: Math.min(reaction * 1000, 2147483647),
     session_id: sessionId,
     session_time_ms: 2000, // placeholder before implementing,
@@ -407,7 +417,7 @@ function processClick(offsetX, offsetY) {
   };
   const newUserState = {
     elapsed_time: Math.min(reaction * 1000, 2147483647),
-    difficulty: difficultyInt,
+    difficulty: difficulty,
     category: gameCategory     
   };
 
@@ -555,5 +565,3 @@ function processClick(offsetX, offsetY) {
 };
 
 export default ReactionGame;
-
-
