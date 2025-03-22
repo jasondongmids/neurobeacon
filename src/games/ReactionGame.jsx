@@ -318,6 +318,7 @@ useEffect(() => {
       // update react states
       const isCorrect = newUserState.correct
       const difficulty = newUserState.difficulty
+      console.log("USER STATS", userStats)
       setUserStats(updateTotals(userStats, isCorrect, gameRef.current, difficulty));
       setDailyStats(updateTotals(dailyStats, isCorrect, gameRef.current, difficulty));
       setWeeklyStats(updateTotals(weeklyStats, isCorrect, gameRef.current, difficulty))     
@@ -341,7 +342,7 @@ useEffect(() => {
       setDifficulty(getDiffString(primaryPrediction))
       return "complete"
     } catch (error) {
-      console.error("Error with batch write")
+      console.error("Error with batch write", error)
     }
   }
 

@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
 import { dataClient } from "..";
+import { getDiffString } from "../functions/Model"
 
 // User statistics are loaded/updated during these actions:
 // 1) User login - loads user/daily/weekly stats; if no stats, writes stats
@@ -31,8 +32,67 @@ export const UserStatisticsProvider = ({children}) => {
     useEffect(() => {
         console.log("Updated weekly statistics:", weeklyStats);
     }, [weeklyStats]); 
+    
+    // Write to database before tab closes or refreshed 
+    // Beyond MVP; need to wrap graphQL query into JSON message instead of using function
+    // useEffect(() => {
+    //     const handleBeforeUnload = (event) => {
+    //         event.preventDefault();
 
-    // Initial Stats
+    //         navigator.sendBeacon(updateStats("daily", dailyStats))
+    //         navigator.sendBeacon(updateStats("weekly", weeklyStats))
+    //         navigator.sendBeacon(updateStats("", userStats))
+    //     };
+
+    //     window.addEventListener('beforeunload', handleBeforeUnload);
+
+    //     return () => {
+    //         window.removeEventListener('beforeunload', handleBeforeUnload);
+    //     };
+    // }, []);
+
+    // FUNCTIONS
+    const formatDate = (unixTimestamp) => {
+        const date = new Date(unixTimestamp)
+        const yyyy = date.getFullYear();
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const dd = String(date.getDate()).padStart(2, '0');
+        return `${yyyy}${mm}${dd}`;
+      }
+    
+    const getStartOfWeekUnix = (unix = Date.now()) => {
+        const today = new Date(unix);
+        const dayOfWeek = today.getDay();
+        const startOfWeekUnix = today - (dayOfWeek * 86400000)
+    
+        return startOfWeekUnix
+    }
+
+    const getYearMonthDate = (frequency) => {
+        const yyyymmdd = frequency === 'daily' ? formatDate(Date.now())
+                : frequency === 'weekly' ? formatDate(getStartOfWeekUnix())
+                : formatDate(Date.now())
+
+        return yyyymmdd
+    }
+
+    function dateDiffInDays(unix1, unix2) {
+        const diffTime = Math.abs(unix2 - unix1); // Get absolute difference in milliseconds
+        return Math.floor(diffTime / (1000 * 60 * 60 * 24)); // Convert ms to days
+    }
+
+    const parseNestedJson = (data) => {
+        return Object.entries(data).reduce((acc, [key, value]) => {
+          try {
+            acc[key] = JSON.parse(value);
+          } catch {
+            acc[key] = value;
+          }
+          return acc;
+        }, {});
+      };
+
+    // INITIAL SCHEMAS
     const schema = {
         yyyymmdd: '',
         // total_sessions: 0,
@@ -96,81 +156,24 @@ export const UserStatisticsProvider = ({children}) => {
 
     const userSchema = {
         ...schema,
+        yyyymmdd: getYearMonthDate(""),
         current_streak: 0,
-        longest_streak: 0
+        longest_streak: 0,
     }
 
     const dailySchema = {
         ...schema,
+        yyyymmdd: getYearMonthDate("daily"),
         current_streak: 1,
         longest_streak: 1,        
     }
 
     const weeklySchema = {
         ...schema,
+        yyyymmdd: getYearMonthDate("weekly"),
         current_streak: 1,
         longest_streak: 1,           
     }
-    
-    // Write to database before tab closes or refreshed 
-    // Beyond MVP; need to wrap graphQL query into JSON message instead of using function
-    // useEffect(() => {
-    //     const handleBeforeUnload = (event) => {
-    //         event.preventDefault();
-
-    //         navigator.sendBeacon(updateStats("daily", dailyStats))
-    //         navigator.sendBeacon(updateStats("weekly", weeklyStats))
-    //         navigator.sendBeacon(updateStats("", userStats))
-    //     };
-
-    //     window.addEventListener('beforeunload', handleBeforeUnload);
-
-    //     return () => {
-    //         window.removeEventListener('beforeunload', handleBeforeUnload);
-    //     };
-    // }, []);
-
-    // ✅ Date functions
-    const formatDate = (unixTimestamp) => {
-        const date = new Date(unixTimestamp)
-        const yyyy = date.getFullYear();
-        const mm = String(date.getMonth() + 1).padStart(2, '0');
-        const dd = String(date.getDate()).padStart(2, '0');
-        return `${yyyy}${mm}${dd}`;
-      }
-    
-    const getStartOfWeekUnix = (unix = Date.now()) => {
-        const today = new Date(unix);
-        const dayOfWeek = today.getDay();
-        const startOfWeekUnix = today - (dayOfWeek * 86400000)
-    
-        return startOfWeekUnix
-    }
-
-    const getYearMonthDate = (frequency) => {
-        const yyyymmdd = frequency === 'daily' ? formatDate(Date.now())
-                : frequency === 'weekly' ? formatDate(getStartOfWeekUnix())
-                : formatDate(Date.now())
-
-        return yyyymmdd
-    }
-
-    function dateDiffInDays(unix1, unix2) {
-        const diffTime = Math.abs(unix2 - unix1); // Get absolute difference in milliseconds
-        return Math.floor(diffTime / (1000 * 60 * 60 * 24)); // Convert ms to days
-    }
-
-    // parse JSON response
-    const parseNestedJson = (data) => {
-        return Object.entries(data).reduce((acc, [key, value]) => {
-          try {
-            acc[key] = JSON.parse(value);
-          } catch {
-            acc[key] = value;
-          }
-          return acc;
-        }, {});
-      };
 
     // ✅ Update React state
     const updateStatsState = (frequency, gameType, difficulty, newStatistics ) => {
@@ -231,14 +234,20 @@ export const UserStatisticsProvider = ({children}) => {
 
     // Update totals after game is answered
     const updateTotals = (inputData, isCorrect, game, difficulty) => {
+        console.log("INPUT DATA", inputData)
         const totalData = incrementCorrect(inputData.total, isCorrect);
         const gameData = incrementCorrect(inputData[game], isCorrect);
-        const difficultyData = incrementCorrect(inputData[difficulty], isCorrect);
+        const diffStr = (typeof(difficulty) === "number") 
+        ? getDiffString(difficulty) 
+        : difficulty
+
+        console.log("DIFFICULTY", diffStr, inputData[diffStr])
+        const difficultyData = incrementCorrect(inputData[diffStr], isCorrect);
         return {
             ...inputData,
             total: totalData,
             [game]: gameData,
-            [difficulty]: difficultyData
+            [diffStr]: difficultyData
         };
     }
 
@@ -254,7 +263,7 @@ export const UserStatisticsProvider = ({children}) => {
             total_questions: totalQuestions,
             total_correct: totalCorrect,
             percent_correct: parseFloat((totalCorrect / totalQuestions).toFixed(3)),
-            current_questions: currentQuestions,
+            current_total: currentQuestions,
             current_correct: currentCorrect,
             current_percent: parseFloat((currentCorrect / currentQuestions).toFixed(3))
         }
@@ -293,6 +302,7 @@ export const UserStatisticsProvider = ({children}) => {
             setUserStats(stats[0])
         } else {
             addStats("", JSON.stringify(userSchema))
+            setUserStats(userSchema)
         };
     
         if (daily) {
@@ -309,6 +319,7 @@ export const UserStatisticsProvider = ({children}) => {
             }
         } else {
             addStats("daily", JSON.stringify(dailySchema))
+            setDailyStats(dailySchema)
         }
         if (weekly) {
             const unix1 = getStartOfWeekUnix(weekly[0].updated_at);
@@ -324,6 +335,7 @@ export const UserStatisticsProvider = ({children}) => {
             }
         } else {
             addStats("weekly", JSON.stringify(weeklySchema))
+            setWeeklyStats(weeklySchema)
         }; 
     }
 
