@@ -373,32 +373,45 @@ useEffect(() => {
   }, [userGameState])
 
   // ────────────────────────────────────────────────────────────────
-// Step 2a: Pointer Down Handler
 function handlePointerDown(event) {
   // Record the starting position of the pointer
   setPointerDownPos({ x: event.clientX, y: event.clientY });
 }
 
-// Step 2b: Pointer Up Handler
-function handlePointerUp(event) {
-  if (!pointerDownPos) return; // Safety check
-
-  // Calculate the distance the pointer moved
+function handlePointerMove(event) {
+  if (!pointerDownPos) return;
+  
   const dx = event.clientX - pointerDownPos.x;
   const dy = event.clientY - pointerDownPos.y;
   const distance = Math.sqrt(dx * dx + dy * dy);
-  const threshold = 10; // threshold in pixels
+  
+  const scrollThreshold = 15; // pixels—adjust if necessary
+  if (distance >= scrollThreshold) {
+    // Cancel click if movement exceeds threshold (likely a scroll)
+    setPointerDownPos(null);
+  }
+}
 
-  // If movement is minimal, treat this as a tap
-  if (distance < threshold) {
+function handlePointerUp(event) {
+  if (!pointerDownPos) return; // Click was cancelled by movement (scroll)
+
+  const dx = event.clientX - pointerDownPos.x;
+  const dy = event.clientY - pointerDownPos.y;
+  const distance = Math.sqrt(dx * dx + dy * dy);
+
+  const clickThreshold = 15; // pixels—same as scrollThreshold above
+
+  if (distance < clickThreshold) {
     const rect = gameCanvas.current.getBoundingClientRect();
     const offsetX = event.clientX - rect.left;
     const offsetY = event.clientY - rect.top;
     processClick(offsetX, offsetY);
   }
-  // Clear the pointer down position
+
+  // Always reset position afterward
   setPointerDownPos(null);
 }
+
 
 // Step 3: Refactor Click Processing
 function processClick(offsetX, offsetY) {
