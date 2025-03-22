@@ -47,7 +47,7 @@ const DashboardPage = () => {
     <div className="dashboard-page">
       <Header />
       <NavBar />
-      <div className="betaMessage"><p><strong>Thank you for joining our Beta Test. Current functionality is not final.<br />Please do not use phones for testing. All feedback welcome!<br />When you are done playing, please fill out our user survey to help us make NeuroBeacon even better!<br /><a href="https://docs.google.com/forms/d/1v-kiT9EV2i8t46WY0D_ZecNFgJCokyxXDVir5CrmbAI/viewform?edit_requested=true"target="_blank"
+      <div className="betaMessage"><p><strong>Thank you for joining our Beta Test. Current functionality is not final.<br />Mobile development is still ongoing and there may be some bugs.. All feedback welcome!<br />When you are done playing, please fill out our user survey to help us make NeuroBeacon even better!<br /><a href="https://docs.google.com/forms/d/1v-kiT9EV2i8t46WY0D_ZecNFgJCokyxXDVir5CrmbAI/viewform?edit_requested=true"target="_blank"
         rel="noopener noreferrer">Find the Survey Here</a></strong></p></div>
       <div className="dashboard-container">
         {/* ✅ Profile Section */}
