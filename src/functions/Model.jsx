@@ -12,7 +12,7 @@ const isSlowThresholds = {
     memory: 2000,
     reaction: 1000,
     sudoku: 100000, // review
-    trivia: 5000, // review
+    trivia: 10000, // review
 }
 
 const gameTypeEmbed = {
