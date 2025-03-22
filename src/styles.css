@@ -1177,4 +1177,7 @@ button {
 .fraction-game span {
   font-size: 20px;
 }
+select {
+    font-size: 20px;
+}
 }
