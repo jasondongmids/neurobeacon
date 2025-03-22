@@ -14,6 +14,11 @@ const schema = a.schema({
       total_elapsed_time: a.integer(),
       average_user_time: a.float(),
       score: a.integer(),
+      reward_weight: a.float(),
+      reward: a.float(),
+      reward_weight_cumulative: a.float(),
+      reward_cumulative: a.float(),
+      total_weighted_reward: a.float(),
       difficulty: a.string(), // difficulty of previous prediction / current question
       predicted_difficulty: a.string(), // difficulty of next question (primary model)
       target_difficulty: a.string(), // target difficulty of current question (target model)
