@@ -29,6 +29,24 @@ const minMaxThresholds = {
     average_user_time: {min: 0, max: 45000000}
     }
 
+// FUNCTIONS FOR REWARDS
+export function calculateRewardWeight(difficultyStr, isCorrect) {
+    if (isCorrect === true) {
+        return difficultyStr === "hard" ? 3
+            : difficultyStr === "medium" ? 2
+            : 1;
+    }
+    if (isCorrect === false) {
+        return difficultyStr === "hard" ? 1
+            : difficultyStr === "medium" ? 2
+            : 3;
+    }
+}
+
+export function calculateReward(rewardWeight, isCorrect) {
+    return rewardWeight * isCorrect
+}
+
 // HELPER FUNCTIONS FOR MODEL
 export function getDiffString(integer) {
     const reverseDiffMap = Object.fromEntries(Object.entries(difficultyMapping).map(([k, v]) => [v, k]))

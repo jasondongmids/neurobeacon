@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from "react";
 import { dataClient } from "../index";
+import { calculateRewardWeight, calculateReward } from "../functions/Model";
 
 const UserStateContext = createContext();
 
@@ -171,6 +172,15 @@ export const UserStateProvider = ({ children }) => {
         const totalCorrect = correct ? gameState.total_correct + 1 : gameState.total_correct;
         const totalElapsedTime = gameState.total_elapsed_time + elapsed_time;
 
+        const rewardWeight = calculateRewardWeight(difficulty, correct);
+        const reward = calculateReward(rewardWeight, correct);
+        const rewardWeightCumulative = (gameState.reward_weight_cumulative) 
+            ? gameState.reward_weight_cumulative + rewardWeight 
+            : rewardWeight
+        const rewardCumulative = (gameState.reward_cumulative) 
+            ? gameState.reward_cumulative + reward
+            : reward
+
         const prepState = {
             // ...gameState,
             prev_is_correct: correct,
@@ -186,9 +196,16 @@ export const UserStateProvider = ({ children }) => {
             // Always overwritten
             score: score,
             difficulty: difficulty,
-            category: category
+            category: category,
+            reward_weight: rewardWeight,
+            reward: reward,
+            reward_weight_cumulative: rewardWeightCumulative,
+            reward_cumulative: rewardCumulative,
+            total_weighted_reward: rewardWeightCumulative > 0
+                ? parseFloat((rewardCumulative / rewardWeightCumulative).toFixed(3))
+                : 0,
         }
-
+        console.log("PREP STATE", prepState)
         return prepState
     }
 
