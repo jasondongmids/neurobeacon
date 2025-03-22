@@ -86,7 +86,7 @@ const handleVerifyToken = async () => {
       {/* Beta Test Message with Email Link */}
       <div className="elevator-pitch-link">
         <h3>
-          Thank you for joining us for our Beta Test!<br /> Mobile development is still ongoing, so please test only on tablets or computers.
+          Thank you for joining us for our Beta Test!<br /> Mobile development is still ongoing, and there may still be some bugs.
           <br />
           Learn more about us by clicking the link below or enter an email and select a password to jump right in.
           <br />
