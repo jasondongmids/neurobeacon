@@ -26,7 +26,8 @@ const gameTypeEmbed = {
 const minMaxThresholds = {
     total_questions: {min: 1, max: 1750},
     total_correct: {min: 1, max: 1530},
-    average_user_time: {min: 0, max: 45000000}
+    average_user_time: {min: 0, max: 45000000},
+
     }
 
 // FUNCTIONS FOR REWARDS
@@ -70,6 +71,7 @@ function applyMinMaxScaling(data, variable) {
 
 // INVOKE MODEL
 const prepRequest = (data) => {
+    console.log("PREP REQUEST DATA", data)
     const modelInput = [
         Number(0), // placeholder for prev_is_slow
         Number(data.prev_is_correct),
@@ -78,7 +80,7 @@ const prepRequest = (data) => {
         data.percent_correct,
         data.category.percent_correct,
         applyMinMaxScaling(data.average_user_time, "average_user_time"), // placeholder
-        1 // placeholder for reward
+        data.total_weighted_reward, // placeholder for reward
     ]
 
     console.log("MODEL INPUT", modelInput)

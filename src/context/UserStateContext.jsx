@@ -135,6 +135,9 @@ export const UserStateProvider = ({ children }) => {
                     total_elapsed_time: data[0].total_elapsed_time || 0,
                     average_user_time: data[0].average_user_time || 0,
                     predicted_difficulty: data[0].predicted_difficulty || 1,
+                    reward_weight_cumulative: data[0].reward_weight_cumulative || 0,
+                    reward_cumulative: data[0].reward_cumulative || 0
+
                 });
             }
         } catch (error) {
@@ -205,7 +208,6 @@ export const UserStateProvider = ({ children }) => {
                 ? parseFloat((rewardCumulative / rewardWeightCumulative).toFixed(3))
                 : 0,
         }
-        console.log("PREP STATE", prepState)
         return prepState
     }
 
@@ -242,6 +244,7 @@ export const UserStateProvider = ({ children }) => {
     // };
 
     const updateUserGameState = (newUserState) => {
+        console.log("NEW USER STATE", newUserState)
         setUserGameState({...newUserState});
     }
 

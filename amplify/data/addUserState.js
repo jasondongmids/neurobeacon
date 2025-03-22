@@ -56,23 +56,6 @@ export function request(ctx) {
             medium_percent: data.user_embedding.medium_percent,
             hard_percent: data.user_embedding.hard_percent,
         },
-        // user_embedding: {
-        //     easy: {
-        //         total_questions: 0,
-        //         total_correct: 0,
-        //         percent_correct: 0.0
-        //     },
-        //     medium: {
-        //         total_questions: 0,
-        //         total_correct: 0,
-        //         percent_correct: 0
-        //     },
-        //     hard: {
-        //         total_questions: 0,
-        //         total_correct: 0,
-        //         percent_correct: 0.0
-        //     }
-        // }
         created_at: sk,
         updated_at: sk
         };
