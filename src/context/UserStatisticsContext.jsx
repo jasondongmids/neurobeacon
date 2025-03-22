@@ -24,14 +24,13 @@ export const UserStatisticsProvider = ({children}) => {
         console.log("Updated user statistics:", userStats);
     }, [userStats]);
 
-    // unsure if these two are needed
-    // useEffect(() => {
-    //     console.log("Updated daily statistics:", dailyStats);
-    // }, [dailyStats]); 
+    useEffect(() => {
+        console.log("Updated daily statistics:", dailyStats);
+    }, [dailyStats]); 
 
-    // useEffect(() => {
-    //     console.log("Updated weekly statistics:", weeklyStats);
-    // }, [weeklyStats]); 
+    useEffect(() => {
+        console.log("Updated weekly statistics:", weeklyStats);
+    }, [weeklyStats]); 
 
     // Initial Stats
     const schema = {
@@ -140,17 +139,17 @@ export const UserStatisticsProvider = ({children}) => {
         return `${yyyy}${mm}${dd}`;
       }
     
-    const getStartOfWeek = () => {
-        const today = new Date(Date.now());
+    const getStartOfWeekUnix = (unix = Date.now()) => {
+        const today = new Date(unix);
         const dayOfWeek = today.getDay();
         const startOfWeekUnix = today - (dayOfWeek * 86400000)
     
-        return formatDate(startOfWeekUnix)
+        return startOfWeekUnix
     }
 
     const getYearMonthDate = (frequency) => {
         const yyyymmdd = frequency === 'daily' ? formatDate(Date.now())
-                : frequency === 'weekly' ? getStartOfWeek()
+                : frequency === 'weekly' ? formatDate(getStartOfWeekUnix())
                 : formatDate(Date.now())
 
         return yyyymmdd
@@ -244,6 +243,7 @@ export const UserStatisticsProvider = ({children}) => {
     }
 
     const incrementCorrect = (inputData, isCorrect) => {
+        console.log("INCREMENT CORRECT DATA", inputData)
         const totalQuestions = inputData.total_questions + 1;
         const totalCorrect = (isCorrect) ? inputData.total_correct + 1 : inputData.total_correct;
         const currentQuestions = inputData.current_questions + 1;
@@ -298,27 +298,28 @@ export const UserStatisticsProvider = ({children}) => {
         if (daily) {
             const unix1 = daily[0].updated_at;
             const unix2 = Math.floor(Date.now() / 1000)
-            if (dateDiffInDays(unix1, unix2) === 1) { // need to redo logic
+            if (dateDiffInDays(unix1, unix2) === 1) {
                 const newStats = updateStreak("daily", daily[0])
                 setDailyStats(newStats)
+            } else if (dateDiffInDays(unix1, unix2) === 0){
+                setDailyStats(daily[0])
             } else {
                 const newStreak = resetTotals(daily[0])
-                // addStats("daily", JSON.stringify(newStreak)) 
                 setDailyStats(newStreak)
             }
         } else {
-          addStats("daily", JSON.stringify(dailySchema))
-        }; 
-    
+            addStats("daily", JSON.stringify(dailySchema))
+        }
         if (weekly) {
-            const unix1 = weekly[0].updated_at;
-            const unix2 = Math.floor(Date.now() / 1000)
-            if (dateDiffInDays(unix1, unix2) <= 7) { // need to redo logic
+            const unix1 = getStartOfWeekUnix(weekly[0].updated_at);
+            const unix2 = getStartOfWeekUnix(Math.floor(Date.now() / 1000));
+            if (dateDiffInDays(unix1, unix2) === 7) { // need to redo logic
                 const newStats = updateStreak("weekly", weekly[0])
                 setWeeklyStats(newStats)
+            } else if (dateDiffInDays(unix1, unix2) === 7) {
+                setWeeklyStats(weekly[0])
             } else {
                 const newStreak = resetTotals(weekly[0])
-                // addStats("weekly", JSON.stringify(newStreak)) 
                 setWeeklyStats(newStreak)
             }
         } else {
