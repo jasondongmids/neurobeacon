@@ -127,22 +127,22 @@ const ReactionGame = ({ onUpdateStats }) => {
 function generateRandomBoxes(count) {
   const boxWidth = 50;
   const boxHeight = 50;
-  // Set margins to 10% of the canvas size but ensure they don't push the box off the canvas.
-  const marginX = Math.min(canvasWidth * 0.1, (canvasWidth - boxWidth) / 2);
-  const marginY = Math.min(canvasHeight * 0.1, (canvasHeight - boxHeight) / 2);
-  // Determine the valid range for x and y
-  const minX = marginX;
-  const maxX = canvasWidth - boxWidth - marginX;
-  const minY = marginY;
-  const maxY = canvasHeight - boxHeight - marginY;
-  
+
+  // Define margins relative to canvas size, ensuring boxes stay fully within canvas bounds
+  const margin = 10; // fixed margin in pixels, small enough for mobile screens
+  const maxX = canvasWidth - boxWidth - margin;
+  const maxY = canvasHeight - boxHeight - margin;
+  const minX = margin;
+  const minY = margin;
+
   return Array.from({ length: count }, () => ({
-    x: Math.random() * (maxX - minX) + minX,
-    y: Math.random() * (maxY - minY) + minY,
+    x: Math.floor(Math.random() * (maxX - minX + 1)) + minX,
+    y: Math.floor(Math.random() * (maxY - minY + 1)) + minY,
     width: boxWidth,
     height: boxHeight,
   }));
 }
+
 
 function handlePointerMove(event) {
   if (!pointerDownPos) return;
