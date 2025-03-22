@@ -4,7 +4,11 @@ import { useParams } from "react-router-dom";
 import "../styles.css";
 
 const Panel = ({ title, position, stats }) => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(() => {
+  // If the window is defined and its width is greater than 600px, load open; otherwise closed.
+  return typeof window !== "undefined" ? window.innerWidth > 600 : true;
+});
+
   const { gameType } = useParams();
 
   const togglePanel = () => {
