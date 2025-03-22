@@ -68,6 +68,8 @@ const schema = a.schema({
     math: a.json(),
     visual: a.json(),
     reaction: a.json(),
+    memory: a.json(),
+    trivia: a.json(),
     easy: a.json(),
     medium: a.json(),
     hard: a.json(),

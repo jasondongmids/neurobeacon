@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import UserStateContext from "../context/UserStateContext";
 import GameHxContext from "../context/GameHxContext";
+import UserStatisticsContext from "../context/UserStatisticsContext";
 import { invokeModel, getDiffString } from "../functions/Model";
 
 const possibleIngredients = [
@@ -159,7 +160,7 @@ const IngredientGrid = ({ ingredients }) => {
 
 const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
   const [maxRounds] = useState(10);
-  const [difficulty] = useState(1); // 0: easy, 1: medium, 2: hard
+  const [difficulty, setDifficulty] = useState(1); // 0: easy, 1: medium, 2: hard
   const [round, setRound] = useState(1);
   const [score, setScore] = useState(0);
   const [scoreModifier, setScoreModifier] = useState(30);
@@ -200,11 +201,13 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
       updateUserGameState, updateUserCategoryState, transactGameData 
       } = useContext(UserStateContext);
     const { addGameHx } = useContext(GameHxContext)
+    const { dailyStats, setDailyStats, weeklyStats, setWeeklyStats,
+      userStats, setUserStats, updateTotals, transactStatsData } = useContext(UserStatisticsContext)
     // const [gameStartTime, setGameStartTime] = useState(0)
     const [sessionId, setSessionId] = useState(crypto.randomUUID()); // set immediately
 
     const initGameStateRef = useRef(true)
-    const gameRef = useRef("trivia")
+    const gameRef = useRef("memory")
     const prevGameStateRef = useRef(userGameState)
     const prevCategoryStateRef = useRef(userCategoryState)
 
@@ -215,6 +218,13 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
       initGameStateRef.current = false;
     }
     try {
+            // update react states
+      const isCorrect = newUserState.correct
+      const difficulty = newUserState.difficulty
+      setUserStats(updateTotals(userStats, isCorrect, gameRef.current, difficulty));
+      setDailyStats(updateTotals(dailyStats, isCorrect, gameRef.current, difficulty));
+      setWeeklyStats(updateTotals(weeklyStats, isCorrect, gameRef.current, difficulty));   
+
       updateUserCategoryState(newUserState);
       const prepState = prepareUserGameState(newUserState, userGameState, userCategoryState);
       const primaryPrediction = await invokeModel(prepState, 'primary');
@@ -222,8 +232,13 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
       const finalState = {
       ...prepState,
       score: newUserState.score,
-      predicted_difficulty: primaryPrediction,
-      target_difficulty: targetPrediction 
+      predicted_difficulty: getDiffString(primaryPrediction),
+      target_difficulty: getDiffString(targetPrediction),
+      user_embedding: {
+        easy_percent: userStats.easy.percent_correct,
+        medium_percent: userStats.medium.percent_correct,
+        hard_percent: userStats.hard.percent_correct,
+       } 
       };
       const finalGameData = {
         ...gameData,
@@ -232,6 +247,7 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
       }
       updateUserGameState(finalState);
       addGameHx(finalGameData);
+      setDifficulty(primaryPrediction)
       return "complete"
     } catch (error) {
       console.error("Error with batch write", error)

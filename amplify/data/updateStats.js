@@ -53,6 +53,22 @@ export function request(ctx) {
                 current_correct: data.reaction.current_correct,
                 current_percent: data.reaction.current_percent,
             },
+            memory: {
+                total_questions: data.memory.total_questions,
+                total_correct: data.memory.total_correct,
+                percent_correct: data.memory.percent_correct,
+                current_total: data.memory.current_total,
+                current_correct: data.memory.current_correct,
+                current_percent: data.memory.current_percent,
+            },
+            trivia: {
+                total_questions: data.trivia.total_questions,
+                total_correct: data.trivia.total_correct,
+                percent_correct: data.trivia.percent_correct,
+                current_total: data.trivia.current_total,
+                current_correct: data.trivia.current_correct,
+                current_percent: data.trivia.current_percent,
+            },
             easy: {
                 total_questions: data.easy.total_questions,
                 total_correct: data.easy.total_correct,

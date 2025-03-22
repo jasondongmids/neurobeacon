@@ -127,7 +127,23 @@ export const UserStatisticsProvider = ({children}) => {
             current_total: 0,
             current_correct: 0,
             current_percent: 0.0,              
-        },        
+        },
+        memory: {
+            total_questions: 0,
+            total_correct: 0,
+            percent_correct: 0.0,
+            current_total: 0,
+            current_correct: 0,
+            current_percent: 0.0,              
+        },
+        trivia: {
+            total_questions: 0,
+            total_correct: 0,
+            percent_correct: 0.0,
+            current_total: 0,
+            current_correct: 0,
+            current_percent: 0.0,              
+        },                
         easy: {
             total_questions: 0,
             total_correct: 0,
@@ -235,6 +251,8 @@ export const UserStatisticsProvider = ({children}) => {
     // Update totals after game is answered
     const updateTotals = (inputData, isCorrect, game, difficulty) => {
         const totalData = incrementCorrect(inputData.total, isCorrect);
+        console.log("GAME", game)
+        console.log("INPUT DATA", inputData)
         const gameData = incrementCorrect(inputData[game], isCorrect);
         const diffStr = (typeof(difficulty) === "number") 
         ? getDiffString(difficulty) 
@@ -250,7 +268,7 @@ export const UserStatisticsProvider = ({children}) => {
     }
 
     const incrementCorrect = (inputData, isCorrect) => {
-        // console.log("INCREMENT CORRECT DATA", inputData)
+        console.log("INCREMENT CORRECT DATA", inputData)
         const totalQuestions = inputData.total_questions + 1;
         const totalCorrect = (isCorrect) ? inputData.total_correct + 1 : inputData.total_correct;
         const currentQuestions = inputData.current_total + 1;
