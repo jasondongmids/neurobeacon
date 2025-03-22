@@ -566,8 +566,8 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
       // Database: Update user state and game hx when correct
       newUserState.correct = true;
       newUserState.score = scoreEarned;
-      newUserState.elapsed_time = Math.min(elapsedTime * 1000, 2147483647);
-      gameData.game_time_ms = Math.min(elapsedTime * 1000, 2147483647);
+      newUserState.elapsed_time = Math.min(endTime - startTime, 2147483647);
+      gameData.game_time_ms = Math.min(endTime - startTime, 2147483647);
       batchWrite(newUserState, gameData)
 
     } else {
@@ -581,8 +581,8 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
         // Database: Update user state when incorrect after three attempts
         newUserState.correct = false
         newUserState.score = 0
-        newUserState.elapsed_time = Math.min(elapsedTime * 1000, 2147483647);
-        gameData.game_time_ms = Math.min(elapsedTime * 1000, 2147483647);
+        newUserState.elapsed_time = Math.min(endTime - startTime, 2147483647);
+        gameData.game_time_ms = Math.min(endTime - startTime, 2147483647);
         batchWrite(newUserState, gameData)
 
         setQuestionCount((prev) => {

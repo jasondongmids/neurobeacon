@@ -32,7 +32,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
     const { addGameHx } = useContext(GameHxContext)
     const { dailyStats, setDailyStats, weeklyStats, setWeeklyStats,
       userStats, setUserStats, updateTotals, transactStatsData } = useContext(UserStatisticsContext)
-    const [gameStartTime, setGameStartTime] = useState(0)
+    const [gameStartTime, setGameStartTime] = useState(null)
     const [sessionId, setSessionId] = useState("");
 
     const initGameStateRef = useRef(true)
@@ -513,6 +513,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
           setShowDecadeModal(false);
           // Reset the session start time
           setSessionStartTime(Date.now());
+          setGameStartTime(Date.now());
           // Load the filtered questions
           loadFilteredQuestions();
           // Database: Load last game state and create sessionId
