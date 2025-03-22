@@ -25,15 +25,14 @@ const gameTypeEmbed = {
 
 // HELPER FUNCTIONS FOR MODEL
 export function getDiffString(integer) {
-    const reverseDiffMap = Object.fromEntries(Object.entries(difficultyMapping[0]).map(([k, v]) => [v, k]))
-    console.log("DIFFICULTY STRING", reverseDiffMap[integer])
+    const reverseDiffMap = Object.fromEntries(Object.entries(difficultyMapping).map(([k, v]) => [v, k]))
+    // console.log("DIFFICULTY STRING", reverseDiffMap[integer])
     return reverseDiffMap[integer]
 
 }
 
 export function getDiffInt(string) {
-    const diffMapping = difficultyMapping[0]
-    return diffMapping[string]
+    return difficultyMapping[string]
 }
 
 // INVOKE MODEL
