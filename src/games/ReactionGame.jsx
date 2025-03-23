@@ -373,11 +373,25 @@ useEffect(() => {
   }, [userGameState])
 
   // ────────────────────────────────────────────────────────────────
+// Step 1: handlePointerDown
 function handlePointerDown(event) {
-  // Record the starting position of the pointer
-  setPointerDownPos({ x: event.clientX, y: event.clientY });
+  const rect = gameCanvas.current.getBoundingClientRect();
+  const offsetX = event.clientX - rect.left;
+  const offsetY = event.clientY - rect.top;
+
+  if (
+    offsetX >= 0 &&
+    offsetY >= 0 &&
+    offsetX <= rect.width &&
+    offsetY <= rect.height
+  ) {
+    setPointerDownPos({ x: event.clientX, y: event.clientY });
+  } else {
+    setPointerDownPos(null);
+  }
 }
 
+// Step 2: handlePointerMove
 function handlePointerMove(event) {
   if (!pointerDownPos) return;
   
@@ -385,35 +399,41 @@ function handlePointerMove(event) {
   const dy = event.clientY - pointerDownPos.y;
   const distance = Math.sqrt(dx * dx + dy * dy);
   
-  const scrollThreshold = 15; // pixels—adjust if necessary
+  const scrollThreshold = 15; // pixels
   if (distance >= scrollThreshold) {
-    // Cancel click if movement exceeds threshold (likely a scroll)
     setPointerDownPos(null);
   }
 }
 
+// Step 3: handlePointerUp
 function handlePointerUp(event) {
-  if (!pointerDownPos) return; // Click was cancelled by movement (scroll)
+  if (!pointerDownPos) return;
+
+  const rect = gameCanvas.current.getBoundingClientRect();
+  const offsetX = event.clientX - rect.left;
+  const offsetY = event.clientY - rect.top;
+
+  const insideCanvas =
+    offsetX >= 0 &&
+    offsetY >= 0 &&
+    offsetX <= rect.width &&
+    offsetY <= rect.height;
 
   const dx = event.clientX - pointerDownPos.x;
   const dy = event.clientY - pointerDownPos.y;
   const distance = Math.sqrt(dx * dx + dy * dy);
+  const clickThreshold = 15;
 
-  const clickThreshold = 15; // pixels—same as scrollThreshold above
-
-  if (distance < clickThreshold) {
-    const rect = gameCanvas.current.getBoundingClientRect();
-    const offsetX = event.clientX - rect.left;
-    const offsetY = event.clientY - rect.top;
+  if (insideCanvas && distance < clickThreshold) {
     processClick(offsetX, offsetY);
   }
 
-  // Always reset position afterward
   setPointerDownPos(null);
 }
 
 
-// Step 3: Refactor Click Processing
+
+// Step 4: Refactor Click Processing
 function processClick(offsetX, offsetY) {
   if (!waitingForGreen || !startTime) return;
 
