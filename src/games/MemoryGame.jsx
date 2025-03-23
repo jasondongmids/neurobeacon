@@ -133,11 +133,11 @@ const IngredientGrid = ({ ingredients }) => {
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(80px, 1fr))",
+        gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
         gap: "8px",
-        justifyContent: "center",
+        justifyItems: "center",
         alignItems: "center",
-        maxWidth: "100%",
+        maxWidth: "600px",
         margin: "0 auto",
         padding: "0 10px",
       }}
@@ -146,7 +146,7 @@ const IngredientGrid = ({ ingredients }) => {
         <div
           key={index}
           style={{
-            minWidth: "100px",
+            Width: "100px",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
