@@ -48,7 +48,6 @@ export function calculateReward(rewardWeight, isCorrect) {
 }
 
 export function calculateIsSlow(gameType, elapsedTime) {
-    console.log("IS SLOW", elapsedTime, isSlowThresholds[gameType], elapsedTime > isSlowThresholds[gameType])
     if (elapsedTime > isSlowThresholds[gameType] ) {
         return true
     } else {
@@ -79,7 +78,6 @@ function applyMinMaxScaling(data, variable) {
 
 // INVOKE MODEL
 const prepRequest = (data) => {
-    console.log("PREP REQUEST DATA", data)
     const modelInput = [
         Number(data.prev_is_slow),
         Number(data.prev_is_correct),
@@ -91,7 +89,7 @@ const prepRequest = (data) => {
         data.total_weighted_reward,
     ]
 
-    console.log("MODEL INPUT", modelInput)
+    // console.log("MODEL INPUT", modelInput)
     return JSON.stringify(modelInput)
 }
 

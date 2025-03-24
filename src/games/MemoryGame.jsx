@@ -222,7 +222,8 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
             // update react states
       const isCorrect = newUserState.correct
       const difficulty = newUserState.difficulty
-      setUserStats(updateTotals(userStats, isCorrect, gameRef.current, difficulty));
+      const newUserStats = updateTotals(userStats, isCorrect, gameRef.current, difficulty)
+      setUserStats(newUserStats);
       setDailyStats(updateTotals(dailyStats, isCorrect, gameRef.current, difficulty));
       setWeeklyStats(updateTotals(weeklyStats, isCorrect, gameRef.current, difficulty));   
 
@@ -236,9 +237,9 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
       predicted_difficulty: getDiffString(primaryPrediction),
       target_difficulty: getDiffString(targetPrediction),
       user_embedding: {
-        easy_percent: userStats.easy.percent_correct,
-        medium_percent: userStats.medium.percent_correct,
-        hard_percent: userStats.hard.percent_correct,
+        easy_percent: newUserStats.easy.percent_correct,
+        medium_percent: newUserStats.medium.percent_correct,
+        hard_percent: newUserStats.hard.percent_correct,
        } 
       };
       const finalGameData = {

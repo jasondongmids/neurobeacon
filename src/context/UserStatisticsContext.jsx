@@ -192,7 +192,7 @@ export const UserStatisticsProvider = ({children}) => {
     }
 
     // ✅ Update React state
-    const updateStatsState = (frequency, gameType, difficulty, newStatistics ) => {
+    const updateStatsState = (frequency, gameType, difficulty, newStatistics) => {
         const { correct } = newStatistics;
         const setStatsSetter = frequency === 'daily' ? setDailyStats
             : frequency === 'weekly' ? setWeeklyStats
@@ -253,8 +253,6 @@ export const UserStatisticsProvider = ({children}) => {
     // Update totals after game is answered
     const updateTotals = (inputData, isCorrect, game, difficulty) => {
         const totalData = incrementCorrect(inputData.total, isCorrect);
-        console.log("GAME", game)
-        console.log("INPUT DATA", inputData)
         const gameData = incrementCorrect(inputData[game], isCorrect);
         const diffStr = (typeof(difficulty) === "number") 
         ? getDiffString(difficulty) 
@@ -270,7 +268,6 @@ export const UserStatisticsProvider = ({children}) => {
     }
 
     const incrementCorrect = (inputData, isCorrect) => {
-        console.log("INCREMENT CORRECT DATA", inputData)
         const totalQuestions = inputData.total_questions + 1;
         const totalCorrect = (isCorrect) ? inputData.total_correct + 1 : inputData.total_correct;
         const currentQuestions = inputData.current_total + 1;

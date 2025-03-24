@@ -326,7 +326,8 @@ useEffect(() => {
       // update react states
       const isCorrect = newUserState.correct
       const difficulty = newUserState.difficulty
-      setUserStats(updateTotals(userStats, isCorrect, gameRef.current, difficulty));
+      const newUserStats = updateTotals(userStats, isCorrect, gameRef.current, difficulty)
+      setUserStats(newUserStats);
       setDailyStats(updateTotals(dailyStats, isCorrect, gameRef.current, difficulty));
       setWeeklyStats(updateTotals(weeklyStats, isCorrect, gameRef.current, difficulty))     
 
@@ -341,9 +342,9 @@ useEffect(() => {
        predicted_difficulty: pPredStr,
        target_difficulty: getDiffString(targetPrediction),
        user_embedding: {
-        easy_percent: userStats.easy.percent_correct,
-        medium_percent: userStats.medium.percent_correct,
-        hard_percent: userStats.hard.percent_correct,
+        easy_percent: newUserStats.easy.percent_correct,
+        medium_percent: newUserStats.medium.percent_correct,
+        hard_percent: newUserStats.hard.percent_correct,
        } 
       };
       const finalGameData = {
@@ -449,7 +450,6 @@ function processClick(offsetX, offsetY) {
   // Database: variables for database updates remain unchanged
   // const difficultyInt = difficulty === "easy" ? 0 : difficulty === "medium" ? 1 : 2;
   const gameCategory = usedImagesRef.current.at(-1).replace(/\..*$/, "");
-  console.log("GAME CATEGORY", gameCategory)
   const gameData = {
     question_id: gameCategory,
     question_type: gameRef.current,
@@ -468,7 +468,6 @@ function processClick(offsetX, offsetY) {
     game_type: gameRef.current,
     category: gameCategory     
   };
-  console.log("newUserState", newUserState)
 
   if (isCorrectClick) {
     setReactionTimes(prev => [...prev, reaction]);
