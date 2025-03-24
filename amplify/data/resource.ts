@@ -134,7 +134,6 @@ const schema = a.schema({
   UserGameHx: a.customType({
     user_game_pk: a.string().required(),
     sk: a.string().required(),
-    game_type: a.string(),
     question_id: a.string(),
     question_type: a.string(),
     question_category: a.string(),
