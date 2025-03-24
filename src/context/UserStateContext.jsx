@@ -49,12 +49,12 @@ export const UserStateProvider = ({ children }) => {
 
     // ✅ Save user state when updated // to be updated!
     useEffect(() => {
-        console.log("Updated game state:", userGameState);
-    }, [userGameState]);    
-
-    useEffect(() => {
         console.log("Updated category state:", userCategoryState);
     }, [userCategoryState])
+
+    useEffect(() => {
+        console.log("Updated game state:", userGameState);
+    }, [userGameState]);    
 
     // ✅ Add single GAME#, GAME#CATEGORY#, or GAME#STATISTICS# state
     const addUserState = async (gameType, category, inputData) => {
@@ -248,29 +248,54 @@ export const UserStateProvider = ({ children }) => {
     // };
 
     const updateUserGameState = (newUserState) => {
-        console.log("NEW USER STATE", newUserState)
         setUserGameState({...newUserState});
     }
 
     // ✅ Update GAME#CATEGORY# react state during game submit
-    const updateUserCategoryState = (newUserState) => {
-        setUserCategoryState(prevState => {
-            const prevValues = prevState.category
-            const totalQuestions = prevValues.total_questions + 1 || 1;
-            const totalCorrect = newUserState.correct ? prevValues.total_correct + 1 : 0 //prevValues.total_correct;
+    // const updateUserCategoryState = (newUserState, prepStateCallback) => {
+    //     setUserCategoryState(prevState => {
+    //         const prevValues = prevState.category
+    //         const totalQuestions = prevValues.total_questions + 1 || 1;
+    //         const totalCorrect = newUserState.correct ? prevValues.total_correct + 1 : 0 //prevValues.total_correct;
 
-            return {
-                ...prevState,
-                category: {
-                    category: newUserState.category,
-                    total_questions: totalQuestions,
-                    total_correct: totalCorrect,
-                    percent_correct: totalQuestions > 0 
-                        ? parseFloat((totalCorrect / totalQuestions).toFixed(3)) 
-                        : 0,
-                }
+    //         const updatedState = {
+    //             ...prevState,
+    //             category: {
+    //                 category: newUserState.category,
+    //                 total_questions: totalQuestions,
+    //                 total_correct: totalCorrect,
+    //                 percent_correct: totalQuestions > 0 
+    //                     ? parseFloat((totalCorrect / totalQuestions).toFixed(3)) 
+    //                     : 0,
+    //             }
+    //         }
+            
+    //         console.log("UPDATED STATE", updatedState)
+
+    //         prepStateCallback && prepStateCallback(updatedState)
+
+    //         return updatedState
+    //     })
+    // };
+
+    const updateUserCategoryState = (newUserState) => {
+        const prevValues = userCategoryState.category
+        const totalQuestions = prevValues.total_questions + 1 || 1;
+        const totalCorrect = newUserState.correct ? prevValues.total_correct + 1 : 0 //prevValues.total_correct;
+
+        const updatedState = {
+            category: {
+                category: newUserState.category,
+                total_questions: totalQuestions,
+                total_correct: totalCorrect,
+                percent_correct: totalQuestions > 0 
+                    ? parseFloat((totalCorrect / totalQuestions).toFixed(3)) 
+                    : 0,
             }
-        })
+        };
+        setUserCategoryState(updatedState)
+
+        return updatedState
     };
 
     // ✅ Update both GAME# and GAME#CATEGORY# react states

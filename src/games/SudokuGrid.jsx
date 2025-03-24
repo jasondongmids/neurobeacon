@@ -274,8 +274,8 @@ const SudokuGrid = ({ onUpdateStats }) => {
       setDailyStats(updateTotals(dailyStats, isCorrect, gameRef.current, difficulty));
       setWeeklyStats(updateTotals(weeklyStats, isCorrect, gameRef.current, difficulty));   
 
-      updateUserCategoryState(newUserState);
-      const prepState = prepareUserGameState(newUserState, userGameState, userCategoryState);
+      const updatedUserCategoryState = updateUserCategoryState(newUserState);
+      const prepState = prepareUserGameState(newUserState, userGameState, updatedUserCategoryState);
       const primaryPrediction = await invokeModel(prepState, 'primary');
       const targetPrediction = await invokeModel(prepState, 'target');
       const finalState = {

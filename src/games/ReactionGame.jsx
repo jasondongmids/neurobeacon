@@ -313,6 +313,10 @@ useEffect(() => {
 
   // ────────────────────────────────────────────────────────────────
   // DATABASE: FUNCTIONS AND EFFECTS
+  // useEffect(() => {
+  //     console.log("Updated category state:", userCategoryState);
+  // }, [userCategoryState])
+
   const batchWrite = async (newUserState, gameData) => {
     // enable ddb writes
     if (initGameStateRef.current) {
@@ -326,8 +330,8 @@ useEffect(() => {
       setDailyStats(updateTotals(dailyStats, isCorrect, gameRef.current, difficulty));
       setWeeklyStats(updateTotals(weeklyStats, isCorrect, gameRef.current, difficulty))     
 
-      updateUserCategoryState(newUserState);
-      const prepState = prepareUserGameState(newUserState, userGameState, userCategoryState);
+      const updatedUserCategoryState = updateUserCategoryState(newUserState);
+      const prepState = prepareUserGameState(newUserState, userGameState, updatedUserCategoryState);
       const primaryPrediction = await invokeModel(prepState, 'primary');
       const targetPrediction = await invokeModel(prepState, 'target');
       const pPredStr = getDiffString(primaryPrediction)
@@ -342,8 +346,6 @@ useEffect(() => {
         hard_percent: userStats.hard.percent_correct,
        } 
       };
-
-      console.log("FINAL STATE", finalState)
       const finalGameData = {
         ...gameData,
         score: newUserState.score
@@ -447,6 +449,7 @@ function processClick(offsetX, offsetY) {
   // Database: variables for database updates remain unchanged
   // const difficultyInt = difficulty === "easy" ? 0 : difficulty === "medium" ? 1 : 2;
   const gameCategory = usedImagesRef.current.at(-1).replace(/\..*$/, "");
+  console.log("GAME CATEGORY", gameCategory)
   const gameData = {
     question_id: gameCategory,
     question_type: gameRef.current,
@@ -465,7 +468,6 @@ function processClick(offsetX, offsetY) {
     game_type: gameRef.current,
     category: gameCategory     
   };
-
   console.log("newUserState", newUserState)
 
   if (isCorrectClick) {
