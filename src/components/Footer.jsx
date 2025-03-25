@@ -46,9 +46,9 @@ const Footer = () => {
             Submit Answer
           </button>
           {!hideNextButton && (
-            <button className="btn next" onClick={() => window.handleNextTask?.()}>
-              Next Question
-            </button>
+          <button className="btn submit" onClick={() => window.handleSubmit?.()}>
+            Submit Answer
+          </button>
           )}
         </>
       )}
