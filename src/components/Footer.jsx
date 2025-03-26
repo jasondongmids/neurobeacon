@@ -33,28 +33,26 @@ const Footer = () => {
       </div>
     );
   }
-
-  // For other games, you might have different button logic.
-  const hideBothButtons = location.pathname.includes("/game/reaction");
-  const hideNextButton = location.pathname.includes("/game/memory");
-
-  return (
-    <div className="footer">
-      {!hideNextButton && (
-        <>
-            <button className="btn next" onClick={() => window.handleNextTask?.()}>
-              Skip Question
-            </button>
-          {!hideBothButtons && (
+  if (gameType === "memory") {
+    return (
+      <div className="footer">
           <button className="btn submit" onClick={() => window.handleSubmit?.()}>
             Submit Answer
           </button>
-          )}
-        </>
-      )}
-    </div>
-  );
-};
+
+      </div>
+    );
+  }
+
+    if (gameType === "reaction") {
+    return (
+      <div className="footer">
+
+
+      </div>
+    );
+  }
+}
 
 export default Footer;
 
