@@ -40,12 +40,12 @@ const Footer = () => {
 
   return (
     <div className="footer">
-      {!hideBothButtons && (
+      {!hideNextButton && (
         <>
             <button className="btn next" onClick={() => window.handleNextTask?.()}>
               Skip Question
             </button>
-          {!hideNextButton && (
+          {!hideBothButtons && (
           <button className="btn submit" onClick={() => window.handleSubmit?.()}>
             Submit Answer
           </button>
