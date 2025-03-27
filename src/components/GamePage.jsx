@@ -45,7 +45,8 @@ const GamePage = () => {
             <h2 className="greeting">
               Hello, {username || "Player"}! {gameGreeting}
             </h2>
-
+<p>This open beta will close on Friday, April 4!<br />Before you leave, please fill out our <a href="https://docs.google.com/forms/d/1v-kiT9EV2i8t46WY0D_ZecNFgJCokyxXDVir5CrmbAI/viewform?edit_requested=true"target="_blank"
+        rel="noopener noreferrer">User Survey</a> so we can make NeuroBeacon even better!</p>
             {/* ✅ Main Layout */}
             <div className="main-container">
                 {/* ✅ Left Panel: Session Stats */}
