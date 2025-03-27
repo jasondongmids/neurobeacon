@@ -91,7 +91,7 @@ const handleVerifyToken = async () => {
           Learn more about us by clicking the link below or enter an email and select a password to jump right in.
           <br />
           When you are done, please be sure to fill out our <a href="https://docs.google.com/forms/d/1v-kiT9EV2i8t46WY0D_ZecNFgJCokyxXDVir5CrmbAI/viewform?edit_requested=true"target="_blank"
-        rel="noopener noreferrer">User Satisfaction Survey</a></strong> and tell us how we can make NeuroBeacon even better.
+        rel="noopener noreferrer">User Satisfaction Survey</a> and tell us how we can make NeuroBeacon even better.
           <br />
           If you have any questions or concerns, please email us at{" "}
           <a href="mailto:fhayes3@berkeley.edu">fhayes3@berkeley.edu</a>.<br /><strong>THIS OPEN BETA WILL CLOSE ON FRIDAY, APRIL 4!</strong>
