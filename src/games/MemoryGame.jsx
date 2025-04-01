@@ -332,7 +332,7 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
         setTimeout(() => {
           setShowFridge(false);
           setGamePhase("showKitchen");
-        }, 3000);
+        }, 4000);
       }, 1000);
     } else if (gamePhase === "showKitchen") {
       setTimeout(() => {
@@ -343,7 +343,7 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
           setStartTime(Date.now());
           // Reset attemptTimes for this question.
           attemptTimesRef.current = [];
-        }, 3000);
+        }, 4000);
       }, 1000);
     }
   }, [gamePhase]);
