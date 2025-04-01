@@ -545,7 +545,7 @@ function processClick(offsetX, offsetY) {
             <option value="medium">Medium</option>
             <option value="hard">Hard</option>
           </select></div> */}
-          <h2>Select Box Color Scheme</h2>
+          <h2style={{ color: "white"}}>Select Box Color Scheme</h2>
           <div><select
             value={selectedColorScheme}
             onChange={e => setSelectedColorScheme(e.target.value)}
@@ -553,6 +553,16 @@ function processClick(offsetX, offsetY) {
             <option value="default">Default (Red/Green)</option>
             <option value="colorBlindFriendly">Color Blind Friendly (Blue/Orange)</option>
           </select></div>
+       {/* Added Rules Section */}
+      <div style={{ color: "white", margin: "16px 0" }}>
+        <h3>Game Rules:</h3>
+        <ul>
+          <li>Wait for the box to change color.</li>
+          <li>Click as quickly as possible once the box changes color.</li>
+          <li>Your reaction time will be measured and added to your score.</li>
+          <li>Try to achieve a fast reaction to earn more points.</li>
+        </ul>
+      </div>
           <button
             onClick={() => {
               setGameStarted(true);
