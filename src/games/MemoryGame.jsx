@@ -534,6 +534,12 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
       {/* Your existing game content goes here */}
       {gamePhase === "intro" && (
         <div>
+          <div style={{ color: "white", fontSize: "1.2em", margin: "16px 0" }}>
+            <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
+            <p>Memorize the ingredients shown on the screen.</p>
+            <p>You will have a limited time to view them.</p>
+            <p>Afterwards, recall as many ingredients as you can.</p>
+          </div>
           <h2 style={{ color: "white" }}>
             Round {round}/{maxRounds}: It's time to see what ingredients you have!
             Click start when you are ready.
