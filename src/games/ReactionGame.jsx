@@ -574,12 +574,12 @@ function processClick(offsetX, offsetY) {
        {/* Added Rules Section */}
       <div style={{ color: "white", margin: "16px 0", fontSize: "1.2em" }}>
         <h3 style={{ fontSize: "1.4em" }}>Game Rules:</h3>
-        <ul>
-          <li>Wait for the box to change color.</li>
-          <li>Click as quickly as possible once the box changes color.</li>
-          <li>Your reaction time will be measured and added to your score.</li>
-          <li>Try to achieve a fast reaction to earn more points.</li>
-        </ul>
+        
+          <p>Wait for the box to change color.</p>
+          <p>Click as quickly as possible once the box changes color.</p>
+          <p>Your reaction time will be measured and added to your score.</p>
+          <p>Try to achieve a fast reaction to earn more points.</p>
+        
       </div>
           <button
             onClick={() => {
