@@ -416,7 +416,7 @@ const SudokuGrid = ({ onUpdateStats }) => {
           <option value="medium">Medium</option>
           <option value="hard">Hard</option>
         </select><br />
-      <div style={{ margin: "16px 0" }}>
+      <div style={{ color: "white", margin: "16px 0" }}>
       <h3 style={{ fontSize: "1.4em" }}>Game Rules:</h3>
         <p>Solve the Sudoku puzzle by filling in the missing numbers.</p>
         <p>Each row, column, and 3x3 block must contain numbers 1 through 9 without repeats.</p>
