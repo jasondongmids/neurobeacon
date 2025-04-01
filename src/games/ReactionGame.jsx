@@ -545,7 +545,7 @@ function processClick(offsetX, offsetY) {
             <option value="medium">Medium</option>
             <option value="hard">Hard</option>
           </select></div> */}
-          <h2style={{ color: "white"}}>Select Box Color Scheme</h2>
+          <h2 style={{ color: "white"}}>Select Box Color Scheme</h2>
           <div><select
             value={selectedColorScheme}
             onChange={e => setSelectedColorScheme(e.target.value)}
