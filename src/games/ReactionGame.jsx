@@ -125,11 +125,28 @@ const ReactionGame = ({ onUpdateStats }) => {
   }
 
 function generateRandomBoxes(count) {
-  const boxWidth = 50;
-  const boxHeight = 50;
+  // Set box dimensions based on current difficulty.
+  let boxWidth, boxHeight;
+  switch (difficulty) {
+    case "easy":
+      boxWidth = 50;
+      boxHeight = 50;
+      break;
+    case "medium":
+      boxWidth = 40;
+      boxHeight = 40;
+      break;
+    case "hard":
+      boxWidth = 30;
+      boxHeight = 30;
+      break;
+    default:
+      boxWidth = 50;
+      boxHeight = 50;
+  }
 
-  // Define margins relative to canvas size, ensuring boxes stay fully within canvas bounds
-  const margin = 10; // fixed margin in pixels, small enough for mobile screens
+  // Define margins relative to canvas size, ensuring boxes stay fully within canvas bounds.
+  const margin = 10; // fixed margin in pixels
   const maxX = canvasWidth - boxWidth - margin;
   const maxY = canvasHeight - boxHeight - margin;
   const minX = margin;
@@ -142,6 +159,7 @@ function generateRandomBoxes(count) {
     height: boxHeight,
   }));
 }
+
 
 
 function handlePointerMove(event) {
@@ -554,8 +572,8 @@ function processClick(offsetX, offsetY) {
             <option value="colorBlindFriendly">Color Blind Friendly (Blue/Orange)</option>
           </select></div>
        {/* Added Rules Section */}
-      <div style={{ color: "white", margin: "16px 0" }}>
-        <h3>Game Rules:</h3>
+      <div style={{ color: "white", margin: "16px 0", fontSize: "1.2em" }}>
+        <h3 style={{ fontSize: "1.4em" }}>Game Rules:</h3>
         <ul>
           <li>Wait for the box to change color.</li>
           <li>Click as quickly as possible once the box changes color.</li>
