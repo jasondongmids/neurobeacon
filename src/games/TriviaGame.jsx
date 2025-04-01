@@ -380,7 +380,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
             {showDecadeModal && (
   <div className="modal-overlay">
     <div className="modal-content">
-      <h2>Select Decades</h2>
+      <h2 style={{ fontSize: "1.4em" }}>Select Decades</h2>
 
       <p>
         <label>
