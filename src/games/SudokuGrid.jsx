@@ -410,7 +410,7 @@ const SudokuGrid = ({ onUpdateStats }) => {
   if (!gameStarted) {
     return (
       <div className="sudoku-start-screen">
-        <h2>Select Difficulty</h2>
+        <h2 style={{ color: "white", fontSize: "1.4em" }}>Select Difficulty</h2>
         <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
           <option value="easy">Easy</option>
           <option value="medium">Medium</option>
