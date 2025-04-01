@@ -156,6 +156,7 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
   const gameRef = useRef("math")
   const prevGameStateRef = useRef(userGameState)
   const prevCategoryStateRef = useRef(userCategoryState)
+  const [showRoundIntro, setShowRoundIntro] = useState(true);
 
   // ----- Effects -----
   // 1) Fetch problems from "/problems.json" on mount, then start the session.
@@ -667,6 +668,26 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
   // ----- Render -----
   return (
     <>
+        {/* Round Start Modal for Math Game */}
+        {showRoundIntro && (
+      <div className="modal-overlay">
+        <div className="modal-content" style={{ color: "white", fontSize: "1.2em" }}>
+          <h2>Round {questionCount + 1} Start</h2>
+          <div style={{ margin: "16px 0" }}>
+            <h3 style={{ fontSize: "1.4em" }}>Game Rules:</h3>
+            <p>Solve the math problem accurately.</p>
+            <p>Enter your answer in the appropriate fields or select one answer from the multiple choice options.</p>
+            <p>You have up to 3 attempts per problem.</p>
+          </div>
+          <button className="btn next" onClick={() => {
+            setShowRoundIntro(false);
+            generateNewProblem();
+          }}>
+            Start Round
+          </button>
+        </div>
+      </div>
+    )}
       <div className="fraction-game">
         <div className="scenario-text">{scenarioText}</div>
 
