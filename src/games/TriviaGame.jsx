@@ -507,7 +507,13 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
           2000s
         </label>
       </p>
-
+      {/* Added Rules Section */}
+      <div style={{ color: "white", margin: "16px 0", fontSize: "1.2em" }}>
+        <h3 style={{ fontSize: "1.4em" }}>Game Rules:</h3>
+        <p>Answer trivia questions from your selected decades.</p>
+        <p>Points are awarded based on difficulty and speed.</p>
+        <p>Try to answer quickly to maximize your score!</p>
+      </div>
       <button
         onClick={() => {
           // Hide the modal
