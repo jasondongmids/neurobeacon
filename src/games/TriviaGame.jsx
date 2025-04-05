@@ -77,6 +77,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
           score: newUserState.score
         }
         updateUserGameState(finalState);
+        console.log("📈 Updated userGameState to:", finalState.difficulty);
         addGameHx(finalGameData);
         return "complete"
       } catch (error) {
@@ -385,7 +386,8 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
     const nextQuestion = () => {
         const currentDifficulty = userGameState?.difficulty || "easy";
         const currentDecade = questions[questionIndex]?.decade || selectedDecades[0] || "unknown";
-      
+        console.log("🎯 Using difficulty:", currentDifficulty);
+        
         const decadeGroup = groupedQuestions[currentDecade] || {};
         const pool = decadeGroup[currentDifficulty] || [];
       
@@ -455,7 +457,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
       <div style={{ color: "white", margin: "16px 0", fontSize: "1.2em" }}>
         <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
         <p>Answer trivia questions from your selected decades by clicking on the answer followed by the Submit Answer Button.</p>
-        <p>Points are awarded based on difficulty and speed. Test 8</p>
+        <p>Points are awarded based on difficulty and speed. Test 9</p>
         <p>Try to answer quickly to maximize your score!</p>
         <p>Feel free to click the Skip Question button to get a new question with no scoring penalty!</p>
       </div>
@@ -593,6 +595,11 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
           // Reset the session start time
           setSessionStartTime(Date.now());
           setGameStartTime(Date.now());
+          setGroupedQuestions({});
+          setUsedQuestionIds(new Set());
+          setQuestions([]);
+          setQuestionIndex(0);
+          loadFilteredQuestions(); // ✅ reload questions from selected decades  
           // Database: Load last game state and create sessionId
           // if (initGameStateRef) { // added session start update
           //   getUserState(gameRef.current, "");
