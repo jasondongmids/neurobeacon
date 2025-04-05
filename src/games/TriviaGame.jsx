@@ -131,6 +131,9 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
         setShowDecadeModal(true);  // ✅ Reset & Show Decade Selection Modal
         setGameStartTime(Date.now());
         setSessionId(crypto.randomUUID()); // Database: generate new sessionId
+        setQuestions([]);
+        setQuestionIndex(0);
+
     };
 
     useImperativeHandle(ref, () => ({
@@ -267,6 +270,8 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
         
         // ✅ Assign score based on difficulty level
         const difficulty = currentQuestion.difficulty || "easy";
+        console.log("➡️ Submitting with difficulty:", difficulty);
+
         const scoreModifier = difficulty === "easy" ? 30 : difficulty === "medium" ? 60 : 100;
     
         let scoreEarned = 0;
@@ -443,7 +448,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
       <div style={{ color: "white", margin: "16px 0", fontSize: "1.2em" }}>
         <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
         <p>Answer trivia questions from your selected decades by clicking on the answer followed by the Submit Answer Button.</p>
-        <p>Points are awarded based on difficulty and speed. Test 5</p>
+        <p>Points are awarded based on difficulty and speed. Test 6</p>
         <p>Try to answer quickly to maximize your score!</p>
         <p>Feel free to click the Skip Question button to get a new question with no scoring penalty!</p>
       </div>
