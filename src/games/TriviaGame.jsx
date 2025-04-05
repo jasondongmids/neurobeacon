@@ -151,6 +151,9 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
     const loadFilteredQuestions = () => {
       let filteredQuestions = triviaQuestions;
     
+      // 🟡 Debug: log the currently selected decades
+      console.log("📅 Decades filter applied:", selectedDecades);
+    
       if (selectedDecades.length === 0 || selectedDecades.includes("all")) {
         console.warn("⚠️ No decades selected or 'all' selected — using full question set.");
       } else {
@@ -165,12 +168,9 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
       }));
     
       const randomized = filteredQuestions.sort(() => Math.random() - 0.5);
+      const grouped = groupQuestionsByDifficulty(randomized);
     
-      // Group by difficulty and decade
-      const grouped = groupQuestionsByDecadeAndDifficulty(randomized);
-
-    
-      // 🔍 LOGGING:
+      // 🔍 Existing logs (keep!)
       console.log("✅ Loaded questions:", randomized.length);
       console.log("📊 Grouped counts:");
       console.log("Easy:", grouped.easy?.length || 0);
@@ -187,6 +187,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
         getUserState(gameRef.current, "");
       }
     };
+
 
     // 👁️ Watch for groupedQuestions being populated, then launch first question
     useEffect(() => {
@@ -421,7 +422,13 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
         setTimeout(() => shuffleAnswers(question), 100);
       };
       
-    
+    useEffect(() => {
+  if (!showDecadeModal) {
+    console.log("📦 Decade modal closed — loading filtered questions for:", selectedDecades);
+    loadFilteredQuestions();
+  }
+}, [showDecadeModal]);
+
 
     return (
         <div className="fraction-game">
@@ -448,7 +455,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
       <div style={{ color: "white", margin: "16px 0", fontSize: "1.2em" }}>
         <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
         <p>Answer trivia questions from your selected decades by clicking on the answer followed by the Submit Answer Button.</p>
-        <p>Points are awarded based on difficulty and speed. Test 6</p>
+        <p>Points are awarded based on difficulty and speed. Test 7</p>
         <p>Try to answer quickly to maximize your score!</p>
         <p>Feel free to click the Skip Question button to get a new question with no scoring penalty!</p>
       </div>
@@ -586,8 +593,6 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
           // Reset the session start time
           setSessionStartTime(Date.now());
           setGameStartTime(Date.now());
-          // Load the filtered questions
-          loadFilteredQuestions();
           // Database: Load last game state and create sessionId
           // if (initGameStateRef) { // added session start update
           //   getUserState(gameRef.current, "");
