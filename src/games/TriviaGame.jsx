@@ -163,8 +163,9 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
     
       const randomized = filteredQuestions.sort(() => Math.random() - 0.5);
     
-      // Group by difficulty
-      const grouped = groupQuestionsByDifficulty(randomized);
+      // Group by difficulty and decade
+      const grouped = groupQuestionsByDecadeAndDifficulty(randomized);
+
     
       // 🔍 LOGGING:
       console.log("✅ Loaded questions:", randomized.length);
@@ -193,14 +194,19 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
     }, [groupedQuestions]);
 
       
-      function groupQuestionsByDifficulty(questions) {
+    function groupQuestionsByDecadeAndDifficulty(questions) {
         return questions.reduce((acc, q) => {
-          const level = q.difficulty || "easy";
-          if (!acc[level]) acc[level] = [];
-          acc[level].push(q);
+          const decade = q.decade || "unknown";
+          const difficulty = q.difficulty || "easy";
+      
+          if (!acc[decade]) acc[decade] = {};
+          if (!acc[decade][difficulty]) acc[decade][difficulty] = [];
+      
+          acc[decade][difficulty].push(q);
           return acc;
         }, {});
       }
+      
         const shuffleAnswers = (question) => {
             if (question) {
                 const answers = [...question.incorrect_answers, question.correct_answer];
@@ -372,19 +378,22 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
     
     const nextQuestion = () => {
         const currentDifficulty = userGameState?.difficulty || "easy";
-        const pool = groupedQuestions[currentDifficulty] || [];
+        const currentDecade = questions[questionIndex]?.decade || selectedDecades[0] || "unknown";
+      
+        const decadeGroup = groupedQuestions[currentDecade] || {};
+        const pool = decadeGroup[currentDifficulty] || [];
       
         const available = pool.filter(q => !usedQuestionIds.has(q.id));
-      // 🔍 LOGGING:
-      console.log("🎯 Requested difficulty:", currentDifficulty);
-      console.log("📚 Available questions:", available.length);
-      console.log("🧠 used IDs:", [...usedQuestionIds]);
-        
+      
+        console.log("🎯 Requested:", currentDecade, "/", currentDifficulty);
+        console.log("📚 Available:", available.length);
+        console.log("🧠 used IDs:", [...usedQuestionIds]);
+      
         if (available.length === 0) {
-          setMessage("⚠️ No more questions at this difficulty. Pulling from other levels...");
-          const fallbackPool = Object.values(groupedQuestions).flat().filter(q => !usedQuestionIds.has(q.id));
+          // Fallback: try any question in same decade
+          const fallbackPool = Object.values(decadeGroup).flat().filter(q => !usedQuestionIds.has(q.id));
           if (fallbackPool.length === 0) {
-            setMessage("✅ All questions answered! Well done.");
+            setMessage("✅ All questions answered for this decade! Well done.");
             return;
           }
           const fallback = fallbackPool[Math.floor(Math.random() * fallbackPool.length)];
@@ -398,6 +407,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
         setMessage("");
         setAttempts(0);
       };
+      
       
       const addToUsedAndSet = (question) => {
         setUsedQuestionIds(prev => new Set(prev).add(question.id));
@@ -433,7 +443,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
       <div style={{ color: "white", margin: "16px 0", fontSize: "1.2em" }}>
         <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
         <p>Answer trivia questions from your selected decades by clicking on the answer followed by the Submit Answer Button.</p>
-        <p>Points are awarded based on difficulty and speed. Test 4</p>
+        <p>Points are awarded based on difficulty and speed. Test 5</p>
         <p>Try to answer quickly to maximize your score!</p>
         <p>Feel free to click the Skip Question button to get a new question with no scoring penalty!</p>
       </div>
@@ -590,8 +600,10 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
             <div className="scenario-text">{questions[questionIndex]?.question || "⚠️ No More Questions!"}</div>
             {/* 🔍 Debug-only Difficulty Display */}
             <p style={{ color: "gray", fontSize: "0.9em" }}>
-              Current Difficulty: <strong>{userGameState?.difficulty || "easy"}</strong>
+               Difficulty: <strong>{userGameState?.difficulty || "easy"}</strong> | 
+               Decade: <strong>{questions[questionIndex]?.decade || "unknown"}</strong>
             </p>
+
             <div className="multiple-choice-options">
                 {shuffledAnswers.map((option, index) => (
                     <label key={index}>
