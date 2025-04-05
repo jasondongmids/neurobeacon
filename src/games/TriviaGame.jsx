@@ -146,32 +146,53 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
 
     // ✅ Load Questions Based on Selected Decades
     const loadFilteredQuestions = () => {
-        let filteredQuestions = triviaQuestions;
-      
-        if (!selectedDecades.includes("all")) {
-          filteredQuestions = triviaQuestions.filter(q => selectedDecades.includes(q.decade));
-        }
-      
-        // ✅ Ensure questions have IDs for tracking
-        filteredQuestions = filteredQuestions.map((q, index) => ({ ...q, id: q.id || index }));
-      
-        const randomized = filteredQuestions.sort(() => Math.random() - 0.5);
-        console.log("✅ Final Question Set:", randomized);
-      
-        // ✅ Group by difficulty
-        setGroupedQuestions(groupQuestionsByDifficulty(randomized));
-      
-        // ✅ Clear used question history
-        setUsedQuestionIds(new Set());
-      
-        // ✅ Prime user state with first question’s decade (optional fallback too)
-        if (randomized.length > 0) {
-          getUserState(gameRef.current, randomized[0]?.decade);
-        }
-        if (initGameStateRef.current) {
-          getUserState(gameRef.current, "");
-        }
-      
+      let filteredQuestions = triviaQuestions;
+    
+      if (selectedDecades.length === 0 || selectedDecades.includes("all")) {
+        console.warn("⚠️ No decades selected or 'all' selected — using full question set.");
+      } else {
+        filteredQuestions = triviaQuestions.filter(q => selectedDecades.includes(q.decade));
+      }
+    
+      // Ensure IDs and difficulty tags
+      filteredQuestions = filteredQuestions.map((q, index) => ({
+        ...q,
+        id: q.id || index,
+        difficulty: q.difficulty || "easy",
+      }));
+    
+      const randomized = filteredQuestions.sort(() => Math.random() - 0.5);
+    
+      // Group by difficulty
+      const grouped = groupQuestionsByDifficulty(randomized);
+    
+      // 🔍 LOGGING:
+      console.log("✅ Loaded questions:", randomized.length);
+      console.log("📊 Grouped counts:");
+      console.log("Easy:", grouped.easy?.length || 0);
+      console.log("Medium:", grouped.medium?.length || 0);
+      console.log("Hard:", grouped.hard?.length || 0);
+    
+      setGroupedQuestions(grouped);
+      setUsedQuestionIds(new Set());
+    
+      if (randomized.length > 0) {
+        getUserState(gameRef.current, randomized[0]?.decade);
+      }
+      if (initGameStateRef.current) {
+        getUserState(gameRef.current, "");
+      }
+    };
+
+    // 👁️ Watch for groupedQuestions being populated, then launch first question
+    useEffect(() => {
+      if (Object.keys(groupedQuestions).length > 0) {
+        console.log("✅ Grouped questions ready — calling nextQuestion()");
+        nextQuestion();
+      }
+    }, [groupedQuestions]);
+
+   
         // ✅ Start with first adaptive question after delay
         setTimeout(() => {
           nextQuestion();
@@ -360,7 +381,11 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
         const pool = groupedQuestions[currentDifficulty] || [];
       
         const available = pool.filter(q => !usedQuestionIds.has(q.id));
-      
+      // 🔍 LOGGING:
+      console.log("🎯 Requested difficulty:", currentDifficulty);
+      console.log("📚 Available questions:", available.length);
+      console.log("🧠 used IDs:", [...usedQuestionIds]);
+        
         if (available.length === 0) {
           setMessage("⚠️ No more questions at this difficulty. Pulling from other levels...");
           const fallbackPool = Object.values(groupedQuestions).flat().filter(q => !usedQuestionIds.has(q.id));
@@ -414,7 +439,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
       <div style={{ color: "white", margin: "16px 0", fontSize: "1.2em" }}>
         <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
         <p>Answer trivia questions from your selected decades by clicking on the answer followed by the Submit Answer Button.</p>
-        <p>Points are awarded based on difficulty and speed. Test</p>
+        <p>Points are awarded based on difficulty and speed. Test 2</p>
         <p>Try to answer quickly to maximize your score!</p>
         <p>Feel free to click the Skip Question button to get a new question with no scoring penalty!</p>
       </div>
