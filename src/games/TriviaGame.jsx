@@ -168,7 +168,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
       }));
     
       const randomized = filteredQuestions.sort(() => Math.random() - 0.5);
-      const grouped = groupQuestionsByDifficulty(randomized);
+      const grouped = groupQuestionsByDecadeAndDifficulty(randomized);
     
       // 🔍 Existing logs (keep!)
       console.log("✅ Loaded questions:", randomized.length);
