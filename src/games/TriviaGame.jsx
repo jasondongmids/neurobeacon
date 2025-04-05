@@ -21,6 +21,8 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
     const [shuffledAnswers, setShuffledAnswers] = useState([]);
     const [groupedQuestions, setGroupedQuestions] = useState({});
     const [usedQuestionIds, setUsedQuestionIds] = useState(new Set());
+    const [currentDifficulty, setCurrentDifficulty] = useState("easy");
+
     
     // ✅ New State: Decade Selection
     const [showDecadeModal, setShowDecadeModal] = useState(true);
@@ -79,6 +81,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
           score: newUserState.score
         }
         updateUserGameState(finalState);
+        setCurrentDifficulty(finalState.difficulty || "easy");
         console.log("📈 Updated userGameState to:", finalState.difficulty);
         addGameHx(finalGameData);
         return "complete"
@@ -387,7 +390,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
 
     
     const nextQuestion = () => {
-        const currentDifficulty = userGameState?.difficulty || "easy";
+        console.log("🎯 Using predicted difficulty:", currentDifficulty);
         const currentDecade = questions[questionIndex]?.decade || selectedDecades[0] || "unknown";
         console.log("🎯 Using difficulty:", currentDifficulty);
         
@@ -459,7 +462,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
       <div style={{ color: "white", margin: "16px 0", fontSize: "1.2em" }}>
         <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
         <p>Answer trivia questions from your selected decades by clicking on the answer followed by the Submit Answer Button.</p>
-        <p>Points are awarded based on difficulty and speed. Test 11</p>
+        <p>Points are awarded based on difficulty and speed. Test 12</p>
         <p>Try to answer quickly to maximize your score!</p>
         <p>Feel free to click the Skip Question button to get a new question with no scoring penalty!</p>
       </div>
@@ -523,10 +526,10 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
             <div className="scenario-text">{questions[questionIndex]?.question || "⚠️ No More Questions!"}</div>
             {/* 🔍 Debug-only Difficulty Display */}
             <p style={{ color: "gray", fontSize: "0.9em" }}>
-               Difficulty: <strong>{userGameState?.difficulty || "easy"}</strong> | 
-               Decade: <strong>{questions[questionIndex]?.decade || "unknown"}</strong>
+              Difficulty: <strong>{currentDifficulty}</strong> | 
+              Decade: <strong>{questions[questionIndex]?.decade || "unknown"}</strong>
             </p>
-
+            
             <div className="multiple-choice-options">
                 {shuffledAnswers.map((option, index) => (
                     <label key={index}>
