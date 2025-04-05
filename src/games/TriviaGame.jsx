@@ -192,12 +192,6 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
       }
     }, [groupedQuestions]);
 
-   
-        // ✅ Start with first adaptive question after delay
-        setTimeout(() => {
-          nextQuestion();
-        }, 100);
-      };
       
       function groupQuestionsByDifficulty(questions) {
         return questions.reduce((acc, q) => {
@@ -439,7 +433,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
       <div style={{ color: "white", margin: "16px 0", fontSize: "1.2em" }}>
         <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
         <p>Answer trivia questions from your selected decades by clicking on the answer followed by the Submit Answer Button.</p>
-        <p>Points are awarded based on difficulty and speed. Test 2</p>
+        <p>Points are awarded based on difficulty and speed. Test 3</p>
         <p>Try to answer quickly to maximize your score!</p>
         <p>Feel free to click the Skip Question button to get a new question with no scoring penalty!</p>
       </div>
