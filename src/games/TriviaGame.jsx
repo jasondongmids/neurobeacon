@@ -19,9 +19,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
     const [showSessionSummary, setShowSessionSummary] = useState(false);
     const [questions, setQuestions] = useState([]);
     const [shuffledAnswers, setShuffledAnswers] = useState([]);
-    const [groupedQuestions, setGroupedQuestions] = useState({});
-    const [usedQuestionIds, setUsedQuestionIds] = useState(new Set());
-    
+
     // ✅ New State: Decade Selection
     const [showDecadeModal, setShowDecadeModal] = useState(true);
     const [selectedDecades, setSelectedDecades] = useState([]);
@@ -77,7 +75,6 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
           score: newUserState.score
         }
         updateUserGameState(finalState);
-        console.log("📈 Updated userGameState to:", finalState.difficulty);
         addGameHx(finalGameData);
         return "complete"
       } catch (error) {
@@ -132,9 +129,6 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
         setShowDecadeModal(true);  // ✅ Reset & Show Decade Selection Modal
         setGameStartTime(Date.now());
         setSessionId(crypto.randomUUID()); // Database: generate new sessionId
-        setQuestions([]);
-        setQuestionIndex(0);
-
     };
 
     useImperativeHandle(ref, () => ({
@@ -150,68 +144,26 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
 
     // ✅ Load Questions Based on Selected Decades
     const loadFilteredQuestions = () => {
-      let filteredQuestions = triviaQuestions;
-    
-      // 🟡 Debug: log the currently selected decades
-      console.log("📅 Decades filter applied:", selectedDecades);
-    
-      if (selectedDecades.length === 0 || selectedDecades.includes("all")) {
-        console.warn("⚠️ No decades selected or 'all' selected — using full question set.");
-      } else {
-        filteredQuestions = triviaQuestions.filter(q => selectedDecades.includes(q.decade));
-      }
-    
-      // Ensure IDs and difficulty tags
-      filteredQuestions = filteredQuestions.map((q, index) => ({
-        ...q,
-        id: q.id || index,
-        difficulty: q.difficulty || "easy",
-      }));
-    
-      const randomized = filteredQuestions.sort(() => Math.random() - 0.5);
-      const grouped = groupQuestionsByDecadeAndDifficulty(randomized);
-    
-      // 🔍 Existing logs (keep!)
-      console.log("✅ Loaded questions:", randomized.length);
-      console.log("📊 Grouped counts:");
-      console.log("Easy:", grouped.easy?.length || 0);
-      console.log("Medium:", grouped.medium?.length || 0);
-      console.log("Hard:", grouped.hard?.length || 0);
-    
-      setGroupedQuestions(grouped);
-      setUsedQuestionIds(new Set());
-    
-      if (randomized.length > 0) {
-        getUserState(gameRef.current, randomized[0]?.decade);
-      }
-      if (initGameStateRef.current) {
-        getUserState(gameRef.current, "");
-      }
+        let filteredQuestions = triviaQuestions;
+
+        if (!selectedDecades.includes("all")) {
+            filteredQuestions = triviaQuestions.filter(q => selectedDecades.includes(q.decade));
+        }
+
+        const randomizedQuestions = filteredQuestions.sort(() => Math.random() - 0.5).slice(0, 35);
+        console.log("✅ Final Question Set:", randomizedQuestions);
+        setQuestions([...randomizedQuestions]);  // ✅ Ensures state update triggers re-render
+        setQuestionIndex(0);
+
+        // Database: Load category totals
+        getUserState(gameRef.current, randomizedQuestions[0]?.decade);
+        if (initGameStateRef.current) {
+          getUserState(gameRef.current, "");
+        }
+
+        setTimeout(() => shuffleAnswers(randomizedQuestions[0]), 100);
     };
 
-
-    // 👁️ Watch for groupedQuestions being populated, then launch first question
-    useEffect(() => {
-      if (Object.keys(groupedQuestions).length > 0) {
-        console.log("✅ Grouped questions ready — calling nextQuestion()");
-        nextQuestion();
-      }
-    }, [groupedQuestions]);
-
-      
-    function groupQuestionsByDecadeAndDifficulty(questions) {
-        return questions.reduce((acc, q) => {
-          const decade = q.decade || "unknown";
-          const difficulty = q.difficulty || "easy";
-      
-          if (!acc[decade]) acc[decade] = {};
-          if (!acc[decade][difficulty]) acc[decade][difficulty] = [];
-      
-          acc[decade][difficulty].push(q);
-          return acc;
-        }, {});
-      }
-      
         const shuffleAnswers = (question) => {
             if (question) {
                 const answers = [...question.incorrect_answers, question.correct_answer];
@@ -272,8 +224,6 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
         
         // ✅ Assign score based on difficulty level
         const difficulty = currentQuestion.difficulty || "easy";
-        console.log("➡️ Submitting with difficulty:", difficulty);
-
         const scoreModifier = difficulty === "easy" ? 30 : difficulty === "medium" ? 60 : 100;
     
         let scoreEarned = 0;
@@ -384,53 +334,30 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
 
     
     const nextQuestion = () => {
-        const currentDifficulty = userGameState?.difficulty || "easy";
-        const currentDecade = questions[questionIndex]?.decade || selectedDecades[0] || "unknown";
-        console.log("🎯 Using difficulty:", currentDifficulty);
-        
-        const decadeGroup = groupedQuestions[currentDecade] || {};
-        const pool = decadeGroup[currentDifficulty] || [];
-      
-        const available = pool.filter(q => !usedQuestionIds.has(q.id));
-      
-        console.log("🎯 Requested:", currentDecade, "/", currentDifficulty);
-        console.log("📚 Available:", available.length);
-        console.log("🧠 used IDs:", [...usedQuestionIds]);
-      
-        if (available.length === 0) {
-          // Fallback: try any question in same decade
-          const fallbackPool = Object.values(decadeGroup).flat().filter(q => !usedQuestionIds.has(q.id));
-          if (fallbackPool.length === 0) {
-            setMessage("✅ All questions answered for this decade! Well done.");
+        if (questionIndex >= questions.length - 1) {
+            setMessage("⚠️ No more questions available!");
             return;
-          }
-          const fallback = fallbackPool[Math.floor(Math.random() * fallbackPool.length)];
-          addToUsedAndSet(fallback);
-        } else {
-          const next = available[Math.floor(Math.random() * available.length)];
-          addToUsedAndSet(next);
         }
-      
+
+        // UPDATE DIFFICULTY LOGIC HERE
+    
+        const nextIndex = questionIndex + 1;
+        
+        // Database: Load new state if category is different
+        if (questions[questionIndex]?.decade != questions[nextIndex]?.decade) {
+            getUserState(gameRef.current, questions[0]?.decade);
+        }
+        setQuestionIndex(nextIndex);
         setSelectedAnswer("");
         setMessage("");
         setAttempts(0);
-      };
-      
-      
-      const addToUsedAndSet = (question) => {
-        setUsedQuestionIds(prev => new Set(prev).add(question.id));
-        setQuestions(prev => [...prev, question]);
-        setQuestionIndex(questions.length);
-        setTimeout(() => shuffleAnswers(question), 100);
-      };
-      
-    useEffect(() => {
-  if (!showDecadeModal) {
-    console.log("📦 Decade modal closed — loading filtered questions for:", selectedDecades);
-    loadFilteredQuestions();
-  }
-}, [showDecadeModal, selectedDecades]);
-
+    
+        // Ensure we shuffle the answers *after* setting the new question
+        setTimeout(() => {
+            shuffleAnswers(questions[nextIndex]);
+        }, 100);
+    };
+    
 
     return (
         <div className="fraction-game">
@@ -457,7 +384,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
       <div style={{ color: "white", margin: "16px 0", fontSize: "1.2em" }}>
         <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
         <p>Answer trivia questions from your selected decades by clicking on the answer followed by the Submit Answer Button.</p>
-        <p>Points are awarded based on difficulty and speed. Test 10</p>
+        <p>Points are awarded based on difficulty and speed. OC</p>
         <p>Try to answer quickly to maximize your score!</p>
         <p>Feel free to click the Skip Question button to get a new question with no scoring penalty!</p>
       </div>
@@ -595,11 +522,8 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
           // Reset the session start time
           setSessionStartTime(Date.now());
           setGameStartTime(Date.now());
-          setGroupedQuestions({});
-          setUsedQuestionIds(new Set());
-          setQuestions([]);
-          setQuestionIndex(0);
-          loadFilteredQuestions(); // ✅ reload questions from selected decades  
+          // Load the filtered questions
+          loadFilteredQuestions();
           // Database: Load last game state and create sessionId
           // if (initGameStateRef) { // added session start update
           //   getUserState(gameRef.current, "");
@@ -615,11 +539,6 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
 )}
 
             <div className="scenario-text">{questions[questionIndex]?.question || "⚠️ No More Questions!"}</div>
-            {/* 🔍 Debug-only Difficulty Display */}
-            <p style={{ color: "gray", fontSize: "0.9em" }}>
-               Difficulty: <strong>{userGameState?.difficulty || "easy"}</strong> | 
-               Decade: <strong>{questions[questionIndex]?.decade || "unknown"}</strong>
-            </p>
 
             <div className="multiple-choice-options">
                 {shuffledAnswers.map((option, index) => (
@@ -638,3 +557,4 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
 });
 
 export default TriviaGame;
+
