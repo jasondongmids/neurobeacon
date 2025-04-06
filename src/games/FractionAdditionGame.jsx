@@ -774,33 +774,29 @@ const handleSubmit = () => {
         )}
 
         {inputMode === "input" && currentProblem && currentProblem.type === "whole-number" && (
-            <>
+          <>
             {/* 🔍 Debug-only Difficulty Display for Math Game */}
-          <div className="fraction-inputs">
-            {/* 🔍 Debug-only Difficulty Display for Math Game */}
-            {/* 🎯 Difficulty Display */}
-            <div className="difficulty-display" style={{ marginBottom: "10px" }}>
-              <p style={{ color: "gray", fontSize: "0.9em", margin: 0 }}>
-                Difficulty: <strong>{difficulty}</strong>
-              </p>
-              <p style={{ color: "gray", fontSize: "0.9em", margin: 0 }}>
-                <strong>Raw Prediction:</strong> {getDiffString(rawPrediction)} | 
-                <strong>Mapped Difficulty:</strong> {difficulty}
-              </p>
+            <div className="fraction-inputs">
+              <div className="difficulty-display" style={{ marginBottom: "10px" }}>
+                <p style={{ color: "gray", fontSize: "0.9em", margin: 0 }}>
+                  Difficulty: <strong>{difficulty}</strong>
+                </p>
+                <p style={{ color: "gray", fontSize: "0.9em", margin: 0 }}>
+                  <strong>Raw Prediction:</strong> {getDiffString(rawPrediction)} | 
+                  <strong>Mapped Difficulty:</strong> {difficulty}
+                </p>
+              </div>
+        
+              {/* ✏️ User Input */}
+              <input
+                type="number"
+                value={userAnswer}
+                onChange={(e) => setUserAnswer(e.target.value)}
+                placeholder="Answer"
+                style={{ marginTop: "10px" }}
+              />
             </div>
-          
-            {/* ✏️ User Input */}
-            <input
-              type="number"
-              value={userAnswer}
-              onChange={(e) => setUserAnswer(e.target.value)}
-              placeholder="Answer"
-              style={{ marginTop: "10px" }}
-            />
-          
-          </div>
-        </>
-
+          </>
         )}
 
         {inputMode === "multiple-choice" && (
