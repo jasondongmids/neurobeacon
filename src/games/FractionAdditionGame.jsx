@@ -485,7 +485,7 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
         setMessage("❌ Please enter both numerator and denominator!");
         return;
       }
-      if (currentProblem.type === "whole-number" && !userAnswer) {
+      if (currentProblem.type === "whole-number" && (userAnswer === "" || userAnswer === null || userAnswer === undefined)) {
         setMessage("❌ Please enter your answer!");
         return;
       }
@@ -528,15 +528,21 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
       if (inputMode === "multiple-choice") {
         isCorrect = selectedChoice === correctValue;
       } else {
-        userInputValue = userAnswer;
+        const sanitizedAnswer = (userAnswer || "").trim();
+        if (!sanitizedAnswer.match(/^\d+$/)) {
+          setMessage("❌ Please enter a valid number!");
+          return;
+        }
+        userInputValue = sanitizedAnswer;
         isCorrect = userInputValue === correctValue;
       }
-    }
+      }
     // ──────────────────────────────────────
     // 🔍 Debug Logs for Model & Answer Eval
     // ──────────────────────────────────────
     console.log("🎯 Difficulty selected:", difficulty);
     console.log("🧠 Model Prediction:", userGameState?.predicted_difficulty);
+    console.log("🔍 Sanitized User Input:", sanitizedAnswer);
     console.log("🎲 Problem:", currentProblem);
     console.log("✅ Correct Answer:", correctValue);
     console.log("🧪 User Answer:", inputMode === "multiple-choice" ? selectedChoice : userInputValue);
@@ -703,7 +709,7 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
           <h2>Round {questionCount + 1} Start</h2>
           <div style={{ margin: "16px 0" }}>
             <h3 style={{ fontSize: "1.4em" }}>Game Rules:</h3>
-            <p>Solve the math problem accurately. Exp 0</p>
+            <p>Solve the math problem accurately. Exp 1</p>
             <p>Enter your answer in the appropriate fields or select one answer from the multiple choice options and click the Submit Answer button.</p>
             <p>You have up to 3 attempts per problem.</p>
             <p>Feel free to click the Skip Question button to get a new question with no scoring penalty!</p>
@@ -722,6 +728,14 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
 
         {inputMode === "input" && currentProblem && currentProblem.type === "fraction" && (
           <div className="fraction-inputs">
+            {/* 🔍 Debug-only Difficulty Display for Math Game */}
+            <p style={{ color: "gray", fontSize: "0.9em" }}>
+              Difficulty: <strong>{difficulty}</strong>
+            </p>
+            <p style={{ color: "gray", fontSize: "0.9em" }}>
+              <strong>Raw Prediction:</strong> {userGameState?.predicted_difficulty ?? "n/a"} | 
+              <strong>Mapped Difficulty:</strong> {difficulty}
+            </p>
             <input
               type="number"
               value={userNumerator}
