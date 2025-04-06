@@ -737,6 +737,7 @@ const handleSubmit = () => {
         <div className="scenario-text">{scenarioText}</div>
 
         {inputMode === "input" && currentProblem && currentProblem.type === "fraction" && (
+            <>
             {/* 🔍 Debug-only Difficulty Display for Math Game */}
           <div className="fraction-inputs">
           
@@ -769,11 +770,11 @@ const handleSubmit = () => {
             </div>
           
           </div>
-
+            </>
         )}
 
         {inputMode === "input" && currentProblem && currentProblem.type === "whole-number" && (
-            
+            <>
             {/* 🔍 Debug-only Difficulty Display for Math Game */}
           <div className="fraction-inputs">
             {/* 🔍 Debug-only Difficulty Display for Math Game */}
@@ -798,7 +799,7 @@ const handleSubmit = () => {
             />
           
           </div>
-
+        </>
 
         )}
 
