@@ -204,6 +204,11 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
       // update react states
       const isCorrect = newUserState.correct
       const difficulty = newUserState.difficulty
+      // ✅ Skip batch write if userStats is undefined
+      if (!userStats) {
+        console.warn("⚠️ Skipping batch write: userStats is undefined");
+        return;
+      }
       const newUserStats = updateTotals(userStats, isCorrect, gameRef.current, difficulty)
       setUserStats(newUserStats);
       setDailyStats(updateTotals(dailyStats, isCorrect, gameRef.current, difficulty));
@@ -305,7 +310,9 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
     setCurrentProblem(randomProblem);
     setInputMode(problemType);
     const probDifficulty = randomProblem.difficulty || "easy";
-    const mappedDifficulty = getDiffString(userGameState?.predicted_difficulty || probDifficulty);
+    const rawPrediction = userGameState?.predicted_difficulty ?? probDifficulty;
+    const mappedDifficulty = getDiffString(rawPrediction);
+
     setDifficulty(mappedDifficulty);
 
     // 🔍 Debug Logs for Problem Generation
