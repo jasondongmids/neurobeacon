@@ -2,7 +2,10 @@ import { useRef, useEffect, useState, forwardRef, useImperativeHandle, useContex
 import UserStateContext from "../context/UserStateContext";
 import GameHxContext from "../context/GameHxContext";
 import UserStatisticsContext from "../context/UserStatisticsContext";
-import { invokeModel, getDiffString } from "../functions/Model";
+import { getDiffString, getDiffInt, invokeModel } from "../functions/Model";
+import { getDiffString } from "../../utils/model"; // adjust path to match your file structure
+
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 //                           HELPER FUNCTIONS
@@ -99,7 +102,8 @@ const generateWholeNumberNearMisses = (correctAnswer) => {
 // ─────────────────────────────────────────────────────────────────────────────
 //               FRACTION ADDITION GAME COMPONENT (Updated)
 // ─────────────────────────────────────────────────────────────────────────────
-
+const [difficulty, setDifficulty] = useState("easy");
+const [rawPrediction, setRawPrediction] = useState("easy");
 const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
   // ----- State Declarations -----
   const [problems, setProblems] = useState([]);
@@ -229,6 +233,9 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
       const prepState = prepareUserGameState(newUserState, userGameState, updatedUserCategoryState);
       const primaryPrediction = await invokeModel(prepState, 'primary');
       const targetPrediction = await invokeModel(prepState, 'target');
+setRawPrediction(primaryPrediction);
+setDifficulty(getDiffString(primaryPrediction));  // use the same map your model file uses
+
       // 🔍 Debug Logs for Model Difficulty and Batch Write
       console.log("📦 Batch Write Triggered");
       console.log("🧠 Raw Model Prediction:", primaryPrediction);
@@ -712,7 +719,7 @@ const handleSubmit = () => {
           <h2>Round {questionCount + 1} Start</h2>
           <div style={{ margin: "16px 0" }}>
             <h3 style={{ fontSize: "1.4em" }}>Game Rules:</h3>
-            <p>Solve the math problem accurately. Exp 4</p>
+            <p>Solve the math problem accurately. Exp 5</p>
             <p>Enter your answer in the appropriate fields or select one answer from the multiple choice options and click the Submit Answer button.</p>
             <p>You have up to 3 attempts per problem.</p>
             <p>Feel free to click the Skip Question button to get a new question with no scoring penalty!</p>
@@ -730,52 +737,69 @@ const handleSubmit = () => {
         <div className="scenario-text">{scenarioText}</div>
 
         {inputMode === "input" && currentProblem && currentProblem.type === "fraction" && (
-          <div className="fraction-inputs">
             {/* 🔍 Debug-only Difficulty Display for Math Game */}
-            <p style={{ color: "gray", fontSize: "0.9em" }}>
-              Difficulty: <strong>{safeGetDiffString(userGameState?.predicted_difficulty ?? "easy")}</strong>
-            </p>
-            <p style={{ color: "gray", fontSize: "0.9em" }}>
-              <strong>Raw Prediction:</strong> {userGameState?.predicted_difficulty ?? "n/a"} | 
-              <strong>Mapped Difficulty:</strong> {difficulty}
-            </p>
-             <p>
-            <input
-              type="number"
-              value={userNumerator}
-              onChange={(e) => setUserNumerator(e.target.value)}
-              placeholder="Numerator"
-            />
-            <span>/</span>
-            <input
-              type="number"
-              value={userDenominator}
-              onChange={(e) => setUserDenominator(e.target.value)}
-              placeholder="Denominator"
-            />
-               </p>
+          <div className="fraction-inputs">
+          
+            {/* 🔍 Difficulty Block: Vertical and Above Inputs */}
+            <div className="difficulty-display" style={{ marginBottom: "10px" }}>
+              <p style={{ color: "gray", fontSize: "0.9em", margin: 0 }}>
+                Difficulty: <strong>{difficulty}</strong>
+              </p>
+              <p style={{ color: "gray", fontSize: "0.9em", margin: 0 }}>
+                <strong>Raw Prediction:</strong> {getDiffString(rawPrediction)} | 
+                <strong>Mapped Difficulty:</strong> {difficulty}
+              </p>
+            </div>
+          
+            {/* 🧮 Fraction Input Fields */}
+            <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+              <input
+                type="number"
+                value={userNumerator}
+                onChange={(e) => setUserNumerator(e.target.value)}
+                placeholder="Numerator"
+              />
+              <span>/</span>
+              <input
+                type="number"
+                value={userDenominator}
+                onChange={(e) => setUserDenominator(e.target.value)}
+                placeholder="Denominator"
+              />
+            </div>
+          
           </div>
+
         )}
 
         {inputMode === "input" && currentProblem && currentProblem.type === "whole-number" && (
-          <div className="fraction-inputs">
             
             {/* 🔍 Debug-only Difficulty Display for Math Game */}
-            <p style={{ color: "gray", fontSize: "0.9em" }}>
-              Difficulty: <strong>{safeGetDiffString(userGameState?.predicted_difficulty ?? "easy")}</strong>
-            </p>
-            <p style={{ color: "gray", fontSize: "0.9em" }}>
-              <strong>Raw Prediction:</strong> {userGameState?.predicted_difficulty ?? "n/a"} | 
-              <strong>Mapped Difficulty:</strong> {difficulty}
-            </p>
-        
+          <div className="fraction-inputs">
+            {/* 🔍 Debug-only Difficulty Display for Math Game */}
+            {/* 🎯 Difficulty Display */}
+            <div className="difficulty-display" style={{ marginBottom: "10px" }}>
+              <p style={{ color: "gray", fontSize: "0.9em", margin: 0 }}>
+                Difficulty: <strong>{difficulty}</strong>
+              </p>
+              <p style={{ color: "gray", fontSize: "0.9em", margin: 0 }}>
+                <strong>Raw Prediction:</strong> {getDiffString(rawPrediction)} | 
+                <strong>Mapped Difficulty:</strong> {difficulty}
+              </p>
+            </div>
+          
+            {/* ✏️ User Input */}
             <input
               type="number"
               value={userAnswer}
               onChange={(e) => setUserAnswer(e.target.value)}
               placeholder="Answer"
+              style={{ marginTop: "10px" }}
             />
+          
           </div>
+
+
         )}
 
         {inputMode === "multiple-choice" && (
