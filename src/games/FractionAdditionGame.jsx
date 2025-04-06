@@ -317,7 +317,6 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
     setInputMode(problemType);
     const probDifficulty = randomProblem.difficulty || "easy";
     const rawPrediction = userGameState?.predicted_difficulty ?? probDifficulty;
-    const rawPrediction = userGameState?.predicted_difficulty ?? probDifficulty;
     const mappedDifficulty = safeGetDiffString(rawPrediction);
 
     setDifficulty(mappedDifficulty);
