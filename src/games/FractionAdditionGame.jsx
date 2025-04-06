@@ -703,7 +703,7 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
           <h2>Round {questionCount + 1} Start</h2>
           <div style={{ margin: "16px 0" }}>
             <h3 style={{ fontSize: "1.4em" }}>Game Rules:</h3>
-            <p>Solve the math problem accurately.</p>
+            <p>Solve the math problem accurately. Exp 0</p>
             <p>Enter your answer in the appropriate fields or select one answer from the multiple choice options and click the Submit Answer button.</p>
             <p>You have up to 3 attempts per problem.</p>
             <p>Feel free to click the Skip Question button to get a new question with no scoring penalty!</p>
