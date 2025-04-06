@@ -190,7 +190,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
       filteredQuestions = filteredQuestions.map((q, index) => ({
         ...q,
         id: q.id || index,
-        difficulty: q.difficulty || "easy",
+        difficulty: (q.difficulty || "easy").toLowerCase(),
       }));
     
       const randomized = filteredQuestions.sort(() => Math.random() - 0.5);
@@ -218,24 +218,43 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
     // 👁️ Watch for groupedQuestions being populated, then launch first question
     useEffect(() => {
       if (Object.keys(groupedQuestions).length > 0) {
-        console.log("✅ Grouped questions ready — calling nextQuestion()");
-        nextQuestion();
+        const decade = selectedDecades[0];
+        const decadeGroup = groupedQuestions[decade];
+    
+        if (decadeGroup && Object.values(decadeGroup).some(arr => arr.length > 0)) {
+          console.log("✅ Grouped questions ready — calling nextQuestion()");
+          nextQuestion();
+        } else {
+          console.warn("❌ No questions found in selected decade group!");
+          setMessage("No questions available for the selected decade(s).");
+        }
       }
     }, [groupedQuestions]);
-
       
     function groupQuestionsByDecadeAndDifficulty(questions) {
-        return questions.reduce((acc, q) => {
-          const decade = q.decade || "unknown";
-          const difficulty = q.difficulty || "easy";
-      
-          if (!acc[decade]) acc[decade] = {};
-          if (!acc[decade][difficulty]) acc[decade][difficulty] = [];
-      
-          acc[decade][difficulty].push(q);
-          return acc;
-        }, {});
-      }
+      const grouped = {};
+    
+      questions.forEach((q) => {
+        const decade = q.decade || "unknown";
+        const difficulty = (q.difficulty || "easy").toLowerCase(); // 🔥 consistent
+    
+        if (!grouped[decade]) grouped[decade] = {};
+        if (!grouped[decade][difficulty]) grouped[decade][difficulty] = [];
+    
+        grouped[decade][difficulty].push(q);
+      });
+    
+      // 🔍 Debug print
+      console.log("🧩 Grouped Questions Breakdown:");
+      Object.entries(grouped).forEach(([decade, difficulties]) => {
+        Object.entries(difficulties).forEach(([diff, list]) => {
+          console.log(`→ ${decade} / ${diff}: ${list.length} questions`);
+        });
+      });
+    
+      return grouped;
+    }
+
       
         const shuffleAnswers = (question) => {
             if (question) {
@@ -409,6 +428,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
 
     
     const nextQuestion = () => {
+        console.log("🎯 Predicted difficulty in nextQuestion:", currentDifficulty);
         console.log("🎯 Using predicted difficulty:", currentDifficulty);
         const currentDecade = questions[questionIndex]?.decade || selectedDecades[0] || "unknown";
         console.log("🎯 Using difficulty:", currentDifficulty);
@@ -481,7 +501,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
       <div style={{ color: "white", margin: "16px 0", fontSize: "1.2em" }}>
         <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
         <p>Answer trivia questions from your selected decades by clicking on the answer followed by the Submit Answer Button.</p>
-        <p>Points are awarded based on difficulty and speed. Test 14</p>
+        <p>Points are awarded based on difficulty and speed. Test 15</p>
         <p>Try to answer quickly to maximize your score!</p>
         <p>Feel free to click the Skip Question button to get a new question with no scoring penalty!</p>
       </div>
