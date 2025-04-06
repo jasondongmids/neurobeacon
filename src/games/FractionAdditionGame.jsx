@@ -7,6 +7,12 @@ import { invokeModel, getDiffString } from "../functions/Model";
 // ─────────────────────────────────────────────────────────────────────────────
 //                           HELPER FUNCTIONS
 // ─────────────────────────────────────────────────────────────────────────────
+const safeGetDiffString = (val) => {
+  if (typeof val === "string" && ["easy", "medium", "hard"].includes(val.toLowerCase())) {
+    return val.toLowerCase();
+  }
+  return getDiffString(parseInt(val));
+};
 
 const getRandomDenominator = (denominatorsList) =>
   denominatorsList[Math.floor(Math.random() * denominatorsList.length)];
@@ -221,8 +227,8 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
       // 🔍 Debug Logs for Model Difficulty and Batch Write
       console.log("📦 Batch Write Triggered");
       console.log("🧠 Raw Model Prediction:", primaryPrediction);
-      console.log("🎯 Mapped Difficulty (Primary):", getDiffString(primaryPrediction));
-      console.log("🎯 Mapped Difficulty (Target):", getDiffString(targetPrediction));
+      console.log("🎯 Mapped Difficulty (Primary):", safeGetDiffString(primaryPrediction));
+      console.log("🎯 Mapped Difficulty (Target):", safeGetDiffString(targetPrediction));
       console.log("📊 User Embedding Snapshot:", {
         easy: newUserStats.easy.percent_correct,
         medium: newUserStats.medium.percent_correct,
@@ -232,8 +238,8 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
       const finalState = {
        ...prepState,
        score: newUserState.score,
-       predicted_difficulty: getDiffString(primaryPrediction),
-       target_difficulty: getDiffString(targetPrediction),
+       predicted_difficulty: safeGetDiffString(primaryPrediction),
+       target_difficulty: safeGetDiffString(targetPrediction),
        user_embedding: {
         easy_percent: newUserStats.easy.percent_correct,
         medium_percent: newUserStats.medium.percent_correct,
@@ -311,7 +317,8 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
     setInputMode(problemType);
     const probDifficulty = randomProblem.difficulty || "easy";
     const rawPrediction = userGameState?.predicted_difficulty ?? probDifficulty;
-    const mappedDifficulty = getDiffString(rawPrediction);
+    const rawPrediction = userGameState?.predicted_difficulty ?? probDifficulty;
+    const mappedDifficulty = safeGetDiffString(rawPrediction);
 
     setDifficulty(mappedDifficulty);
 
@@ -329,7 +336,7 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
     if (initGameStateRef.current) {
       getUserState(gameRef.current, randomProblem.scenario_type)
       getUserState(gameRef.current, "");
-      setDifficulty(userGameState.difficulty)
+      setDifficulty(safeGetDiffString(userGameState?.predicted_difficulty ?? "easy"));
     }
     if (userCategoryState.category.category != randomProblem.scenario_type) {
       getUserState(gameRef.current, randomProblem.scenario_type)
@@ -701,7 +708,7 @@ const handleSubmit = () => {
           <h2>Round {questionCount + 1} Start</h2>
           <div style={{ margin: "16px 0" }}>
             <h3 style={{ fontSize: "1.4em" }}>Game Rules:</h3>
-            <p>Solve the math problem accurately. Exp 2</p>
+            <p>Solve the math problem accurately. Exp 3</p>
             <p>Enter your answer in the appropriate fields or select one answer from the multiple choice options and click the Submit Answer button.</p>
             <p>You have up to 3 attempts per problem.</p>
             <p>Feel free to click the Skip Question button to get a new question with no scoring penalty!</p>
@@ -728,7 +735,7 @@ const handleSubmit = () => {
               <strong>Raw Prediction:</strong> {userGameState?.predicted_difficulty ?? "n/a"} | 
               <strong>Mapped Difficulty:</strong> {difficulty}
             </p>
-             <br /> 
+             <p>
             <input
               type="number"
               value={userNumerator}
@@ -742,6 +749,7 @@ const handleSubmit = () => {
               onChange={(e) => setUserDenominator(e.target.value)}
               placeholder="Denominator"
             />
+               </p>
           </div>
         )}
 
@@ -756,13 +764,13 @@ const handleSubmit = () => {
               <strong>Raw Prediction:</strong> {userGameState?.predicted_difficulty ?? "n/a"} | 
               <strong>Mapped Difficulty:</strong> {difficulty}
             </p>
-             <br /> 
+             <p> 
             <input
               type="number"
               value={userAnswer}
               onChange={(e) => setUserAnswer(e.target.value)}
               placeholder="Answer"
-            />
+            /></p>
           </div>
         )}
 
