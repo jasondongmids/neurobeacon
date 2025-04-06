@@ -52,43 +52,57 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
       if (initGameStateRef.current) {
         initGameStateRef.current = false;
       }
+    
       try {
-        // update react states
-        const isCorrect = newUserState.correct
-        const difficulty = newUserState.difficulty
-        const newUserStats = updateTotals(userStats, isCorrect, gameRef.current, difficulty)
+        const isCorrect = newUserState.correct;
+        const difficulty = newUserState.difficulty;
+    
+        // 🧠 Update local React stats
+        const newUserStats = updateTotals(userStats, isCorrect, gameRef.current, difficulty);
         setUserStats(newUserStats);
         setDailyStats(updateTotals(dailyStats, isCorrect, gameRef.current, difficulty));
-        setWeeklyStats(updateTotals(weeklyStats, isCorrect, gameRef.current, difficulty)); 
-
+        setWeeklyStats(updateTotals(weeklyStats, isCorrect, gameRef.current, difficulty));
+    
+        // 🧠 Prepare updated state and get predictions
         const updatedUserCategoryState = updateUserCategoryState(newUserState);
         const prepState = prepareUserGameState(newUserState, userGameState, updatedUserCategoryState);
-        const primaryPrediction = await invokeModel(prepState, 'primary');
-        const targetPrediction = await invokeModel(prepState, 'target');
+    
+        const primaryPrediction = await invokeModel(prepState, "primary");
+        const targetPrediction = await invokeModel(prepState, "target");
+    
+        const predictedDifficulty = getDiffString(primaryPrediction);
+        const targetDiff = getDiffString(targetPrediction);
+    
+        // ✅ Build final state including actual new difficulty to use
         const finalState = {
-        ...prepState,
-        score: newUserState.score,
-        predicted_difficulty: getDiffString(primaryPrediction),
-        target_difficulty: getDiffString(targetPrediction),
-        user_embedding: {
-          easy_percent: newUserStats.easy.percent_correct,
-          medium_percent: newUserStats.medium.percent_correct,
-          hard_percent: newUserStats.hard.percent_correct,
-        }
+          ...prepState,
+          difficulty: predictedDifficulty, // 👈 This line makes dynamic difficulty WORK!
+          score: newUserState.score,
+          predicted_difficulty: predictedDifficulty,
+          target_difficulty: targetDiff,
+          user_embedding: {
+            easy_percent: newUserStats.easy.percent_correct,
+            medium_percent: newUserStats.medium.percent_correct,
+            hard_percent: newUserStats.hard.percent_correct,
+          },
         };
+    
         const finalGameData = {
           ...gameData,
-          score: newUserState.score
-        }
+          score: newUserState.score,
+        };
+    
         updateUserGameState(finalState);
-        setCurrentDifficulty(finalState.difficulty || "easy");
-        console.log("📈 Updated userGameState to:", finalState.difficulty);
+        setCurrentDifficulty(predictedDifficulty); // ✅ this updates the difficulty for nextQuestion()
+        console.log(`📈 Model predicted: ${predictedDifficulty} | Setting difficulty to: ${finalState.difficulty}`);
         addGameHx(finalGameData);
-        return "complete"
+    
+        return "complete";
       } catch (error) {
-        console.error("Error with batch write", error)
+        console.error("Error with batch write", error);
       }
-    }
+    };
+
 
     useEffect(() => {
         if (
