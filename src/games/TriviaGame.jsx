@@ -61,31 +61,31 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
         setDailyStats(updateTotals(dailyStats, isCorrect, gameRef.current, difficulty));
         setWeeklyStats(updateTotals(weeklyStats, isCorrect, gameRef.current, difficulty));
     
-        const updatedUserCategoryState = updateUserCategoryState(newUserState);
-    
-        // 🔁 Build full synthetic game state before prediction
-        const finalUserGameState = {
-          ...userGameState,
+        // 🔧 Augment newUserState with "prev_is_correct" + timing
+        const updatedUserCategoryState = updateUserCategoryState({
           ...newUserState,
           prev_is_correct: isCorrect,
-          total_correct: (userGameState?.total_correct || 0) + (isCorrect ? 1 : 0),
-          total_questions: (userGameState?.total_questions || 0) + 1,
-        };
+          prev_is_slow: false, // You can add a real "slow" check here later
+        });
     
-        const prepState = prepareUserGameState(finalUserGameState, finalUserGameState, updatedUserCategoryState);
+        const prepState = prepareUserGameState(
+          {
+            ...newUserState,
+            prev_is_correct: isCorrect,
+            prev_is_slow: false,
+          },
+          userGameState,
+          updatedUserCategoryState
+        );
     
         const primaryPrediction = await invokeModel(prepState, "primary");
         const targetPrediction = await invokeModel(prepState, "target");
     
-        const predictedDifficulty = getDiffString(primaryPrediction);
-        const targetDiff = getDiffString(targetPrediction);
-    
         const finalState = {
           ...prepState,
-          difficulty: predictedDifficulty,
           score: newUserState.score,
-          predicted_difficulty: predictedDifficulty,
-          target_difficulty: targetDiff,
+          predicted_difficulty: getDiffString(primaryPrediction),
+          target_difficulty: getDiffString(targetPrediction),
           user_embedding: {
             easy_percent: newUserStats.easy.percent_correct,
             medium_percent: newUserStats.medium.percent_correct,
@@ -99,15 +99,17 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
         };
     
         updateUserGameState(finalState);
-        setCurrentDifficulty(predictedDifficulty);
-        console.log(`📈 Model predicted: ${predictedDifficulty} | Setting difficulty to: ${finalState.difficulty}`);
-        addGameHx(finalGameData);
+        setCurrentDifficulty(finalState.difficulty || "easy");
     
+        console.log("📈 Model predicted:", finalState.predicted_difficulty, "| Setting difficulty to:", finalState.difficulty);
+    
+        addGameHx(finalGameData);
         return "complete";
       } catch (error) {
         console.error("Error with batch write", error);
       }
     };
+
 
     useEffect(() => {
         if (
@@ -501,7 +503,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
       <div style={{ color: "white", margin: "16px 0", fontSize: "1.2em" }}>
         <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
         <p>Answer trivia questions from your selected decades by clicking on the answer followed by the Submit Answer Button.</p>
-        <p>Points are awarded based on difficulty and speed. Test 15</p>
+        <p>Points are awarded based on difficulty and speed. Test 16</p>
         <p>Try to answer quickly to maximize your score!</p>
         <p>Feel free to click the Skip Question button to get a new question with no scoring penalty!</p>
       </div>
