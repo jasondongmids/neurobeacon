@@ -48,7 +48,6 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
  
     // ✅ Database: Functions and Effects
     const batchWrite = async (newUserState, gameData) => {
-      // enable ddb writes
       if (initGameStateRef.current) {
         initGameStateRef.current = false;
       }
@@ -57,15 +56,23 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
         const isCorrect = newUserState.correct;
         const difficulty = newUserState.difficulty;
     
-        // 🧠 Update local React stats
         const newUserStats = updateTotals(userStats, isCorrect, gameRef.current, difficulty);
         setUserStats(newUserStats);
         setDailyStats(updateTotals(dailyStats, isCorrect, gameRef.current, difficulty));
         setWeeklyStats(updateTotals(weeklyStats, isCorrect, gameRef.current, difficulty));
     
-        // 🧠 Prepare updated state and get predictions
         const updatedUserCategoryState = updateUserCategoryState(newUserState);
-        const prepState = prepareUserGameState(newUserState, userGameState, updatedUserCategoryState);
+    
+        // 🔁 Build full synthetic game state before prediction
+        const finalUserGameState = {
+          ...userGameState,
+          ...newUserState,
+          prev_is_correct: isCorrect,
+          total_correct: (userGameState?.total_correct || 0) + (isCorrect ? 1 : 0),
+          total_questions: (userGameState?.total_questions || 0) + 1,
+        };
+    
+        const prepState = prepareUserGameState(finalUserGameState, finalUserGameState, updatedUserCategoryState);
     
         const primaryPrediction = await invokeModel(prepState, "primary");
         const targetPrediction = await invokeModel(prepState, "target");
@@ -73,10 +80,9 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
         const predictedDifficulty = getDiffString(primaryPrediction);
         const targetDiff = getDiffString(targetPrediction);
     
-        // ✅ Build final state including actual new difficulty to use
         const finalState = {
           ...prepState,
-          difficulty: predictedDifficulty, // 👈 This line makes dynamic difficulty WORK!
+          difficulty: predictedDifficulty,
           score: newUserState.score,
           predicted_difficulty: predictedDifficulty,
           target_difficulty: targetDiff,
@@ -93,7 +99,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
         };
     
         updateUserGameState(finalState);
-        setCurrentDifficulty(predictedDifficulty); // ✅ this updates the difficulty for nextQuestion()
+        setCurrentDifficulty(predictedDifficulty);
         console.log(`📈 Model predicted: ${predictedDifficulty} | Setting difficulty to: ${finalState.difficulty}`);
         addGameHx(finalGameData);
     
@@ -102,7 +108,6 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
         console.error("Error with batch write", error);
       }
     };
-
 
     useEffect(() => {
         if (
@@ -476,7 +481,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
       <div style={{ color: "white", margin: "16px 0", fontSize: "1.2em" }}>
         <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
         <p>Answer trivia questions from your selected decades by clicking on the answer followed by the Submit Answer Button.</p>
-        <p>Points are awarded based on difficulty and speed. Test 13</p>
+        <p>Points are awarded based on difficulty and speed. Test 14</p>
         <p>Try to answer quickly to maximize your score!</p>
         <p>Feel free to click the Skip Question button to get a new question with no scoring penalty!</p>
       </div>
