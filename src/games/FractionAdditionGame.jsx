@@ -468,177 +468,162 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
     setIsGenerating(false);
   };
 
-  // ----- Handle Submission -----
-  const handleSubmit = () => {
-    console.log("📤 Submit button clicked");
-    if (isPaused) {
-      console.warn("❌ Session is over, game is paused.");
-      return;
-        }
-       // Check if an answer has been provided.
-    if (inputMode === "multiple-choice" && !selectedChoice) {
-      setMessage("❌ Please select an answer!");
-      return;
-    }
-    if (inputMode === "input") {
-      if (currentProblem.type === "fraction" && (!userNumerator || !userDenominator)) {
-        setMessage("❌ Please enter both numerator and denominator!");
-        return;
-      }
-      if (currentProblem.type === "whole-number" && (userAnswer === "" || userAnswer === null || userAnswer === undefined)) {
-        setMessage("❌ Please enter your answer!");
-        return;
-      }
-    }
- 
-    const endTime = Date.now();
-    let isCorrect = false;
-    let correctValue;
-    let userInputValue;
-  
-    if (currentProblem.type === "fraction") {
-      // Recompute the correct answer (already simplified when generated)
-      correctValue = simplifyFraction(
-        currentProblem.operation === "+"
-          ? (n1 * (lcm(d1, d2) / d1) + n2 * (lcm(d1, d2) / d2))
-          : (n1 * (lcm(d1, d2) / d1) - n2 * (lcm(d1, d2) / d2)),
-        lcm(d1, d2)
-      );
-      userInputValue = `${userNumerator}/${userDenominator}`;
-      // Simplify user's input so that "2/4" becomes "1/2"
-      const simplifiedUserInput = simplifyUserInput(userInputValue);
-      isCorrect = selectedChoice === correctValue || simplifiedUserInput === correctValue;
-    } else if (currentProblem.type === "whole-number") {
-      switch (currentProblem.operation) {
-        case "+":
-          correctValue = (n1 + n2).toString();
-          break;
-        case "-":
-          correctValue = (n1 - n2).toString();
-          break;
-        case "*":
-          correctValue = (n1 * n2).toString();
-          break;
-        case "/":
-          correctValue = Math.floor(n1 / n2).toString();
-          break;
-        default:
-          console.error("❌ Invalid operation in submission:", currentProblem.operation);
-      }
-      if (inputMode === "multiple-choice") {
-        isCorrect = selectedChoice === correctValue;
-      } else {
-        const sanitizedAnswer = (userAnswer || "").trim();
-        if (!sanitizedAnswer.match(/^\d+$/)) {
-          setMessage("❌ Please enter a valid number!");
-          return;
-        }
-        userInputValue = sanitizedAnswer;
-        isCorrect = userInputValue === correctValue;
-      }
-      }
-    // ──────────────────────────────────────
-    // 🔍 Debug Logs for Model & Answer Eval
-    // ──────────────────────────────────────
-    console.log("🎯 Difficulty selected:", difficulty);
-    console.log("🧠 Model Prediction:", userGameState?.predicted_difficulty);
-    console.log("🔍 Sanitized User Input:", sanitizedAnswer);
-    console.log("🎲 Problem:", currentProblem);
-    console.log("✅ Correct Answer:", correctValue);
-    console.log("🧪 User Answer:", inputMode === "multiple-choice" ? selectedChoice : userInputValue);
+const handleSubmit = () => {
+  console.log("📤 Submit button clicked");
 
-    // Database: variables for database updates
-    // const difficultyInt = difficulty === "easy" ? 0 : difficulty === "medium" ? 1 : 2;
-    const gameCategory = currentProblem.scenario_type;
-    const gameData = {
-      question_id: currentProblem.id,
-      question_type: gameRef.current,
-      question_category: gameCategory,
-      difficulty: difficulty,
-      // game_time_ms: 100, // placeholder
-      session_id: sessionId,
-      session_time_ms: 2000, // placeholder before implementing,
-      attempt: attempts + 1,
-      user_answer: selectedChoice,
-      is_correct: isCorrect,
+  if (isPaused) {
+    console.warn("❌ Session is over, game is paused.");
+    return;
+  }
+
+  // Validate input presence
+  if (inputMode === "multiple-choice" && !selectedChoice) {
+    setMessage("❌ Please select an answer!");
+    return;
+  }
+  if (inputMode === "input") {
+    if (currentProblem.type === "fraction" && (!userNumerator || !userDenominator)) {
+      setMessage("❌ Please enter both numerator and denominator!");
+      return;
     }
-    const newUserState = {
-      // elapsed_time: Math.min(reaction * 1000, 2147483647),
-      difficulty: difficulty,
-      game_type: gameRef.current,
-      category: gameCategory     
-    };
-  
-    let scoreEarned = 0;
-    if (isCorrect) {
-      console.log("✅ Correct Answer!");
-      switch (attempts) {
-        case 0:
-          scoreEarned = scoreModifier;
-          break;
-        case 1:
-          scoreEarned = Math.floor(scoreModifier * 0.5);
-          break;
-        case 2:
-          scoreEarned = Math.floor(scoreModifier * 0.25);
-          break;
-        default:
-          scoreEarned = 0;
+    if (currentProblem.type === "whole-number" && (userAnswer === "" || userAnswer === null || userAnswer === undefined)) {
+      setMessage("❌ Please enter your answer!");
+      return;
+    }
+  }
+
+  const endTime = Date.now();
+  let isCorrect = false;
+  let correctValue;
+  let userInputValue;
+  let sanitizedAnswer = ""; // ✅ Moved to top for global visibility
+
+  // Evaluate answers
+  if (currentProblem.type === "fraction") {
+    correctValue = simplifyFraction(
+      currentProblem.operation === "+"
+        ? (n1 * (lcm(d1, d2) / d1) + n2 * (lcm(d1, d2) / d2))
+        : (n1 * (lcm(d1, d2) / d1) - n2 * (lcm(d1, d2) / d2)),
+      lcm(d1, d2)
+    );
+    userInputValue = `${userNumerator}/${userDenominator}`;
+    const simplifiedUserInput = simplifyUserInput(userInputValue);
+    isCorrect = selectedChoice === correctValue || simplifiedUserInput === correctValue;
+  } else if (currentProblem.type === "whole-number") {
+    switch (currentProblem.operation) {
+      case "+": correctValue = (n1 + n2).toString(); break;
+      case "-": correctValue = (n1 - n2).toString(); break;
+      case "*": correctValue = (n1 * n2).toString(); break;
+      case "/": correctValue = Math.floor(n1 / n2).toString(); break;
+      default:
+        console.error("❌ Invalid operation in submission:", currentProblem.operation);
+    }
+
+    if (inputMode === "multiple-choice") {
+      isCorrect = selectedChoice === correctValue;
+    } else {
+      sanitizedAnswer = (userAnswer || "").trim();
+      if (!sanitizedAnswer.match(/^\d+$/)) {
+        setMessage("❌ Please enter a valid number!");
+        return;
       }
-      setSessionCorrectCount((prev) => prev + 1);
-      setMessage(`✅ Correct! You earned ${scoreEarned} points.`);
+      userInputValue = sanitizedAnswer;
+      isCorrect = userInputValue === correctValue;
+    }
+  }
+
+  // 🔍 Debug
+  console.log("🎯 Difficulty selected:", difficulty || "fallback");
+  console.log("🧠 Model Prediction:", userGameState?.predicted_difficulty);
+  console.log("🔍 Sanitized User Input:", sanitizedAnswer);
+  console.log("🎲 Problem:", currentProblem);
+  console.log("✅ Correct Answer:", correctValue);
+  console.log("🧪 User Answer:", inputMode === "multiple-choice" ? selectedChoice : userInputValue);
+  console.log("✅ isCorrect:", isCorrect);
+
+  // Prepare DB updates
+  const gameCategory = currentProblem.scenario_type;
+  const gameData = {
+    question_id: currentProblem.id,
+    question_type: gameRef.current,
+    question_category: gameCategory,
+    difficulty: difficulty || "easy",
+    session_id: sessionId,
+    session_time_ms: 2000,
+    attempt: attempts + 1,
+    user_answer: selectedChoice,
+    is_correct: isCorrect,
+  };
+
+  const newUserState = {
+    difficulty: difficulty || "easy",
+    game_type: gameRef.current,
+    category: gameCategory,
+  };
+
+  // Handle scoring
+  let scoreEarned = 0;
+  if (isCorrect) {
+    console.log("✅ Correct Answer!");
+    switch (attempts) {
+      case 0: scoreEarned = scoreModifier; break;
+      case 1: scoreEarned = Math.floor(scoreModifier * 0.5); break;
+      case 2: scoreEarned = Math.floor(scoreModifier * 0.25); break;
+      default: scoreEarned = 0;
+    }
+
+    setSessionCorrectCount((prev) => prev + 1);
+    setMessage(`✅ Correct! You earned ${scoreEarned} points.`);
+    setElapsedTime(((endTime - startTime) / 1000).toFixed(2));
+    setScore((prev) => prev + scoreEarned);
+
+    setQuestionCount((prev) => {
+      const newCount = prev + 1;
+      if (newCount >= maxRounds) {
+        endSession(endTime);
+      } else {
+        setTimeout(() => generateNewProblem(), 1500);
+      }
+      return newCount;
+    });
+
+    newUserState.correct = true;
+    newUserState.score = scoreEarned;
+    newUserState.elapsed_time = Math.min(endTime - startTime, 2147483647);
+    gameData.game_time_ms = newUserState.elapsed_time;
+    batchWrite(newUserState, gameData);
+  } else {
+    console.warn("❌ Incorrect Answer!");
+    const newAttempts = attempts + 1;
+    setAttempts(newAttempts);
+
+    if (newAttempts >= 3) {
+      setMessage(`❌ Nice try! The correct answer was ${correctValue}.`);
       setElapsedTime(((endTime - startTime) / 1000).toFixed(2));
-      setScore((prev) => prev + scoreEarned);
+
+      newUserState.correct = false;
+      newUserState.score = 0;
+      newUserState.elapsed_time = Math.min(endTime - startTime, 2147483647);
+      gameData.game_time_ms = newUserState.elapsed_time;
+      batchWrite(newUserState, gameData);
+
       setQuestionCount((prev) => {
         const newCount = prev + 1;
         if (newCount >= maxRounds) {
           endSession(endTime);
         } else {
-          setTimeout(() => generateNewProblem(), 1500);
+          setTimeout(() => generateNewProblem(), 2500);
         }
         return newCount;
       });
-
-      // Database: Update user state and game hx when correct
-      newUserState.correct = true;
-      newUserState.score = scoreEarned;
-      newUserState.elapsed_time = Math.min(endTime - startTime, 2147483647);
-      gameData.game_time_ms = Math.min(endTime - startTime, 2147483647);
-      batchWrite(newUserState, gameData)
-
     } else {
-      console.warn("❌ Incorrect Answer!");
-      const newAttempts = attempts + 1;
-      setAttempts(newAttempts);
-      if (newAttempts >= 3) {
-        setMessage(`❌ Nice try! The correct answer was ${correctValue}.`);
-        setElapsedTime(((endTime - startTime) / 1000).toFixed(2));
-
-        // Database: Update user state when incorrect after three attempts
-        newUserState.correct = false
-        newUserState.score = 0
-        newUserState.elapsed_time = Math.min(endTime - startTime, 2147483647);
-        gameData.game_time_ms = Math.min(endTime - startTime, 2147483647);
-        batchWrite(newUserState, gameData)
-
-        setQuestionCount((prev) => {
-          const newCount = prev + 1;
-          if (newCount >= maxRounds) {
-            endSession(endTime);
-          } else {
-            setTimeout(() => generateNewProblem(), 2500);
-          }
-          return newCount;
-        });
-      } else {
-        setMessage(`❌ Try Again! (${3 - newAttempts} attempts left)`);
-
-        // Database: Update game hx per attempt
-        gameData.score = 0
-        addGameHx(gameData)
-      }
+      setMessage(`❌ Try Again! (${3 - newAttempts} attempts left)`);
+      gameData.score = 0;
+      addGameHx(gameData);
     }
-  };
+  }
+};
+
 
   // ----- End Session -----
   const endSession = (endTime) => {
@@ -709,7 +694,7 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
           <h2>Round {questionCount + 1} Start</h2>
           <div style={{ margin: "16px 0" }}>
             <h3 style={{ fontSize: "1.4em" }}>Game Rules:</h3>
-            <p>Solve the math problem accurately. Exp 1</p>
+            <p>Solve the math problem accurately. Exp 2</p>
             <p>Enter your answer in the appropriate fields or select one answer from the multiple choice options and click the Submit Answer button.</p>
             <p>You have up to 3 attempts per problem.</p>
             <p>Feel free to click the Skip Question button to get a new question with no scoring penalty!</p>
@@ -736,6 +721,7 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
               <strong>Raw Prediction:</strong> {userGameState?.predicted_difficulty ?? "n/a"} | 
               <strong>Mapped Difficulty:</strong> {difficulty}
             </p>
+             <br /> 
             <input
               type="number"
               value={userNumerator}
@@ -754,6 +740,7 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
 
         {inputMode === "input" && currentProblem && currentProblem.type === "whole-number" && (
           <div className="fraction-inputs">
+            
             {/* 🔍 Debug-only Difficulty Display for Math Game */}
             <p style={{ color: "gray", fontSize: "0.9em" }}>
               Difficulty: <strong>{difficulty}</strong>
@@ -762,7 +749,7 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
               <strong>Raw Prediction:</strong> {userGameState?.predicted_difficulty ?? "n/a"} | 
               <strong>Mapped Difficulty:</strong> {difficulty}
             </p>
-
+             <br /> 
             <input
               type="number"
               value={userAnswer}
