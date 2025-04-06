@@ -11,8 +11,13 @@ const safeGetDiffString = (val) => {
   if (typeof val === "string" && ["easy", "medium", "hard"].includes(val.toLowerCase())) {
     return val.toLowerCase();
   }
-  return getDiffString(parseInt(val));
+  const parsed = parseInt(val);
+  if ([0, 1, 2].includes(parsed)) {
+    return ["easy", "medium", "hard"][parsed];
+  }
+  return "easy"; // final fallback
 };
+
 
 const getRandomDenominator = (denominatorsList) =>
   denominatorsList[Math.floor(Math.random() * denominatorsList.length)];
@@ -707,7 +712,7 @@ const handleSubmit = () => {
           <h2>Round {questionCount + 1} Start</h2>
           <div style={{ margin: "16px 0" }}>
             <h3 style={{ fontSize: "1.4em" }}>Game Rules:</h3>
-            <p>Solve the math problem accurately. Exp 3</p>
+            <p>Solve the math problem accurately. Exp 4</p>
             <p>Enter your answer in the appropriate fields or select one answer from the multiple choice options and click the Submit Answer button.</p>
             <p>You have up to 3 attempts per problem.</p>
             <p>Feel free to click the Skip Question button to get a new question with no scoring penalty!</p>
@@ -728,7 +733,7 @@ const handleSubmit = () => {
           <div className="fraction-inputs">
             {/* 🔍 Debug-only Difficulty Display for Math Game */}
             <p style={{ color: "gray", fontSize: "0.9em" }}>
-              Difficulty: <strong>{difficulty}</strong>
+              Difficulty: <strong>{safeGetDiffString(userGameState?.predicted_difficulty ?? "easy")}</strong>
             </p>
             <p style={{ color: "gray", fontSize: "0.9em" }}>
               <strong>Raw Prediction:</strong> {userGameState?.predicted_difficulty ?? "n/a"} | 
@@ -757,19 +762,19 @@ const handleSubmit = () => {
             
             {/* 🔍 Debug-only Difficulty Display for Math Game */}
             <p style={{ color: "gray", fontSize: "0.9em" }}>
-              Difficulty: <strong>{difficulty}</strong>
+              Difficulty: <strong>{safeGetDiffString(userGameState?.predicted_difficulty ?? "easy")}</strong>
             </p>
             <p style={{ color: "gray", fontSize: "0.9em" }}>
               <strong>Raw Prediction:</strong> {userGameState?.predicted_difficulty ?? "n/a"} | 
               <strong>Mapped Difficulty:</strong> {difficulty}
             </p>
-             <p> 
+        
             <input
               type="number"
               value={userAnswer}
               onChange={(e) => setUserAnswer(e.target.value)}
               placeholder="Answer"
-            /></p>
+            />
           </div>
         )}
 
@@ -777,7 +782,7 @@ const handleSubmit = () => {
           <div>
             {/* 🔍 Debug-only Difficulty Display for Math Game */}
             <p style={{ color: "gray", fontSize: "0.9em" }}>
-              Difficulty: <strong>{difficulty}</strong>
+              Difficulty: <strong>{safeGetDiffString(userGameState?.predicted_difficulty ?? "easy")}</strong>
             </p>
             <p style={{ color: "gray", fontSize: "0.9em" }}>
               <strong>Raw Prediction:</strong> {userGameState?.predicted_difficulty ?? "n/a"} | 
