@@ -342,10 +342,10 @@ canvas {
 
 /* ===== Logo ===== */
 .welcome-logo {
-  max-width: 250px; /* it won’t exceed 250px on large screens */
-  width: 80%;       /* but on smaller screens, it can shrink */
+  max-width: 400px; /* it won’t exceed 250px on large screens */
+  width: 150%;       /* but on smaller screens, it can shrink */
   height: auto;     /* keeps aspect ratio */
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 
