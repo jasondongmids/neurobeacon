@@ -79,7 +79,11 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
         );
     
         const primaryPrediction = await invokeModel(prepState, "primary");
+        console.log("🔍 Model prediction (raw):", primaryPrediction);
+        console.log("🔍 Mapped difficulty:", getDiffString(primaryPrediction));
+        
         const targetPrediction = await invokeModel(prepState, "target");
+
     
         const finalState = {
           ...prepState,
@@ -503,7 +507,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
       <div style={{ color: "white", margin: "16px 0", fontSize: "1.2em" }}>
         <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
         <p>Answer trivia questions from your selected decades by clicking on the answer followed by the Submit Answer Button.</p>
-        <p>Points are awarded based on difficulty and speed. Test 17</p>
+        <p>Points are awarded based on difficulty and speed. Test 18</p>
         <p>Try to answer quickly to maximize your score!</p>
         <p>Feel free to click the Skip Question button to get a new question with no scoring penalty!</p>
       </div>
@@ -570,7 +574,8 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
               Difficulty: <strong>{currentDifficulty}</strong> | 
               Decade: <strong>{questions[questionIndex]?.decade || "unknown"}</strong>
             </p>
-            
+            <p style={{ color: "gray", fontSize: "0.9em" }}><strong>Raw Prediction:</strong> {userGameState?.predicted_difficulty}</p>
+            <p style={{ color: "gray", fontSize: "0.9em" }}><strong>Mapped Difficulty:</strong> {currentDifficulty}</p>
             <div className="multiple-choice-options">
                 {shuffledAnswers.map((option, index) => (
                     <label key={index}>
