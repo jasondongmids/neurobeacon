@@ -213,6 +213,17 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
       const prepState = prepareUserGameState(newUserState, userGameState, updatedUserCategoryState);
       const primaryPrediction = await invokeModel(prepState, 'primary');
       const targetPrediction = await invokeModel(prepState, 'target');
+      // 🔍 Debug Logs for Model Difficulty and Batch Write
+      console.log("📦 Batch Write Triggered");
+      console.log("🧠 Raw Model Prediction:", primaryPrediction);
+      console.log("🎯 Mapped Difficulty (Primary):", getDiffString(primaryPrediction));
+      console.log("🎯 Mapped Difficulty (Target):", getDiffString(targetPrediction));
+      console.log("📊 User Embedding Snapshot:", {
+        easy: newUserStats.easy.percent_correct,
+        medium: newUserStats.medium.percent_correct,
+        hard: newUserStats.hard.percent_correct,
+      });
+
       const finalState = {
        ...prepState,
        score: newUserState.score,
@@ -294,7 +305,16 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
     setCurrentProblem(randomProblem);
     setInputMode(problemType);
     const probDifficulty = randomProblem.difficulty || "easy";
-    setDifficulty(probDifficulty);
+    const mappedDifficulty = getDiffString(userGameState?.predicted_difficulty || probDifficulty);
+    setDifficulty(mappedDifficulty);
+
+    // 🔍 Debug Logs for Problem Generation
+    console.log("🎲 New Problem:", randomProblem);
+    console.log("🎯 Raw Difficulty:", probDifficulty);
+    console.log("🧠 Model Prediction:", userGameState?.predicted_difficulty);
+    console.log("✅ Mapped Difficulty:", mappedDifficulty);
+    console.log("🎮 Input Mode:", problemType);
+    
     const scoreMod = probDifficulty === "easy" ? 30 : probDifficulty === "medium" ? 60 : 100;
     setScoreModifier(scoreMod);
 
@@ -512,6 +532,14 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
         isCorrect = userInputValue === correctValue;
       }
     }
+    // ──────────────────────────────────────
+    // 🔍 Debug Logs for Model & Answer Eval
+    // ──────────────────────────────────────
+    console.log("🎯 Difficulty selected:", difficulty);
+    console.log("🧠 Model Prediction:", userGameState?.predicted_difficulty);
+    console.log("🎲 Problem:", currentProblem);
+    console.log("✅ Correct Answer:", correctValue);
+    console.log("🧪 User Answer:", inputMode === "multiple-choice" ? selectedChoice : userInputValue);
 
     // Database: variables for database updates
     // const difficultyInt = difficulty === "easy" ? 0 : difficulty === "medium" ? 1 : 2;
@@ -712,6 +740,15 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
 
         {inputMode === "input" && currentProblem && currentProblem.type === "whole-number" && (
           <div className="fraction-inputs">
+            {/* 🔍 Debug-only Difficulty Display for Math Game */}
+            <p style={{ color: "gray", fontSize: "0.9em" }}>
+              Difficulty: <strong>{difficulty}</strong>
+            </p>
+            <p style={{ color: "gray", fontSize: "0.9em" }}>
+              <strong>Raw Prediction:</strong> {userGameState?.predicted_difficulty ?? "n/a"} | 
+              <strong>Mapped Difficulty:</strong> {difficulty}
+            </p>
+
             <input
               type="number"
               value={userAnswer}
@@ -723,6 +760,15 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
 
         {inputMode === "multiple-choice" && (
           <div>
+            {/* 🔍 Debug-only Difficulty Display for Math Game */}
+            <p style={{ color: "gray", fontSize: "0.9em" }}>
+              Difficulty: <strong>{difficulty}</strong>
+            </p>
+            <p style={{ color: "gray", fontSize: "0.9em" }}>
+              <strong>Raw Prediction:</strong> {userGameState?.predicted_difficulty ?? "n/a"} | 
+              <strong>Mapped Difficulty:</strong> {difficulty}
+            </p>
+
             <p style={{ marginBottom: "8px", color: "#333" }}>
               Please choose one answer:
             </p>
