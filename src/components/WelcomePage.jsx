@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import UserContext from "../context/UserContext";
 //import NavBar from "./NavBar";
 import "../styles.css";
-import logo from "../assets/Gif white text.gif";
+import logo from "../assets/gif-logo-white-text.gif";
 
 const WelcomePage = () => {
   const navigate = useNavigate();
