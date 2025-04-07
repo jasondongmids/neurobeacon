@@ -469,7 +469,6 @@ function handlePointerUp(event) {
 }
 
 
-// Step 4: Refactor Click Processing
 function processClick(offsetX, offsetY) {
   if (!waitingForGreen || !startTime) return;
 
@@ -478,88 +477,89 @@ function processClick(offsetX, offsetY) {
     offsetX <= targetBox.x + targetBox.width &&
     offsetY >= targetBox.y &&
     offsetY <= targetBox.y + targetBox.height;
-  const reaction = (Date.now() - startTime) / 1000;
 
-  // Database: variables for database updates remain unchanged
-  // const difficultyInt = difficulty === "easy" ? 0 : difficulty === "medium" ? 1 : 2;
+  const reaction = (Date.now() - startTime) / 1000;
+  const clampedMs = Math.min(reaction * 1000, 2147483647);
   const gameCategory = usedImagesRef.current.at(-1).replace(/\..*$/, "");
+
   const gameData = {
     question_id: gameCategory,
     question_type: gameRef.current,
     question_category: gameCategory,
-    difficulty: difficulty,
-    game_time_ms: Math.min(reaction * 1000, 2147483647),
+    difficulty,
+    game_time_ms: clampedMs,
     session_id: sessionId,
-    session_time_ms: 2000, // placeholder before implementing,
+    session_time_ms: 2000, // can replace later
     attempt: mistakes + 1,
     user_answer: "not_applicable",
     is_correct: isCorrectClick,
   };
+
   const newUserState = {
-    elapsed_time: Math.min(reaction * 1000, 2147483647),
-    difficulty: difficulty,
+    elapsed_time: clampedMs,
+    difficulty,
     game_type: gameRef.current,
-    category: gameCategory     
+    category: gameCategory,
   };
 
   if (isCorrectClick) {
+    const timeBonus = Math.max(difficultyLevels[difficulty].reactionTime - reaction, 0) * 100;
+    const finalScore = timeBonus * difficultyLevels[difficulty].speedFactor;
+
     setReactionTimes(prev => [...prev, reaction]);
     setCorrectClicks(prev => prev + 1);
-
-    const timeBonus = Math.max(
-      difficultyLevels[difficulty].reactionTime - reaction,
-      0
-    ) * 100;
-    const finalScore = timeBonus * difficultyLevels[difficulty].speedFactor;
-    setScore(prev => prev + finalScore);
+    setScore(prev => {
+      const updated = prev + finalScore;
+      const acc = ((correctClicks + 1) / (round || 1)) * 100;
+      console.log(`🧠 Difficulty Logic | acc: ${acc.toFixed(2)}% | reaction time: ${(reaction * 1000).toFixed(0)}ms | prediction: ${difficulty}`);
+      return updated;
+    });
 
     setMessage(`✅ Great job! Reaction time: ${reaction.toFixed(2)} sec.`);
     setWaitingForGreen(false);
-    updateStats(round);
 
-    // Database: Update user state and game hx when correct
     newUserState.correct = true;
     newUserState.score = Math.round(finalScore);
     batchWrite(newUserState, gameData);
+    updateStats(round);
 
-    if (round >= maxRounds) {
-      setTimeout(endGame, 700);
-    } else {
-      setTimeout(startNewRound, 1000);
-    }
+    setTimeout(() => {
+      if (round >= maxRounds) endGame();
+      else startNewRound();
+    }, 700);
   } else {
-    if (mistakes < 2) {
-      gameData.score = 0;
-      addGameHx(gameData);
-    } else {
+    const totalMistakes = mistakes + 1;
+    const isFinalMistake = totalMistakes >= 3;
+
+    if (isFinalMistake) {
       newUserState.correct = false;
       newUserState.score = 0;
       batchWrite(newUserState, gameData);
+    } else {
+      gameData.score = 0;
+      addGameHx(gameData);
     }
 
-    setMistakes(prev => {
-      const newMistakes = prev + 1;
-      setScore(prevScore => Math.max(prevScore - 50, 0));
-      if (newMistakes >= 3) {
-        console.warn("🚨 3 Mistakes! Moving to next round.");
-        setMessage("❌ Round ended due to 3 mistakes.");
-        setTimeout(() => {
-          if (round >= maxRounds) {
-            endGame();
-          } else {
-            startNewRound();
-          }
-        }, 1000);
-        return 0;
-      } else if (newMistakes === 1) {
-        setMessage("❌ Incorrect click. Try again!");
-      } else if (newMistakes === 2) {
-        setMessage("⚠️ One more mistake and the round ends!");
-      }
-      return newMistakes;
-    });
+    setMistakes(totalMistakes);
+    setScore(prev => Math.max(prev - 50, 0));
+
+    if (isFinalMistake) {
+      console.warn("🚨 3 Mistakes! Moving to next round.");
+      setMessage("❌ Round ended due to 3 mistakes.");
+      setTimeout(() => {
+        if (round >= maxRounds) endGame();
+        else startNewRound();
+      }, 1000);
+    } else {
+      setMessage(
+        totalMistakes === 1
+          ? "❌ Incorrect click. Try again!"
+          : "⚠️ One more mistake and the round ends!"
+      );
+    }
   }
 }
+
 
 
   // ────────────────────────────────────────────────────────────────
@@ -582,7 +582,7 @@ function processClick(offsetX, offsetY) {
         <div style={{ color: "white", margin: "16px 0", fontSize: "1.2em" }}>
         <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
         
-          <p>Wait for the box to change color. Exp 2</p>
+          <p>Wait for the box to change color. Exp 3</p>
           <p>Click as quickly as possible once the box changes color.</p>
           <p>Your reaction time will be measured and added to your score.</p>
           <p>Try to achieve a fast reaction to earn more points.</p>
@@ -629,10 +629,9 @@ function processClick(offsetX, offsetY) {
           <p>Round: {round}/{maxRounds}</p>
           {/* Show any warning or mistake messages immediately */}
           {message && <p className="warning">{message}</p>}
-          <p style={{ color: "white", fontWeight: "bold", marginTop: "8px" }}>
+          <p style={{ color: "white" }}>
             Difficulty: <span style={{ color: "white" }}>{difficulty}</span>
-          </p>
-          <p style={{ color: "white", fontWeight: "bold" }}>
+            <br />
             Raw Prediction: <span style={{ color: "white" }}>{rawPrediction}</span>{" "}
             | Mapped Difficulty: <span style={{ color: "white" }}>{mappedDifficulty}</span>
           </p>
