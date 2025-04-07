@@ -188,6 +188,21 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
       .catch((error) => console.error("Failed to load problems:", error));
   }, []);
 
+// Ensure model is invoked once everything is hydrated
+useEffect(() => {
+  if (initGameStateRef.current && userStats && userGameState && userCategoryState) {
+    setTimeout(() => {
+      const prepState = prepareUserGameState(userGameState, userCategoryState);
+      invokeModel(prepState, "primary").then((primaryPrediction) => {
+        console.log("🧠 Initial model prediction (delayed):", primaryPrediction);
+        setRawPrediction(primaryPrediction);
+        setDifficulty(getDiffString(primaryPrediction));
+      });
+    }, 300); // Delay ensures getUserState finishes
+  }
+}, [userStats, userGameState, userCategoryState]);
+
+  
   // 2) Update stats for the panel/modal whenever score, correct count, or question count changes.
   useEffect(() => {
     if (onUpdateStats) {
@@ -720,7 +735,7 @@ const handleSubmit = () => {
           <h2>Round {questionCount + 1} Start</h2>
           <div style={{ margin: "16px 0" }}>
             <h3 style={{ fontSize: "1.4em" }}>Game Rules:</h3>
-            <p>Solve the math problem accurately. Exp 5</p>
+            <p>Solve the math problem accurately. Exp 6</p>
             <p>Enter your answer in the appropriate fields or select one answer from the multiple choice options and click the Submit Answer button.</p>
             <p>You have up to 3 attempts per problem.</p>
             <p>Feel free to click the Skip Question button to get a new question with no scoring penalty!</p>
@@ -743,7 +758,7 @@ const handleSubmit = () => {
           <div className="fraction-inputs">
           
             {/* 🔍 Difficulty Block: Vertical and Above Inputs */}
-            <div className="difficulty-display" style={{ marginBottom: "10px" }}>
+            <div className="difficulty-display" style={{ marginBottom: "10px", display: "block" }}>
               <p style={{ color: "gray", fontSize: "0.9em", margin: 0 }}>
                 Difficulty: <strong>{difficulty}</strong>
               </p>
@@ -778,7 +793,7 @@ const handleSubmit = () => {
           <>
             {/* 🔍 Debug-only Difficulty Display for Math Game */}
             <div className="fraction-inputs">
-              <div className="difficulty-display" style={{ marginBottom: "10px" }}>
+              <div className="difficulty-display" style={{ marginBottom: "10px", display: "block" }}> }}>
                 <p style={{ color: "gray", fontSize: "0.9em", margin: 0 }}>
                   Difficulty: <strong>{difficulty}</strong>
                 </p>
