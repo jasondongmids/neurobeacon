@@ -735,7 +735,7 @@ const handleSubmit = () => {
           <h2>Round {questionCount + 1} Start</h2>
           <div style={{ margin: "16px 0" }}>
             <h3 style={{ fontSize: "1.4em" }}>Game Rules:</h3>
-            <p>Solve the math problem accurately. Exp 6</p>
+            <p>Solve the math problem accurately. Exp 7</p>
             <p>Enter your answer in the appropriate fields or select one answer from the multiple choice options and click the Submit Answer button.</p>
             <p>You have up to 3 attempts per problem.</p>
             <p>Feel free to click the Skip Question button to get a new question with no scoring penalty!</p>
@@ -755,10 +755,10 @@ const handleSubmit = () => {
         {inputMode === "input" && currentProblem && currentProblem.type === "fraction" && (
             <>
             {/* 🔍 Debug-only Difficulty Display for Math Game */}
-          <div className="fraction-inputs">
+          <div className="fraction-inputs" style={{display: "block" }}>
           
             {/* 🔍 Difficulty Block: Vertical and Above Inputs */}
-            <div className="difficulty-display" style={{ marginBottom: "10px", display: "block" }}>
+            <div className="difficulty-display" style={{ marginBottom: "10px"}}>
               <p style={{ color: "gray", fontSize: "0.9em", margin: 0 }}>
                 Difficulty: <strong>{difficulty}</strong>
               </p>
@@ -792,8 +792,8 @@ const handleSubmit = () => {
         {inputMode === "input" && currentProblem && currentProblem.type === "whole-number" && (
           <>
             {/* 🔍 Debug-only Difficulty Display for Math Game */}
-            <div className="fraction-inputs">
-              <div className="difficulty-display" style={{ marginBottom: "10px", display: "block" }}> }}>
+            <div className="fraction-inputs"style={{ display: "block" }}>
+              <div className="difficulty-display" style={{ marginBottom: "10px"}}>
                 <p style={{ color: "gray", fontSize: "0.9em", margin: 0 }}>
                   Difficulty: <strong>{difficulty}</strong>
                 </p>
