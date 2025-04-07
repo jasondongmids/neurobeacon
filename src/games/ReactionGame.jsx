@@ -306,7 +306,7 @@ useEffect(() => {
     const parentRect = gameCanvas.current.parentElement.getBoundingClientRect();
     // Use the container's width or window width (whichever is smaller)
     const availableWidth = Math.min(parentRect.width, window.innerWidth);
-    const newWidth = Math.min(availableWidth, 800); // never exceed 800px
+    const newWidth = Math.min(availableWidth, 750); // never exceed 800px
     const newHeight = (newWidth * 500) / 800; // maintain aspect ratio
     setCanvasWidth(newWidth);
     setCanvasHeight(newHeight);
@@ -515,27 +515,41 @@ function processClick(offsetX, offsetY) {
       batchWrite(newUserState, gameData);
     }
 
-    setMistakes(prev => {
-      const newMistakes = prev + 1;
-      setScore(prevScore => Math.max(prevScore - 50, 0));
-      if (newMistakes >= 3) {
-        console.warn("🚨 3 Mistakes! Moving to next round.");
-        setMessage("❌ Round ended due to 3 mistakes.");
-        setTimeout(() => {
-          if (round >= maxRounds) {
-            endGame();
-          } else {
-            startNewRound();
-          }
-        }, 1000);
-        return 0;
-      } else if (newMistakes === 1) {
-        setMessage("❌ Incorrect click. Try again!");
-      } else if (newMistakes === 2) {
-        setMessage("⚠️ One more mistake and the round ends!");
+setMistakes(prev => {
+  const newMistakes = prev + 1;
+
+  if (newMistakes >= 3) {
+    console.warn("🚨 3 Mistakes! Moving to next round.");
+    setMessage("❌ Round ended due to 3 mistakes.");
+
+    newUserState.correct = false;
+    newUserState.score = 0; // No points awarded, but also no deduction
+
+    batchWrite(newUserState, gameData); // Only log final failed attempt
+
+    setTimeout(() => {
+      if (round >= maxRounds) {
+        endGame();
+      } else {
+        startNewRound();
       }
-      return newMistakes;
-    });
+    }, 1000);
+    return 0;
+  } else {
+    if (newMistakes === 1) {
+      setMessage("❌ Incorrect click. Try again!");
+    } else if (newMistakes === 2) {
+      setMessage("⚠️ One more mistake and the round ends!");
+    }
+
+    // You can still log these early mistakes (optional)
+    gameData.score = 0;
+    addGameHx(gameData);
+  }
+
+  return newMistakes;
+});
+
   }
 }
 
@@ -560,7 +574,7 @@ function processClick(offsetX, offsetY) {
         <div style={{ color: "white", margin: "16px 0", fontSize: "1.2em" }}>
         <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
         
-          <p>Wait for the box to change color. Exp 0</p>
+          <p>Wait for the box to change color. Exp 1</p>
           <p>Click as quickly as possible once the box changes color.</p>
           <p>Your reaction time will be measured and added to your score.</p>
           <p>Try to achieve a fast reaction to earn more points.</p>
