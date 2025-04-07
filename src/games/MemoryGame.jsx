@@ -519,32 +519,32 @@ import React, {
     let flatTimes = allAttemptTimes.flat();
     let overallAvg = flatTimes.length > 0 ? (flatTimes.reduce((a, b) => a + b, 0) / flatTimes.length).toFixed(2) : "0.00";
   
-    return (
-        <div style={{ position: "relative", minHeight: "100%", height: "auto" }}>
-              <>
-                <div style={{ marginTop: "12px", color: "white", fontSize: "0.75em" }}>
-                  Difficulty: <span style={{ color: "white" }}>{getDiffString(difficulty)}</span>
-                  <br />
-                  Raw Prediction: <span style={{ color: "white" }}>{rawPrediction}</span> | Mapped Difficulty:{" "}
-                  <span style={{ color: "white" }}>{mappedDifficulty}</span>
-                </div></>
-          <LazyBackground
-            src={getBackgroundImage()}
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              backgroundcolor: "#2e86c1",
-              height: "100%",
-              backgroundSize: "cover",
-              backgroundRepeat: "no-repeat",
-              zIndex: 0,
-            }}
-            placeholderColor="#2e86c1"
-            transitionDuration="0.4s"
-          />
-          <div style={{ position: "relative", zIndex: 2, textAlign: "center", padding: "20px" }}>
+        return (
+          <div style={{ position: "relative", minHeight: "100%", height: "auto" }}>
+            <LazyBackground
+              src={getBackgroundImage()}
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                backgroundcolor: "#2e86c1",
+                height: "100%",
+                backgroundSize: "cover",
+                backgroundRepeat: "no-repeat",
+                zIndex: 0,
+              }}
+              placeholderColor="#2e86c1"
+              transitionDuration="0.4s"
+            />
+            <div style={{ position: "relative", zIndex: 2, textAlign: "center", padding: "20px" }}>
+              
+              {/* ⬇️ Always-visible difficulty info */}
+              <div style={{ marginTop: "4px", color: "white", fontSize: "0.75em" }}>
+                Difficulty: <span>{getDiffString(difficulty)}</span>
+                <br />
+                Raw Prediction: <span>{rawPrediction}</span> | Mapped Difficulty: <span>{mappedDifficulty}</span>
+              </div>
             {gamePhase === "intro" && (
               <div>
                 <div style={{ color: "white", fontSize: "1.2em", margin: "16px 0" }}>
