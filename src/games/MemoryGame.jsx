@@ -583,12 +583,6 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
                 <span>{option}</span>
               </label>
             ))}
-        <p style={{ color: "white", fontSize: "0.75em", margin: 0 }}>
-          Difficulty: <span style={{ color: "white" }}>{getDiffString(difficulty)}</span>
-          <br />
-          Raw Prediction: <span style={{ color: "white" }}>{rawPrediction}</span>{" "}
-          | Mapped Difficulty: <span style={{ color: "white" }}>{mappedDifficulty}</span>
-        </p>
           </div>
           {message && (
             <div>
@@ -599,6 +593,12 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
       )}
 
       {gamePhase === "end" && (
+        <div style={{ marginTop: "12px", color: "white", fontSize: "0.75em" }}>
+    Difficulty: <span style={{ color: "white" }}>{getDiffString(difficulty)}</span>
+    <br />
+    Raw Prediction: <span style={{ color: "white" }}>{rawPrediction}</span> | 
+    Mapped Difficulty: <span style={{ color: "white" }}>{mappedDifficulty}</span>
+  </div>
         <div className="modal-overlay">
           <div className="modal-content">
             <h2>Game Over!</h2>
