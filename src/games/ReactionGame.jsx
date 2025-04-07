@@ -317,10 +317,6 @@ function handlePointerMove(event) {
     drawBoxes(ctx);
   }, [waitingForGreen, boxes, targetBox]);
 
-  // Update stats when round, correctClicks, reactionTimes, or score change.
-  useEffect(() => {
-    updateStats(round);
-  }, [round, correctClicks, reactionTimes, score]);
 
   //Dynamic resizer for the image canvas
 useEffect(() => {
@@ -582,7 +578,7 @@ function processClick(offsetX, offsetY) {
         <div style={{ color: "white", margin: "16px 0", fontSize: "1.2em" }}>
         <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
         
-          <p>Wait for the box to change color. Exp 3</p>
+          <p>Wait for the box to change color. Exp 4</p>
           <p>Click as quickly as possible once the box changes color.</p>
           <p>Your reaction time will be measured and added to your score.</p>
           <p>Try to achieve a fast reaction to earn more points.</p>
@@ -629,7 +625,7 @@ function processClick(offsetX, offsetY) {
           <p>Round: {round}/{maxRounds}</p>
           {/* Show any warning or mistake messages immediately */}
           {message && <p className="warning">{message}</p>}
-          <p style={{ color: "white" }}>
+          <p style={{ color: "white",fontSize: "0.75em", margin: 0 }}>
             Difficulty: <span style={{ color: "white" }}>{difficulty}</span>
             <br />
             Raw Prediction: <span style={{ color: "white" }}>{rawPrediction}</span>{" "}
