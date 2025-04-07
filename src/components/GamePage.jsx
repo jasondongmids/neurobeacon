@@ -61,7 +61,8 @@ const GamePage = () => {
                 <Panel title="Hints" position="right" />
             </div>
 
-            <Footer />
+        {/* ✅ Hide footer for reaction game */}
+        {gameType !== "reaction" && <Footer />}
         </div>
     );
 };
