@@ -92,39 +92,43 @@ function getScaledOffset(event, canvas) {
     x: (event.clientX - rect.left) * scaleX,
     y: (event.clientY - rect.top) * scaleY,
   };
-  function updateStats(updatedRound) {
-    const validTimes = reactionTimes.filter(time => !isNaN(time));
-    const avgReaction =
-      validTimes.length > 0
-        ? (validTimes.reduce((a, b) => a + b, 0) / validTimes.length).toFixed(2)
-        : "N/A";
+}
 
-    const newAccuracy =
-      updatedRound > 0
-        ? ((correctClicks / updatedRound) * 100).toFixed(2)
-        : "0.00";
+// ✅ Now define updateStats OUTSIDE
+function updateStats(updatedRound) {
+  const validTimes = reactionTimes.filter(time => !isNaN(time));
+  const avgReaction =
+    validTimes.length > 0
+      ? (validTimes.reduce((a, b) => a + b, 0) / validTimes.length).toFixed(2)
+      : "N/A";
 
-    const newScore = score.toFixed(2);
-    console.log(`📊 updateStats | score: ${newScore} | acc: ${newAccuracy} | rounds: ${updatedRound} | avgReaction: ${avgReaction}`);
-    
-    const updatedStats = {
+  const newAccuracy =
+    updatedRound > 0
+      ? ((correctClicks / updatedRound) * 100).toFixed(2)
+      : "0.00";
+
+  const newScore = score.toFixed(2);
+  console.log(`📊 updateStats | score: ${newScore} | acc: ${newAccuracy} | rounds: ${updatedRound} | avgReaction: ${avgReaction}`);
+  
+  const updatedStats = {
+    score: newScore,
+    accuracy: newAccuracy,
+    avgReactionTime: avgReaction
+  };
+
+  setFinalStats(updatedStats);
+
+  if (onUpdateStats) {
+    onUpdateStats({
       score: newScore,
+      questionsAnswered: updatedRound,
       accuracy: newAccuracy,
-      avgReactionTime: avgReaction
-    };
-
-    setFinalStats(updatedStats);
-
-    if (onUpdateStats) {
-      onUpdateStats({
-        score: newScore,
-        questionsAnswered: updatedRound,
-        accuracy: newAccuracy,
-        reactionTime: avgReaction,
-        maxRounds
-      });
-    }
+      reactionTime: avgReaction,
+      maxRounds
+    });
   }
+}
+
 
   function endGame() {
     setShowEndModal(true);
@@ -155,9 +159,7 @@ function generateRandomBoxes(count) {
       boxHeight = 50;
   }
 
-}
-
-  // Define margins relative to canvas size, ensuring boxes stay fully within canvas bounds.
+  // ✅ Moved inside the function to use boxWidth and boxHeight
   const margin = 10; // fixed margin in pixels
   const maxX = canvasWidth - boxWidth - margin;
   const maxY = canvasHeight - boxHeight - margin;
@@ -569,7 +571,7 @@ function processClick(offsetX, offsetY) {
         <div style={{ color: "white", margin: "16px 0", fontSize: "1.2em" }}>
         <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
         
-          <p>Wait for the box to change color. Exp 5</p>
+          <p>Wait for the box to change color. Exp 6</p>
           <p>Click as quickly as possible once the box changes color.</p>
           <p>Your reaction time will be measured and added to your score.</p>
           <p>Try to achieve a fast reaction to earn more points.</p>
