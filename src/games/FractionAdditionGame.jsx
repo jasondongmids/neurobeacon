@@ -3,7 +3,7 @@ import UserStateContext from "../context/UserStateContext";
 import GameHxContext from "../context/GameHxContext";
 import UserStatisticsContext from "../context/UserStatisticsContext";
 import { getDiffString, getDiffInt, invokeModel } from "../functions/Model";
-import { getDiffString } from "../../utils/model"; // adjust path to match your file structure
+
 
 
 
@@ -102,8 +102,7 @@ const generateWholeNumberNearMisses = (correctAnswer) => {
 // ─────────────────────────────────────────────────────────────────────────────
 //               FRACTION ADDITION GAME COMPONENT (Updated)
 // ─────────────────────────────────────────────────────────────────────────────
-const [difficulty, setDifficulty] = useState("easy");
-const [rawPrediction, setRawPrediction] = useState("easy");
+
 const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
   // ----- State Declarations -----
   const [problems, setProblems] = useState([]);
@@ -114,6 +113,8 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
   const [sessionCorrectCount, setSessionCorrectCount] = useState(0);
   const [sessionStartTime, setSessionStartTime] = useState(null);
   const [sessionEndTime, setSessionEndTime] = useState("");
+  const [difficulty, setDifficulty] = useState("easy");
+  const [rawPrediction, setRawPrediction] = useState("easy");
   const [isPaused, setIsPaused] = useState(false);
 
 
