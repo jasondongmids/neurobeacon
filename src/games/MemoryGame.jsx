@@ -211,6 +211,9 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
     const gameRef = useRef("memory")
     const prevGameStateRef = useRef(userGameState)
     const prevCategoryStateRef = useRef(userCategoryState)
+    const [rawPrediction, setRawPrediction] = useState("");
+    const [mappedDifficulty, setMappedDifficulty] = useState("");
+
 
   // Database: Functions and effects:
   const batchWrite = async (newUserState, gameData) => {
@@ -249,7 +252,11 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
       }
       updateUserGameState(finalState);
       addGameHx(finalGameData);
-      setDifficulty(primaryPrediction)
+      const pPredStr = getDiffString(primaryPrediction);
+      const tPredStr = getDiffString(targetPrediction);
+      setRawPrediction(pPredStr);
+      setMappedDifficulty(pPredStr); // or map it differently if needed
+      setDifficulty(primaryPrediction);
       return "complete"
     } catch (error) {
       console.error("Error with batch write", error)
@@ -576,6 +583,12 @@ const MemoryGame = forwardRef(({ onUpdateStats }, ref) => {
                 <span>{option}</span>
               </label>
             ))}
+        <p style={{ color: "white", fontSize: "0.75em", margin: 0 }}>
+          Difficulty: <span style={{ color: "white" }}>{getDiffString(difficulty)}</span>
+          <br />
+          Raw Prediction: <span style={{ color: "white" }}>{rawPrediction}</span>{" "}
+          | Mapped Difficulty: <span style={{ color: "white" }}>{mappedDifficulty}</span>
+        </p>
           </div>
           {message && (
             <div>
