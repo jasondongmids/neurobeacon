@@ -83,52 +83,39 @@ const ReactionGame = ({ onUpdateStats }) => {
 
   // ────────────────────────────────────────────────────────────────
   // HELPER FUNCTIONS (using function declarations)
-function getScaledOffset(event, canvas) {
-  const rect = canvas.getBoundingClientRect();
-  const scaleX = canvas.width / rect.width;
-  const scaleY = canvas.height / rect.height;
 
-  return {
-    x: (event.clientX - rect.left) * scaleX,
-    y: (event.clientY - rect.top) * scaleY,
-  };
-}
+  function updateStats(updatedRound) {
+    const validTimes = reactionTimes.filter(time => !isNaN(time));
+    const avgReaction =
+      validTimes.length > 0
+        ? (validTimes.reduce((a, b) => a + b, 0) / validTimes.length).toFixed(2)
+        : "N/A";
 
-// ✅ Now define updateStats OUTSIDE
-function updateStats(updatedRound) {
-  const validTimes = reactionTimes.filter(time => !isNaN(time));
-  const avgReaction =
-    validTimes.length > 0
-      ? (validTimes.reduce((a, b) => a + b, 0) / validTimes.length).toFixed(2)
-      : "N/A";
+    const newAccuracy =
+      updatedRound > 0
+        ? ((correctClicks / updatedRound) * 100).toFixed(2)
+        : "0.00";
 
-  const newAccuracy =
-    updatedRound > 0
-      ? ((correctClicks / updatedRound) * 100).toFixed(2)
-      : "0.00";
+    const newScore = score.toFixed(2);
 
-  const newScore = score.toFixed(2);
-  console.log(`📊 updateStats | score: ${newScore} | acc: ${newAccuracy} | rounds: ${updatedRound} | avgReaction: ${avgReaction}`);
-  
-  const updatedStats = {
-    score: newScore,
-    accuracy: newAccuracy,
-    avgReactionTime: avgReaction
-  };
-
-  setFinalStats(updatedStats);
-
-  if (onUpdateStats) {
-    onUpdateStats({
+    const updatedStats = {
       score: newScore,
-      questionsAnswered: updatedRound,
       accuracy: newAccuracy,
-      reactionTime: avgReaction,
-      maxRounds
-    });
-  }
-}
+      avgReactionTime: avgReaction
+    };
 
+    setFinalStats(updatedStats);
+
+    if (onUpdateStats) {
+      onUpdateStats({
+        score: newScore,
+        questionsAnswered: updatedRound,
+        accuracy: newAccuracy,
+        reactionTime: avgReaction,
+        maxRounds
+      });
+    }
+  }
 
   function endGame() {
     setShowEndModal(true);
@@ -159,7 +146,7 @@ function generateRandomBoxes(count) {
       boxHeight = 50;
   }
 
-  // ✅ Moved inside the function to use boxWidth and boxHeight
+  // Define margins relative to canvas size, ensuring boxes stay fully within canvas bounds.
   const margin = 10; // fixed margin in pixels
   const maxX = canvasWidth - boxWidth - margin;
   const maxY = canvasHeight - boxHeight - margin;
@@ -175,34 +162,37 @@ function generateRandomBoxes(count) {
 }
 
 
-  function startNewRound() {
-    if (round >= maxRounds) {
-      endGame();
-      return;
-    }
-
-    // Reset per-round states.
-    setStartTime(null);
-    setWaitingForGreen(false);
-    setMistakes(0);
-    setMessage("");
-
-    // Load new image.
-    setCurrentImage(getNextImage());
-
-    // Generate boxes and pick target.
-    const boxPositions = generateRandomBoxes(difficultyLevels[difficulty].distractions);
-    setBoxes(boxPositions);
-    const target = boxPositions[Math.floor(Math.random() * boxPositions.length)];
-    setTargetBox(target);
-
-    // Activate green box after a delay.
-    const delay = Math.random() * 3000 + 2000;
-    setTimeout(() => {
-      setWaitingForGreen(true);
-      setStartTime(Date.now());
-    }, delay);
+function startNewRound() {
+  if (round >= maxRounds) {
+    endGame();
+    return;
   }
+
+  // ✅ Advance to the next round first
+  setRound(prev => prev + 1);
+
+  // Reset per-round states.
+  setStartTime(null);
+  setWaitingForGreen(false);
+  setMistakes(0);
+  setMessage("");
+
+  // Load new image.
+  setCurrentImage(getNextImage());
+
+  // Generate boxes and pick target.
+  const boxPositions = generateRandomBoxes(difficultyLevels[difficulty].distractions);
+  setBoxes(boxPositions);
+  const target = boxPositions[Math.floor(Math.random() * boxPositions.length)];
+  setTargetBox(target);
+
+  // Activate green box after a delay.
+  const delay = Math.random() * 3000 + 2000;
+  setTimeout(() => {
+    setWaitingForGreen(true);
+    setStartTime(Date.now());
+  }, delay);
+}
 
   function startNewSession() {
     setGameStarted(false);
@@ -290,7 +280,6 @@ function generateRandomBoxes(count) {
       ctx.fillRect(0, 0, canvasWidth, canvasHeight);
       
       drawBoxes(ctx);
-      setRound(prev => prev + 1);
     };
     
     img.onerror = err =>
@@ -305,12 +294,10 @@ function generateRandomBoxes(count) {
     drawBoxes(ctx);
   }, [waitingForGreen, boxes, targetBox]);
 
-  // Runs updateStats only once per round, after all state (score, clicks, times) is updated
+  // Update stats when round, correctClicks, reactionTimes, or score change.
   useEffect(() => {
-    if (!gameStarted || showEndModal || round === 0) return;
     updateStats(round);
-  }, [round, correctClicks, reactionTimes, score, gameStarted, showEndModal]);
-
+  }, [round, correctClicks, reactionTimes, score]);
 
   //Dynamic resizer for the image canvas
 useEffect(() => {
@@ -359,7 +346,7 @@ useEffect(() => {
       console.log("📈 Raw Prediction:", pPredStr);
       console.log(`🧠 Difficulty Logic | acc: ${newUserStats[difficulty].percent_correct.toFixed(2)}% | reaction time: ${newUserState.elapsed_time}ms | prediction: ${pPredStr}`);
       setRawPrediction(pPredStr);
-      setMappedDifficulty(pPredStr);
+      setMappedDifficulty(pPredStr); // for now, identical
       const finalState = {
        ...prepState,
        score: newUserState.score,
@@ -459,6 +446,8 @@ function handlePointerUp(event) {
 }
 
 
+
+// Step 4: Refactor Click Processing
 function processClick(offsetX, offsetY) {
   if (!waitingForGreen || !startTime) return;
 
@@ -467,88 +456,88 @@ function processClick(offsetX, offsetY) {
     offsetX <= targetBox.x + targetBox.width &&
     offsetY >= targetBox.y &&
     offsetY <= targetBox.y + targetBox.height;
-
   const reaction = (Date.now() - startTime) / 1000;
-  const clampedMs = Math.min(reaction * 1000, 2147483647);
-  const gameCategory = usedImagesRef.current.at(-1).replace(/\..*$/, "");
 
+  // Database: variables for database updates remain unchanged
+  // const difficultyInt = difficulty === "easy" ? 0 : difficulty === "medium" ? 1 : 2;
+  const gameCategory = usedImagesRef.current.at(-1).replace(/\..*$/, "");
   const gameData = {
     question_id: gameCategory,
     question_type: gameRef.current,
     question_category: gameCategory,
-    difficulty,
-    game_time_ms: clampedMs,
+    difficulty: difficulty,
+    game_time_ms: Math.min(reaction * 1000, 2147483647),
     session_id: sessionId,
-    session_time_ms: 2000, // can replace later
+    session_time_ms: 2000, // placeholder before implementing,
     attempt: mistakes + 1,
     user_answer: "not_applicable",
     is_correct: isCorrectClick,
   };
-
   const newUserState = {
-    elapsed_time: clampedMs,
-    difficulty,
+    elapsed_time: Math.min(reaction * 1000, 2147483647),
+    difficulty: difficulty,
     game_type: gameRef.current,
-    category: gameCategory,
+    category: gameCategory     
   };
 
   if (isCorrectClick) {
-    const timeBonus = Math.max(difficultyLevels[difficulty].reactionTime - reaction, 0) * 100;
-    const finalScore = timeBonus * difficultyLevels[difficulty].speedFactor;
-
     setReactionTimes(prev => [...prev, reaction]);
     setCorrectClicks(prev => prev + 1);
-    setScore(prev => {
-      const updated = prev + finalScore;
-      const acc = ((correctClicks + 1) / (round || 1)) * 100;
-      console.log(`🧠 Difficulty Logic | acc: ${acc.toFixed(2)}% | reaction time: ${(reaction * 1000).toFixed(0)}ms | prediction: ${difficulty}`);
-      return updated;
-    });
+
+    const timeBonus = Math.max(
+      difficultyLevels[difficulty].reactionTime - reaction,
+      0
+    ) * 100;
+    const finalScore = timeBonus * difficultyLevels[difficulty].speedFactor;
+    setScore(prev => prev + finalScore);
 
     setMessage(`✅ Great job! Reaction time: ${reaction.toFixed(2)} sec.`);
     setWaitingForGreen(false);
+    updateStats(round);
 
+    // Database: Update user state and game hx when correct
     newUserState.correct = true;
     newUserState.score = Math.round(finalScore);
     batchWrite(newUserState, gameData);
 
-    setTimeout(() => {
-      if (round >= maxRounds) endGame();
-      else startNewRound();
-    }, 700);
+    if (round >= maxRounds) {
+      setTimeout(endGame, 700);
+    } else {
+      setTimeout(startNewRound, 1000);
+    }
   } else {
-    const totalMistakes = mistakes + 1;
-    const isFinalMistake = totalMistakes >= 3;
-
-    if (isFinalMistake) {
+    if (mistakes < 2) {
+      gameData.score = 0;
+      addGameHx(gameData);
+    } else {
       newUserState.correct = false;
       newUserState.score = 0;
       batchWrite(newUserState, gameData);
-    } else {
-      gameData.score = 0;
-      addGameHx(gameData);
     }
 
-    setMistakes(totalMistakes);
-    setScore(prev => Math.max(prev - 50, 0));
-
-    if (isFinalMistake) {
-      console.warn("🚨 3 Mistakes! Moving to next round.");
-      setMessage("❌ Round ended due to 3 mistakes.");
-      setTimeout(() => {
-        if (round >= maxRounds) endGame();
-        else startNewRound();
-      }, 1000);
-    } else {
-      setMessage(
-        totalMistakes === 1
-          ? "❌ Incorrect click. Try again!"
-          : "⚠️ One more mistake and the round ends!"
-      );
-    }
+    setMistakes(prev => {
+      const newMistakes = prev + 1;
+      setScore(prevScore => Math.max(prevScore - 50, 0));
+      if (newMistakes >= 3) {
+        console.warn("🚨 3 Mistakes! Moving to next round.");
+        setMessage("❌ Round ended due to 3 mistakes.");
+        setTimeout(() => {
+          if (round >= maxRounds) {
+            endGame();
+          } else {
+            startNewRound();
+          }
+        }, 1000);
+        return 0;
+      } else if (newMistakes === 1) {
+        setMessage("❌ Incorrect click. Try again!");
+      } else if (newMistakes === 2) {
+        setMessage("⚠️ One more mistake and the round ends!");
+      }
+      return newMistakes;
+    });
   }
 }
-
 
 
   // ────────────────────────────────────────────────────────────────
@@ -571,7 +560,7 @@ function processClick(offsetX, offsetY) {
         <div style={{ color: "white", margin: "16px 0", fontSize: "1.2em" }}>
         <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
         
-          <p>Wait for the box to change color. Exp 6</p>
+          <p>Wait for the box to change color. Exp 0</p>
           <p>Click as quickly as possible once the box changes color.</p>
           <p>Your reaction time will be measured and added to your score.</p>
           <p>Try to achieve a fast reaction to earn more points.</p>
@@ -618,13 +607,12 @@ function processClick(offsetX, offsetY) {
           <p>Round: {round}/{maxRounds}</p>
           {/* Show any warning or mistake messages immediately */}
           {message && <p className="warning">{message}</p>}
-          <p style={{ color: "white",fontSize: "0.75em", margin: 0 }}>
+            <p style={{ color: "white",fontSize: "0.75em", margin: 0 }}>
             Difficulty: <span style={{ color: "white" }}>{difficulty}</span>
             <br />
             Raw Prediction: <span style={{ color: "white" }}>{rawPrediction}</span>{" "}
             | Mapped Difficulty: <span style={{ color: "white" }}>{mappedDifficulty}</span>
           </p>
-
         </div>
       )}
 
