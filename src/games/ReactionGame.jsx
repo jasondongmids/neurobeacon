@@ -97,7 +97,8 @@ const ReactionGame = ({ onUpdateStats }) => {
         : "0.00";
 
     const newScore = score.toFixed(2);
-
+    console.log(`📊 updateStats | score: ${newScore} | acc: ${newAccuracy} | rounds: ${updatedRound} | avgReaction: ${avgReaction}`);
+    
     const updatedStats = {
       score: newScore,
       accuracy: newAccuracy,
@@ -366,6 +367,7 @@ useEffect(() => {
       const targetPrediction = await invokeModel(prepState, 'target');
       const pPredStr = getDiffString(primaryPrediction)
       console.log("📈 Raw Prediction:", pPredStr);
+      console.log(`🧠 Difficulty Logic | acc: ${newUserStats[difficulty].percent_correct.toFixed(2)}% | reaction time: ${newUserState.elapsed_time}ms | prediction: ${pPredStr}`);
       setRawPrediction(pPredStr);
       setMappedDifficulty(pPredStr);
       const finalState = {
@@ -580,7 +582,7 @@ function processClick(offsetX, offsetY) {
         <div style={{ color: "white", margin: "16px 0", fontSize: "1.2em" }}>
         <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
         
-          <p>Wait for the box to change color. Exp 1</p>
+          <p>Wait for the box to change color. Exp 2</p>
           <p>Click as quickly as possible once the box changes color.</p>
           <p>Your reaction time will be measured and added to your score.</p>
           <p>Try to achieve a fast reaction to earn more points.</p>
