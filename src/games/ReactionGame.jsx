@@ -410,44 +410,54 @@ useEffect(() => {
   // ────────────────────────────────────────────────────────────────
 // Step 1: handlePointerDown
 function handlePointerDown(event) {
-  if (!gameCanvas.current) return;
-  const { x, y } = getScaledOffset(event, gameCanvas.current);
-  setPointerDownPos({ x, y });
-}
+  const rect = gameCanvas.current.getBoundingClientRect();
+  const offsetX = event.clientX - rect.left;
+  const offsetY = event.clientY - rect.top;
 
+  if (
+    offsetX >= 0 &&
+    offsetY >= 0 &&
+    offsetX <= rect.width &&
+    offsetY <= rect.height
+  ) {
+    setPointerDownPos({ x: event.clientX, y: event.clientY });
+  } else {
+    setPointerDownPos(null);
+  }
+}
 
 // Step 2: handlePointerMove
 function handlePointerMove(event) {
-  if (!pointerDownPos || !gameCanvas.current) return;
-  const { x, y } = getScaledOffset(event, gameCanvas.current);
-
-  const dx = x - pointerDownPos.x;
-  const dy = y - pointerDownPos.y;
+  if (!pointerDownPos) return;
+  
+  const dx = event.clientX - pointerDownPos.x;
+  const dy = event.clientY - pointerDownPos.y;
   const distance = Math.sqrt(dx * dx + dy * dy);
-
-  const scrollThreshold = 15;
+  
+  const scrollThreshold = 15; // pixels
   if (distance >= scrollThreshold) {
     setPointerDownPos(null);
   }
 }
 
-
 // Step 3: handlePointerUp
 function handlePointerUp(event) {
-  if (!pointerDownPos || !gameCanvas.current) return;
+  if (!pointerDownPos) return;
 
-  const { x: offsetX, y: offsetY } = getScaledOffset(event, gameCanvas.current);
-
-  const dx = offsetX - pointerDownPos.x;
-  const dy = offsetY - pointerDownPos.y;
-  const distance = Math.sqrt(dx * dx + dy * dy);
-  const clickThreshold = 15;
+  const rect = gameCanvas.current.getBoundingClientRect();
+  const offsetX = event.clientX - rect.left;
+  const offsetY = event.clientY - rect.top;
 
   const insideCanvas =
     offsetX >= 0 &&
     offsetY >= 0 &&
-    offsetX <= gameCanvas.current.width &&
-    offsetY <= gameCanvas.current.height;
+    offsetX <= rect.width &&
+    offsetY <= rect.height;
+
+  const dx = event.clientX - pointerDownPos.x;
+  const dy = event.clientY - pointerDownPos.y;
+  const distance = Math.sqrt(dx * dx + dy * dy);
+  const clickThreshold = 15;
 
   if (insideCanvas && distance < clickThreshold) {
     processClick(offsetX, offsetY);
@@ -570,7 +580,7 @@ function processClick(offsetX, offsetY) {
         <div style={{ color: "white", margin: "16px 0", fontSize: "1.2em" }}>
         <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
         
-          <p>Wait for the box to change color. Exp 0</p>
+          <p>Wait for the box to change color. Exp 1</p>
           <p>Click as quickly as possible once the box changes color.</p>
           <p>Your reaction time will be measured and added to your score.</p>
           <p>Try to achieve a fast reaction to earn more points.</p>
@@ -617,12 +627,12 @@ function processClick(offsetX, offsetY) {
           <p>Round: {round}/{maxRounds}</p>
           {/* Show any warning or mistake messages immediately */}
           {message && <p className="warning">{message}</p>}
-          <p style={{ color: "#777", fontWeight: "bold", marginTop: "8px" }}>
-            Difficulty: <span style={{ color: "#222" }}>{difficulty}</span>
+          <p style={{ color: "white", fontWeight: "bold", marginTop: "8px" }}>
+            Difficulty: <span style={{ color: "white" }}>{difficulty}</span>
           </p>
-          <p style={{ color: "#777", fontWeight: "bold" }}>
-            Raw Prediction: <span style={{ color: "#222" }}>{rawPrediction}</span>{" "}
-            | Mapped Difficulty: <span style={{ color: "#222" }}>{mappedDifficulty}</span>
+          <p style={{ color: "white", fontWeight: "bold" }}>
+            Raw Prediction: <span style={{ color: "white" }}>{rawPrediction}</span>{" "}
+            | Mapped Difficulty: <span style={{ color: "white" }}>{mappedDifficulty}</span>
           </p>
 
         </div>
