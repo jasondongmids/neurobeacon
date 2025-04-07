@@ -521,6 +521,13 @@ import React, {
   
     return (
         <div style={{ position: "relative", minHeight: "100%", height: "auto" }}>
+              <>
+                <div style={{ marginTop: "12px", color: "white", fontSize: "0.75em" }}>
+                  Difficulty: <span style={{ color: "white" }}>{getDiffString(difficulty)}</span>
+                  <br />
+                  Raw Prediction: <span style={{ color: "white" }}>{rawPrediction}</span> | Mapped Difficulty:{" "}
+                  <span style={{ color: "white" }}>{mappedDifficulty}</span>
+                </div></>
           <LazyBackground
             src={getBackgroundImage()}
             style={{
@@ -597,13 +604,7 @@ import React, {
             )}
       
             {gamePhase === "end" && (
-              <>
-                <div style={{ marginTop: "12px", color: "white", fontSize: "0.75em" }}>
-                  Difficulty: <span style={{ color: "white" }}>{getDiffString(difficulty)}</span>
-                  <br />
-                  Raw Prediction: <span style={{ color: "white" }}>{rawPrediction}</span> | Mapped Difficulty:{" "}
-                  <span style={{ color: "white" }}>{mappedDifficulty}</span>
-                </div>
+
                 <div className="modal-overlay">
                   <div className="modal-content">
                     <h2>Game Over!</h2>
@@ -622,7 +623,7 @@ import React, {
                     </button>
                   </div>
                 </div>
-              </>
+
             )}
                  </div>
       </div>
