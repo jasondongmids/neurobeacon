@@ -306,8 +306,8 @@ useEffect(() => {
     const parentRect = gameCanvas.current.parentElement.getBoundingClientRect();
     // Use the container's width or window width (whichever is smaller)
     const availableWidth = Math.min(parentRect.width, window.innerWidth);
-    const newWidth = Math.min(availableWidth, 700); // never exceed 800px
-    const newHeight = (newWidth * 400) / 800; // maintain aspect ratio
+    const newWidth = Math.min(availableWidth, 700); // never exceed 700px
+    const newHeight = (newWidth * 400) / 400; // maintain aspect ratio
     setCanvasWidth(newWidth);
     setCanvasHeight(newHeight);
   }
@@ -574,7 +574,7 @@ setMistakes(prev => {
         <div style={{ color: "white", margin: "16px 0", fontSize: "1.2em" }}>
         <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
         
-          <p>Wait for the box to change color. Exp 2</p>
+          <p>Wait for the box to change color. Exp 3</p>
           <p>Click as quickly as possible once the box changes color.</p>
           <p>Your reaction time will be measured and added to your score.</p>
           <p>Try to achieve a fast reaction to earn more points.</p>
