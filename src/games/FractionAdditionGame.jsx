@@ -152,7 +152,7 @@ const FractionAdditionGame = forwardRef(({ onUpdateStats }, ref) => {
   });
 
   // Difficulty and session limits:
-  const [difficulty, setDifficulty] = useState("easy");
+
   const maxRounds = 10;
 
   // Flag to prevent rapid duplicate generation:
