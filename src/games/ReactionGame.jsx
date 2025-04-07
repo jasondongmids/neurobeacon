@@ -83,7 +83,15 @@ const ReactionGame = ({ onUpdateStats }) => {
 
   // ────────────────────────────────────────────────────────────────
   // HELPER FUNCTIONS (using function declarations)
+function getScaledOffset(event, canvas) {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
 
+  return {
+    x: (event.clientX - rect.left) * scaleX,
+    y: (event.clientY - rect.top) * scaleY,
+  };
   function updateStats(updatedRound) {
     const validTimes = reactionTimes.filter(time => !isNaN(time));
     const avgReaction =
@@ -146,15 +154,7 @@ function generateRandomBoxes(count) {
       boxWidth = 50;
       boxHeight = 50;
   }
-function getScaledOffset(event, canvas) {
-  const rect = canvas.getBoundingClientRect();
-  const scaleX = canvas.width / rect.width;
-  const scaleY = canvas.height / rect.height;
 
-  return {
-    x: (event.clientX - rect.left) * scaleX,
-    y: (event.clientY - rect.top) * scaleY,
-  };
 }
 
   // Define margins relative to canvas size, ensuring boxes stay fully within canvas bounds.
@@ -170,20 +170,6 @@ function getScaledOffset(event, canvas) {
     width: boxWidth,
     height: boxHeight,
   }));
-}
-
-
-
-function handlePointerMove(event) {
-  if (!pointerDownPos) return;
-  const dx = event.clientX - pointerDownPos.x;
-  const dy = event.clientY - pointerDownPos.y;
-  const distance = Math.sqrt(dx * dx + dy * dy);
-  const threshold = 10; // same threshold as before
-  if (distance >= threshold) {
-    // Cancel the tap if movement exceeds threshold
-    setPointerDownPos(null);
-  }
 }
 
 
@@ -316,6 +302,12 @@ function handlePointerMove(event) {
     const ctx = gameCanvas.current.getContext("2d");
     drawBoxes(ctx);
   }, [waitingForGreen, boxes, targetBox]);
+
+  // Runs updateStats only once per round, after all state (score, clicks, times) is updated
+  useEffect(() => {
+    if (!gameStarted || showEndModal || round === 0) return;
+    updateStats(round);
+  }, [round, correctClicks, reactionTimes, score, gameStarted, showEndModal]);
 
 
   //Dynamic resizer for the image canvas
@@ -517,7 +509,6 @@ function processClick(offsetX, offsetY) {
     newUserState.correct = true;
     newUserState.score = Math.round(finalScore);
     batchWrite(newUserState, gameData);
-    updateStats(round);
 
     setTimeout(() => {
       if (round >= maxRounds) endGame();
@@ -578,7 +569,7 @@ function processClick(offsetX, offsetY) {
         <div style={{ color: "white", margin: "16px 0", fontSize: "1.2em" }}>
         <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
         
-          <p>Wait for the box to change color. Exp 4</p>
+          <p>Wait for the box to change color. Exp 5</p>
           <p>Click as quickly as possible once the box changes color.</p>
           <p>Your reaction time will be measured and added to your score.</p>
           <p>Try to achieve a fast reaction to earn more points.</p>
