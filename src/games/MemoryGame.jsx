@@ -540,7 +540,7 @@ import React, {
             <div style={{ position: "relative", zIndex: 2, textAlign: "center", padding: "20px" }}>
               
               {/* ⬇️ Always-visible difficulty info */}
-              <div style={{ marginTop: "4px", color: "white", fontSize: "0.75em" }}>
+              <div style={{ marginTop: "4px", color: "black", fontSize: "0.75em" }}>
                 Difficulty: <span>{getDiffString(difficulty)}</span>
                 <br />
                 Raw Prediction: <span>{rawPrediction}</span> | Mapped Difficulty: <span>{mappedDifficulty}</span>
