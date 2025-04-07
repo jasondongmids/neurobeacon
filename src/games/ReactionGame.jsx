@@ -47,7 +47,8 @@ const ReactionGame = ({ onUpdateStats }) => {
   const [canvasWidth, setCanvasWidth] = useState(800);
   const [canvasHeight, setCanvasHeight] = useState(500);
   const [pointerDownPos, setPointerDownPos] = useState(null);
-
+  const [rawPrediction, setRawPrediction] = useState("");
+  const [mappedDifficulty, setMappedDifficulty] = useState("");
 
   // We'll only use message for mistake warnings.
   const [message, setMessage] = useState("");
@@ -144,6 +145,16 @@ function generateRandomBoxes(count) {
       boxWidth = 50;
       boxHeight = 50;
   }
+function getScaledOffset(event, canvas) {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+
+  return {
+    x: (event.clientX - rect.left) * scaleX,
+    y: (event.clientY - rect.top) * scaleY,
+  };
+}
 
   // Define margins relative to canvas size, ensuring boxes stay fully within canvas bounds.
   const margin = 10; // fixed margin in pixels
@@ -354,6 +365,9 @@ useEffect(() => {
       const primaryPrediction = await invokeModel(prepState, 'primary');
       const targetPrediction = await invokeModel(prepState, 'target');
       const pPredStr = getDiffString(primaryPrediction)
+      console.log("📈 Raw Prediction:", pPredStr);
+      setRawPrediction(pPredStr);
+      setMappedDifficulty(pPredStr);
       const finalState = {
        ...prepState,
        score: newUserState.score,
@@ -396,54 +410,44 @@ useEffect(() => {
   // ────────────────────────────────────────────────────────────────
 // Step 1: handlePointerDown
 function handlePointerDown(event) {
-  const rect = gameCanvas.current.getBoundingClientRect();
-  const offsetX = event.clientX - rect.left;
-  const offsetY = event.clientY - rect.top;
-
-  if (
-    offsetX >= 0 &&
-    offsetY >= 0 &&
-    offsetX <= rect.width &&
-    offsetY <= rect.height
-  ) {
-    setPointerDownPos({ x: event.clientX, y: event.clientY });
-  } else {
-    setPointerDownPos(null);
-  }
+  if (!gameCanvas.current) return;
+  const { x, y } = getScaledOffset(event, gameCanvas.current);
+  setPointerDownPos({ x, y });
 }
+
 
 // Step 2: handlePointerMove
 function handlePointerMove(event) {
-  if (!pointerDownPos) return;
-  
-  const dx = event.clientX - pointerDownPos.x;
-  const dy = event.clientY - pointerDownPos.y;
+  if (!pointerDownPos || !gameCanvas.current) return;
+  const { x, y } = getScaledOffset(event, gameCanvas.current);
+
+  const dx = x - pointerDownPos.x;
+  const dy = y - pointerDownPos.y;
   const distance = Math.sqrt(dx * dx + dy * dy);
-  
-  const scrollThreshold = 15; // pixels
+
+  const scrollThreshold = 15;
   if (distance >= scrollThreshold) {
     setPointerDownPos(null);
   }
 }
 
+
 // Step 3: handlePointerUp
 function handlePointerUp(event) {
-  if (!pointerDownPos) return;
+  if (!pointerDownPos || !gameCanvas.current) return;
 
-  const rect = gameCanvas.current.getBoundingClientRect();
-  const offsetX = event.clientX - rect.left;
-  const offsetY = event.clientY - rect.top;
+  const { x: offsetX, y: offsetY } = getScaledOffset(event, gameCanvas.current);
+
+  const dx = offsetX - pointerDownPos.x;
+  const dy = offsetY - pointerDownPos.y;
+  const distance = Math.sqrt(dx * dx + dy * dy);
+  const clickThreshold = 15;
 
   const insideCanvas =
     offsetX >= 0 &&
     offsetY >= 0 &&
-    offsetX <= rect.width &&
-    offsetY <= rect.height;
-
-  const dx = event.clientX - pointerDownPos.x;
-  const dy = event.clientY - pointerDownPos.y;
-  const distance = Math.sqrt(dx * dx + dy * dy);
-  const clickThreshold = 15;
+    offsetX <= gameCanvas.current.width &&
+    offsetY <= gameCanvas.current.height;
 
   if (insideCanvas && distance < clickThreshold) {
     processClick(offsetX, offsetY);
@@ -451,7 +455,6 @@ function handlePointerUp(event) {
 
   setPointerDownPos(null);
 }
-
 
 
 // Step 4: Refactor Click Processing
@@ -567,7 +570,7 @@ function processClick(offsetX, offsetY) {
         <div style={{ color: "white", margin: "16px 0", fontSize: "1.2em" }}>
         <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
         
-          <p>Wait for the box to change color.</p>
+          <p>Wait for the box to change color. Exp 0</p>
           <p>Click as quickly as possible once the box changes color.</p>
           <p>Your reaction time will be measured and added to your score.</p>
           <p>Try to achieve a fast reaction to earn more points.</p>
@@ -614,6 +617,14 @@ function processClick(offsetX, offsetY) {
           <p>Round: {round}/{maxRounds}</p>
           {/* Show any warning or mistake messages immediately */}
           {message && <p className="warning">{message}</p>}
+          <p style={{ color: "#777", fontWeight: "bold", marginTop: "8px" }}>
+            Difficulty: <span style={{ color: "#222" }}>{difficulty}</span>
+          </p>
+          <p style={{ color: "#777", fontWeight: "bold" }}>
+            Raw Prediction: <span style={{ color: "#222" }}>{rawPrediction}</span>{" "}
+            | Mapped Difficulty: <span style={{ color: "#222" }}>{mappedDifficulty}</span>
+          </p>
+
         </div>
       )}
 
