@@ -15,7 +15,7 @@ const DashboardPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const overallStats = userStats;
-
+  const { userStats } = useContext(UserStatisticsContext);
   
   // State to track selected game
   const [selectedGame, setSelectedGame] = useState("");
@@ -65,11 +65,11 @@ const DashboardPage = () => {
       <div className="dashboard-container">
         {/* ✅ Profile Section  */}
         <div className="panel profile">
-          <h2 className="dboardH2"> Welcome {username || "Your Profile"}!</h2>
+          <h3 className="dboardH2"> Welcome {username || "Your Profile"}!</h2>
           {overallStats ? (
         <div className="dashboard-stats">
-          <p><strong>Total Games Played:</strong> {overallStats.total?.total_questions ?? "..."}</p>
-          <p><strong>Streak:</strong> {overallStats.current_streak ?? "..."} days 🔥</p>
+          <p><strong>Total Games Played:</strong> {userStats.total?.total_questions ?? 0}</p>
+          <p><strong>Streak:</strong> {userStats.current_streak ?? 0} days 🔥</p>
            {/* <p><strong>Rank:</strong> {overallStats.rank || "Unranked"}</p>  */}
         </div>
       ) : (
