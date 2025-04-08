@@ -90,10 +90,10 @@ const DashboardPage = () => {
           <strong>THIS OPEN BETA WILL CLOSE ON FRIDAY, APRIL 4!</strong>
         </p>
       </div>
-
+  
       <div className="dashboard-container">
         <div className="panel profile">
-          <h2 className="dboardH2"> Welcome {username || "Your Profile"}!</h2>
+          <h2 className="dboardH2">Welcome {username || "Your Profile"}!</h2>
           {overallStats && (
             <div className="dashboard-stats">
               <p>Total Games Played: {overallStats.total_games}</p>
@@ -103,7 +103,7 @@ const DashboardPage = () => {
           )}
           <button className="logout-btn" onClick={handleLogout}>Logout</button>
         </div>
-
+  
         <div className="panel game-selection">
           <h2 className="dboardH2">Select a Game to Play</h2>
           {[
@@ -119,15 +119,15 @@ const DashboardPage = () => {
                 name="game"
                 value={value}
                 onChange={(e) => setSelectedGame(e.target.value)}
-              />{" "}
-              {label}
+              />
+              {" "}{label}
             </label>
           ))}
           <br />
           <button className="nav-btn-select" onClick={handleGameSelection}>Play Now!</button>
           {message && <p style={{ color: "red" }}>{message}</p>}
         </div>
-
+  
         <div className="panel progress">
           <h2 className="dboardH2">📊 Progress Overview</h2>
           {!dailyStats.length ? (
@@ -145,7 +145,10 @@ const DashboardPage = () => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="date" />
                   <YAxis domain={[0, 100]} tickFormatter={(tick) => `${tick}%`} />
-                  <Tooltip formatter={(value) => `${value.toFixed(2)}%`} />
+                  <Tooltip formatter={(value) => {
+                    const num = parseFloat(value);
+                    return isNaN(num) ? "N/A" : `${num.toFixed(2)}%`;
+                  }} />
                   <Line
                     type="monotone"
                     dataKey="accuracy"
@@ -165,6 +168,7 @@ const DashboardPage = () => {
       </div>
     </div>
   );
+
 };
 
 export default DashboardPage;
