@@ -63,6 +63,7 @@ const DashboardPage = () => {
       navigate(`/game/${selectedGame}`);
     }
   };
+  console.log("📊 Daily stats for charting:", dailyStats);
 
   return (
     <div className="dashboard-page">
@@ -138,7 +139,7 @@ const DashboardPage = () => {
                 <LineChart
                   data={dailyStats.map((entry) => ({
                     date: String(entry.sk).replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"),
-                    accuracy: entry.percent_correct,
+                    accuracy: entry.total?.percent_correct ?? 0, // ✅ Now using correct path
                   }))}
                   margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
                 >
