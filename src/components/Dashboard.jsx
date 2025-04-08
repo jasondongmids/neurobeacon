@@ -35,7 +35,7 @@ const DashboardPage = () => {
     };
   
     fetchStats();
-  }, [location, queryStats]);
+  }, [location]);
 
 
   const handleLogout = async () => {
