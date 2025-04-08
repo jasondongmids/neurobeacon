@@ -14,8 +14,8 @@ const DashboardPage = () => {
   const { username, setUsername, logoutUser } = useContext(UserContext);
   const navigate = useNavigate();
   const location = useLocation();
-  const overallStats = userStats;
   const { userStats } = useContext(UserStatisticsContext);
+  const overallStats = userStats;
   
   // State to track selected game
   const [selectedGame, setSelectedGame] = useState("");
