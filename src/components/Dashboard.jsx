@@ -76,7 +76,7 @@ const DashboardPage = () => {
               {/* <p><strong>Rank:</strong> {userStats.rank || "Unranked"}</p> */}
             </div>
           ) : (
-            <p style={{ color: "white" }}>Loading stats...</p>
+            <p style={{ color: "#2e86c1;" }}>Loading stats...</p>
           )}
           <button className="logout-btn" onClick={handleLogout}>Logout</button>
         </div>
