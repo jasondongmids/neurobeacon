@@ -15,12 +15,14 @@ const isSlowThresholds = {
     trivia: 10000, // review
 }
 
-const gameTypeEmbed = {
-    math: 3,
-    memory: 4,
-    reaction: 5,
-    sudoku: 6,
-    trivia: 7
+const gameTypeMapping = {
+    math: 0,
+    memory: 1,
+    reaction: 2,
+    // sudoku: 6,
+    // trivia: 7
+    sudoku: 1,
+    trivia: 2
 }
 
 const minMaxThresholds = {
@@ -77,8 +79,9 @@ function applyMinMaxScaling(data, variable) {
 }
 
 // INVOKE MODEL
-const prepRequest = (data) => {
-    const modelInput = [
+const prepRequest = (data, userFeatures, gameType) => {
+    console.log("PREP STATE")
+    const state = [
         Number(data.prev_is_slow),
         Number(data.prev_is_correct),
         applyMinMaxScaling(data.total_questions, "total_questions"),
@@ -89,8 +92,19 @@ const prepRequest = (data) => {
         data.total_weighted_reward,
     ]
 
-    // console.log("MODEL INPUT", modelInput)
+    const userEmbed = [userFeatures.easy_percent, userFeatures.medium_percent, userFeatures.hard_percent]
+
+    const gameTypeInt = gameTypeMapping[gameType]
+
+    const modelInput = {
+        states: state,
+        user_features: userEmbed,
+        game_type: gameTypeInt
+    }
+    console.log("FINAL REQUEST", JSON.stringify(modelInput))
     return JSON.stringify(modelInput)
+
+    // return JSON.stringify(modelInput)
 }
 
 const sendTargetRequest = async (modelInput) => {
@@ -141,8 +155,8 @@ const sendPrimaryRequest = async (modelInput) => {
     }
 };
 
-export const invokeModel = async (data, target) => {
-    const modelInput = prepRequest(data)
+export const invokeModel = async (data, userFeatures, gameType, target) => {
+    const modelInput = prepRequest(data, userFeatures, gameType)
     try {
         let prediction
 
@@ -152,7 +166,8 @@ export const invokeModel = async (data, target) => {
             prediction = await sendTargetRequest(modelInput, target)
         }
         
-        // console.log("Prediction:", parseInt(prediction))
+
+        console.log("PREDICTION:", prediction)
         return parseInt(prediction)
     } catch (error) {
         console.log("Error with invoking model.", error)

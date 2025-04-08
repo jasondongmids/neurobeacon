@@ -340,8 +340,13 @@ useEffect(() => {
 
       const updatedUserCategoryState = updateUserCategoryState(newUserState);
       const prepState = prepareUserGameState(newUserState, userGameState, updatedUserCategoryState);
-      const primaryPrediction = await invokeModel(prepState, 'primary');
-      const targetPrediction = await invokeModel(prepState, 'target');
+      const prepEmbedding = {
+        easy_percent: newUserStats.easy.percent_correct,
+        medium_percent: newUserStats.medium.percent_correct,
+        hard_percent: newUserStats.hard.percent_correct,
+      }
+      const primaryPrediction = await invokeModel(prepState, prepEmbedding, gameRef.current, 'primary');
+      const targetPrediction = await invokeModel(prepState, prepEmbedding, gameRef.current, 'target');
       const pPredStr = getDiffString(primaryPrediction)
       console.log("📈 Raw Prediction:", pPredStr);
       console.log(`🧠 Difficulty Logic | acc: ${newUserStats[difficulty].percent_correct.toFixed(2)}% | reaction time: ${newUserState.elapsed_time}ms | prediction: ${pPredStr}`);
@@ -352,11 +357,7 @@ useEffect(() => {
        score: newUserState.score,
        predicted_difficulty: pPredStr,
        target_difficulty: getDiffString(targetPrediction),
-       user_embedding: {
-        easy_percent: newUserStats.easy.percent_correct,
-        medium_percent: newUserStats.medium.percent_correct,
-        hard_percent: newUserStats.hard.percent_correct,
-       } 
+       user_embedding: prepEmbedding
       };
       const finalGameData = {
         ...gameData,
@@ -364,7 +365,7 @@ useEffect(() => {
       }
       updateUserGameState(finalState);
       addGameHx(finalGameData);
-      setDifficulty(pPredStr)
+      setDifficulty(pPredStr || "easy")
       return "complete"
     } catch (error) {
       console.error("Error with batch write", error)

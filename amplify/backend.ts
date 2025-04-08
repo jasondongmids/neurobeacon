@@ -16,6 +16,7 @@ const userStateHxTable = aws_dynamodb.Table.fromTableName(
   extDataSourcesStack,
   "UserStateHxName",
   "UserStateHxPrd",
+  // "UserStateHx",
 )
 backend.data.addDynamoDbDataSource(
   "UserStateHxTable",
@@ -38,6 +39,7 @@ const userGameHxTable = aws_dynamodb.Table.fromTableName(
   extDataSourcesStack,
   "UserGameHxName",
   "UserGameHxPrd",
+  // "UserGameHxTest",
 )
 backend.data.addDynamoDbDataSource(
   "UserGameHxTable",
@@ -48,7 +50,8 @@ backend.data.addDynamoDbDataSource(
 const userTable = aws_dynamodb.Table.fromTableName(
   extDataSourcesStack,
   "UserStatsName",
-  "UserStatsPrd"
+  "UserStatsPrd",
+  // "UserStatsTest"
 )
 backend.data.addDynamoDbDataSource(
   "UserTable",

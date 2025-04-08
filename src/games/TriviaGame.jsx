@@ -77,24 +77,23 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
           userGameState,
           updatedUserCategoryState
         );
-    
-        const primaryPrediction = await invokeModel(prepState, "primary");
+        const prepEmbedding = {
+          easy_percent: newUserStats.easy.percent_correct,
+          medium_percent: newUserStats.medium.percent_correct,
+          hard_percent: newUserStats.hard.percent_correct,
+        }
+        const primaryPrediction = await invokeModel(prepState, prepEmbedding, gameRef.current, 'primary');
         console.log("🔍 Model prediction (raw):", primaryPrediction);
         console.log("🔍 Mapped difficulty:", getDiffString(primaryPrediction));
         
-        const targetPrediction = await invokeModel(prepState, "target");
-
+        const targetPrediction = await invokeModel(prepState, prepEmbedding, gameRef.current, 'target');
     
         const finalState = {
           ...prepState,
           score: newUserState.score,
           predicted_difficulty: getDiffString(primaryPrediction),
           target_difficulty: getDiffString(targetPrediction),
-          user_embedding: {
-            easy_percent: newUserStats.easy.percent_correct,
-            medium_percent: newUserStats.medium.percent_correct,
-            hard_percent: newUserStats.hard.percent_correct,
-          },
+          user_embedding: prepEmbedding
         };
     
         const finalGameData = {
