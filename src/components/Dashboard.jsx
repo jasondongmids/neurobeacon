@@ -128,32 +128,46 @@ const DashboardPage = () => {
           {message && <p style={{ color: "red" }}>{message}</p>}
         </div>
 
+        {/* ✅ Progress Overview */}
         <div className="panel progress">
           <h2 className="dboardH2">📊 Progress Overview</h2>
-          {dailyStats.length > 0 ? (
-            <ResponsiveContainer width="100%" height={250}>
-              <LineChart data={dailyStats}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis domain={[0, 100]} tickFormatter={(tick) => `${tick}%`} />
-                <Tooltip formatter={(value) => `${value}%`} />
-                <Line
-                  type="monotone"
-                  dataKey="accuracy"
-                  stroke="#82ca9d"
-                  strokeWidth={3}
-                  dot={{ r: 4 }}
-                  activeDot={{ r: 6 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+        
+          {!dailyStats.length ? (
+            <p style={{ color: "white" }}>Loading recent performance data...</p>
           ) : (
-            <p>Loading your stats...</p>
+            <>
+              <ResponsiveContainer width="100%" height={250}>
+                <LineChart
+                  data={dailyStats.map((entry) => ({
+                    date: String(entry.sk).replace(
+                      /(\d{4})(\d{2})(\d{2})/,
+                      "$1-$2-$3"
+                    ),
+                    accuracy: entry.percent_correct,
+                  }))}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis domain={[0, 100]} tickFormatter={(tick) => `${tick}%`} />
+                  <Tooltip formatter={(value) => `${value.toFixed(2)}%`} />
+                  <Line
+                    type="monotone"
+                    dataKey="accuracy"
+                    stroke="#8884d8"
+                    strokeWidth={3}
+                    dot={{ r: 5 }}
+                    activeDot={{ r: 7 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+              <p style={{ marginTop: "12px" }}>
+                You're improving! Keep pushing forward to increase your streak! 🚀
+              </p>
+            </>
           )}
-          <p>You're improving! Keep pushing forward to increase your streak! 🚀</p>
         </div>
-      </div>
-    </div>
+
   );
 };
 
