@@ -22,20 +22,6 @@ const DashboardPage = () => {
   // State to store a message for the user.
   const [message, setMessage] = useState("");
 
-  useEffect(() => {
-    if (location.state?.redirected) {
-      setMessage("⚠️ You must be logged in to access that page.");
-    }
-  
-    const fetchStats = async () => {
-      const result = await queryStats("", 1);
-      if (result && result.length > 0) {
-        setOverallStats(result[0]);
-      }
-    };
-  
-    fetchStats();
-  }, [location]);
 
 
   const handleLogout = async () => {
