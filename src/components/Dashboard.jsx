@@ -46,7 +46,7 @@ const DashboardPage = () => {
     };
 
     fetchStats();
-  }, []);
+  }, [queryStats]);
 
   const handleLogout = async () => {
     await logoutUser();
@@ -119,8 +119,8 @@ const DashboardPage = () => {
                 name="game"
                 value={value}
                 onChange={(e) => setSelectedGame(e.target.value)}
-              />
-              {" "}{label}
+              />{" "}
+              {label}
             </label>
           ))}
           <br />
@@ -161,11 +161,10 @@ const DashboardPage = () => {
               </p>
             </>
           )}
-        </div> {/* ✅ this was the missing closing tag for .panel.progress */}
-      </div> {/* ✅ Close dashboard-container */}
-    </div>   
+        </div>
+      </div>
+    </div>
   );
-
 };
-;
+
 export default DashboardPage;
