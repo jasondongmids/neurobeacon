@@ -18,7 +18,7 @@ import {
 
 const DashboardPage = () => {
   const { username, setUsername, logoutUser } = useContext(UserContext);
-  const { queryStats, queryStatistics } = useContext(UserStatisticsContext);
+  const { queryStats } = useContext(UserStatisticsContext);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -128,10 +128,8 @@ const DashboardPage = () => {
           {message && <p style={{ color: "red" }}>{message}</p>}
         </div>
 
-        {/* ✅ Progress Overview */}
         <div className="panel progress">
           <h2 className="dboardH2">📊 Progress Overview</h2>
-        
           {!dailyStats.length ? (
             <p style={{ color: "white" }}>Loading recent performance data...</p>
           ) : (
@@ -139,10 +137,7 @@ const DashboardPage = () => {
               <ResponsiveContainer width="100%" height={250}>
                 <LineChart
                   data={dailyStats.map((entry) => ({
-                    date: String(entry.sk).replace(
-                      /(\d{4})(\d{2})(\d{2})/,
-                      "$1-$2-$3"
-                    ),
+                    date: String(entry.sk).replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"),
                     accuracy: entry.percent_correct,
                   }))}
                   margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
@@ -166,10 +161,11 @@ const DashboardPage = () => {
               </p>
             </>
           )}
-        </div>
-
+        </div> {/* ✅ this was the missing closing tag for .panel.progress */}
+      </div> {/* ✅ Close dashboard-container */}
+    </div>   
   );
+
 };
-
+;
 export default DashboardPage;
-
