@@ -65,7 +65,7 @@ const DashboardPage = () => {
       <div className="dashboard-container">
         {/* ✅ Profile Section  */}
         <div className="panel profile">
-          <h3 className="dboardH2"> Welcome {username || "Your Profile"}!</h2>
+          <h3 className="dboardH2"> Welcome {username || "Your Profile"}!</h3>
           {overallStats ? (
         <div className="dashboard-stats">
           <p><strong>Total Games Played:</strong> {userStats.total?.total_questions ?? 0}</p>
