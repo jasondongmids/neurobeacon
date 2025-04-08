@@ -14,8 +14,8 @@ const DashboardPage = () => {
   const { username, setUsername, logoutUser } = useContext(UserContext);
   const navigate = useNavigate();
   const location = useLocation();
-  const { queryStats } = useContext(UserStatisticsContext);
-  const [overallStats, setOverallStats] = useState(null);
+  const overallStats = userStats;
+
   
   // State to track selected game
   const [selectedGame, setSelectedGame] = useState("");
@@ -63,14 +63,14 @@ const DashboardPage = () => {
         rel="noopener noreferrer">Find the Survey Here</a></strong></p>
       <p><strong>THIS OPEN BETA WILL CLOSE ON FRIDAY, APRIL 4!</strong></p></div>
       <div className="dashboard-container">
-        {/* ✅ Profile Section */}
+        {/* ✅ Profile Section  */}
         <div className="panel profile">
           <h2 className="dboardH2"> Welcome {username || "Your Profile"}!</h2>
           {overallStats ? (
         <div className="dashboard-stats">
-          <p><strong>Total Games Played:</strong> {overallStats.total?.total_questions || 0}</p>
-          <p><strong>Streak:</strong> {overallStats.current_streak || 0} days 🔥</p>
-          <p><strong>Rank:</strong> {overallStats.rank || "Unranked"}</p>
+          <p><strong>Total Games Played:</strong> {overallStats.total?.total_questions ?? "..."}</p>
+          <p><strong>Streak:</strong> {overallStats.current_streak ?? "..."} days 🔥</p>
+           {/* <p><strong>Rank:</strong> {overallStats.rank || "Unranked"}</p>  */}
         </div>
       ) : (
         <p style={{ color: "white" }}>Loading stats...</p>
