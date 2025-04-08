@@ -6,6 +6,16 @@ import Header from "./Header";
 import NavBar from "./NavBar"; 
 import "../styles.css";
 
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  ResponsiveContainer,
+} from "recharts";
+
 // Images
 import profilePlaceholder from "../assets/profile-placeholder.png";
 import progressChart from "../assets/progress.png";
@@ -101,14 +111,40 @@ const DashboardPage = () => {
         {/* ✅ Progress Overview */}
         <div className="panel progress">
           <h2 className="dboardH2">📊 Progress Overview</h2>
-          <p style={{ color: "red" }}>Placeholder Content</p>
-          <img
-            src={progressChart}
-            alt="User Progress Chart"
-            className="stats-image"
-          />
-          <p>You're improving! Keep pushing forward to increase your streak! 🚀</p>
+        
+          {!dailyStats || !dailyStats.length ? (
+            <p style={{ color: "white" }}>Loading recent performance data...</p>
+          ) : (
+            <>
+              <ResponsiveContainer width="100%" height={250}>
+                <LineChart
+                  data={dailyStats.map((entry) => ({
+                    date: String(entry.sk).replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"),
+                    accuracy: (entry.total?.percent_correct ?? 0) * 100,
+                  }))}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis domain={[0, 100]} tickFormatter={(tick) => `${tick}%`} />
+                  <Tooltip formatter={(value) => `${value.toFixed(2)}%`} />
+                  <Line
+                    type="monotone"
+                    dataKey="accuracy"
+                    stroke="#82ca9d"
+                    strokeWidth={3}
+                    dot={{ r: 5 }}
+                    activeDot={{ r: 7 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+              <p style={{ marginTop: "12px" }}>
+                You're improving! Keep pushing forward to increase your streak! 🚀
+              </p>
+            </>
+          )}
         </div>
+
 
       </div>
     </div>
