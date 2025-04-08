@@ -1,52 +1,42 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import UserContext from "../context/UserContext";
 import UserStatisticsContext from "../context/UserStatisticsContext";
+import UserContext from "../context/UserContext";
 import Header from "./Header";
-import NavBar from "./NavBar";
+import NavBar from "./NavBar"; 
 import "../styles.css";
 
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-  ResponsiveContainer,
-} from "recharts";
+// ✅ Import images directly (Replacing require())
+import profilePlaceholder from "../assets/profile-placeholder.png";
+import progressChart from "../assets/progress.png";
 
 const DashboardPage = () => {
   const { username, setUsername, logoutUser } = useContext(UserContext);
-  const { queryStats } = useContext(UserStatisticsContext);
   const navigate = useNavigate();
   const location = useLocation();
-
-  const [weeklyStats, setWeeklyStats] = useState([]);
-  const [dailyStats, setDailyStats] = useState([]);
+  const { queryStats } = useContext(UserStatisticsContext);
   const [overallStats, setOverallStats] = useState(null);
+  
+  // State to track selected game
   const [selectedGame, setSelectedGame] = useState("");
+  // State to store a message for the user.
   const [message, setMessage] = useState("");
 
   useEffect(() => {
     if (location.state?.redirected) {
       setMessage("⚠️ You must be logged in to access that page.");
     }
-  }, [location]);
-
-  useEffect(() => {
+  
     const fetchStats = async () => {
-      const weekly = await queryStats("weekly", 5);
-      const daily = await queryStats("daily", 5);
-      const overall = await queryStats("", 1);
-
-      setWeeklyStats(weekly || []);
-      setDailyStats(daily || []);
-      setOverallStats(overall?.[0] || null);
+      const result = await queryStats("", 1);
+      if (result && result.length > 0) {
+        setOverallStats(result[0]);
+      }
     };
-
+  
     fetchStats();
-  }, [queryStats]);
+  }, [location, queryStats]);
+
 
   const handleLogout = async () => {
     await logoutUser();
@@ -60,116 +50,106 @@ const DashboardPage = () => {
       setMessage("❌ Please select a game to play from the list above!");
     } else {
       setMessage("");
+      // Proceed with game selection logic. For example, navigate to the game page.
       navigate(`/game/${selectedGame}`);
     }
   };
-  console.log("📊 Daily stats for charting:", dailyStats);
 
   return (
     <div className="dashboard-page">
       <Header />
       <NavBar />
-      <div className="betaMessage">
-        <p>
-          <strong>
-            Thank you for joining our Beta Test. Current functionality is not final.
-            <br />
-            Mobile development is still ongoing and there may be some bugs. All feedback welcome!
-            <br />
-            When you are done playing, please fill out our user survey to help us make NeuroBeacon even better!
-            <br />
-            <a
-              href="https://docs.google.com/forms/d/1v-kiT9EV2i8t46WY0D_ZecNFgJCokyxXDVir5CrmbAI/viewform?edit_requested=true"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Find the Survey Here
-            </a>
-          </strong>
-        </p>
-        <p>
-          <strong>THIS OPEN BETA WILL CLOSE ON FRIDAY, APRIL 4!</strong>
-        </p>
-      </div>
-  
+      <div className="betaMessage"><p><strong>Thank you for joining our Beta Test. Current functionality is not final.<br />Mobile development is still ongoing and there may be some bugs. All feedback welcome!<br />When you are done playing, please fill out our user survey to help us make NeuroBeacon even better!<br /><a href="https://docs.google.com/forms/d/1v-kiT9EV2i8t46WY0D_ZecNFgJCokyxXDVir5CrmbAI/viewform?edit_requested=true"target="_blank"
+        rel="noopener noreferrer">Find the Survey Here</a></strong></p>
+      <p><strong>THIS OPEN BETA WILL CLOSE ON FRIDAY, APRIL 4!</strong></p></div>
       <div className="dashboard-container">
+        {/* ✅ Profile Section */}
         <div className="panel profile">
-          <h2 className="dboardH2">Welcome {username || "Your Profile"}!</h2>
-          {overallStats && (
-            <div className="dashboard-stats">
-              <p>Total Games Played: {overallStats.total_games}</p>
-              <p>Streak: {overallStats.current_streak} days 🔥</p>
-              <p>Highest Rank: {overallStats.rank || "Unranked"}</p>
-            </div>
-          )}
+          <h2 className="dboardH2"> Welcome {username || "Your Profile"}!</h2>
+          {overallStats ? (
+        <div className="dashboard-stats">
+          <p><strong>Total Games Played:</strong> {overallStats.total?.total_questions || 0}</p>
+          <p><strong>Streak:</strong> {overallStats.current_streak || 0} days 🔥</p>
+          <p><strong>Rank:</strong> {overallStats.rank || "Unranked"}</p>
+        </div>
+      ) : (
+        <p style={{ color: "white" }}>Loading stats...</p>
+      )}
           <button className="logout-btn" onClick={handleLogout}>Logout</button>
         </div>
-  
+
+        {/* ✅ Game Selection Panel */}
         <div className="panel game-selection">
           <h2 className="dboardH2">Select a Game to Play</h2>
-          {[
-            { label: "🧮 Math", value: "math" },
-            { label: "❓ Trivia", value: "trivia" },
-            { label: "⚡ Reaction", value: "reaction" },
-            { label: "🧠 Memory", value: "memory" },
-            { label: "🔢 Sudoku", value: "sudoku" },
-          ].map(({ label, value }) => (
-            <label className="gameSelect" key={value}>
-              <input
-                type="radio"
-                name="game"
-                value={value}
-                onChange={(e) => setSelectedGame(e.target.value)}
-              />
-              {" "}{label}
-            </label>
-          ))}
+
+          {/* ✅ Use state to track selection */}
+          <label className="gameSelect">
+            <input
+              type="radio"
+              name="game"
+              value="math"
+              onChange={(e) => setSelectedGame(e.target.value)}
+            />{" "}
+            🧮 Math
+          </label>
+          <label className="gameSelect">
+            <input
+              type="radio"
+              name="game"
+              value="trivia"
+              onChange={(e) => setSelectedGame(e.target.value)}
+            />{" "}
+            ❓ Trivia
+          </label>
+          <label className="gameSelect">
+            <input
+              type="radio"
+              name="game"
+              value="reaction"
+              onChange={(e) => setSelectedGame(e.target.value)}
+            />{" "}
+            ⚡ Reaction
+          </label>
+          <label className="gameSelect">
+            <input
+              type="radio"
+              name="game"
+              value="memory"
+              onChange={(e) => setSelectedGame(e.target.value)}
+            />{" "}
+            🧠 Memory
+          </label>
+          <label className="gameSelect">
+            <input
+              type="radio"
+              name="game"
+              value="sudoku"
+              onChange={(e) => setSelectedGame(e.target.value)}
+            />{" "}
+            🔢 Sudoku
+          </label>
           <br />
-          <button className="nav-btn-select" onClick={handleGameSelection}>Play Now!</button>
+          <button className="nav-btn-select" onClick={handleGameSelection}>
+            Play Now!
+          </button>
           {message && <p style={{ color: "red" }}>{message}</p>}
         </div>
-  
+
+        {/* ✅ Progress Overview */}
         <div className="panel progress">
           <h2 className="dboardH2">📊 Progress Overview</h2>
-          {!dailyStats.length ? (
-            <p style={{ color: "white" }}>Loading recent performance data...</p>
-          ) : (
-            <>
-              <ResponsiveContainer width="100%" height={250}>
-                <LineChart
-                  data={dailyStats.map((entry) => ({
-                    date: String(entry.sk).replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"),
-                    accuracy: entry.total?.percent_correct ?? 0, // ✅ Now using correct path
-                  }))}
-                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis domain={[0, 100]} tickFormatter={(tick) => `${tick}%`} />
-                  <Tooltip formatter={(value) => {
-                    const num = parseFloat(value);
-                    return isNaN(num) ? "N/A" : `${num.toFixed(2)}%`;
-                  }} />
-                  <Line
-                    type="monotone"
-                    dataKey="accuracy"
-                    stroke="#8884d8"
-                    strokeWidth={3}
-                    dot={{ r: 5 }}
-                    activeDot={{ r: 7 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-              <p style={{ marginTop: "12px" }}>
-                You're improving! Keep pushing forward to increase your streak! 🚀
-              </p>
-            </>
-          )}
+          <p style={{ color: "red" }}>Placeholder Content</p>
+
+          <img
+            src={progressChart}
+            alt="User Progress Chart"
+            className="stats-image"
+          />
+          <p>You're improving! Keep pushing forward to increase your streak! 🚀</p>
         </div>
       </div>
     </div>
   );
-
 };
 
 export default DashboardPage;
