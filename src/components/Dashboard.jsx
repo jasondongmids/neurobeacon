@@ -5,6 +5,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 // ✅ 3. Context Providers
+import ThemeContext from "../context/ThemeContext";
 import UserContext from "../context/UserContext";
 import UserStatisticsContext from "../context/UserStatisticsContext";
 
@@ -29,6 +30,7 @@ const DashboardPage = () => {
   const { userStats, dailyStats, queryStats } = useContext(UserStatisticsContext);
   const navigate = useNavigate();
   const location = useLocation();
+  const { isDark, setIsDark } = useContext(ThemeContext);
 
   const [selectedGame, setSelectedGame] = useState("");
   const [message, setMessage] = useState("");
@@ -197,13 +199,14 @@ useEffect(() => {
 
         {/* ✅ Profile Panel */}
         <div className="panel profile">
-          <h2 className="dboardH2">Welcome!6</h2>
+          <h2 className="dboardH2">Welcome!7</h2>
           <h3>{username || "Your Profile"} check out your personal stats below</h3>
           <div className="dashboard-stats">
             <p><strong>Total Games Played:</strong> {totalGames}</p>
             <p><strong>Streak:</strong> {streak} days 🔥</p>
           </div>
           <button className="logout-btn" onClick={handleLogout}>Logout</button>
+          <button className="auth-btn" onClick={() => setIsDark((prev) => !prev)}> {isDark ? "☀ Light Mode" : "🌙 Dark Mode"}</button>
         </div>
 
         {/* ✅ Game Selection Panel */}
