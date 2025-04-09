@@ -1447,3 +1447,20 @@ body.dark-mode .dropdown-menu button {
   width: 100%;
   text-align: left;
 }
+/* Ensure full-height dark background */
+body,
+html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Default light background */
+body {
+  background-color: #f0f0f0;
+}
+
+/* Dark mode background */
+body.dark-mode {
+  background-color: #111; /* or use #000 if you want it pitch black */
+}
