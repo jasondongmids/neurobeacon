@@ -80,8 +80,8 @@ const handleVerifyToken = async () => {
     <div className="welcome-container">
       {/* <NavBar /> */}
       <img src={logo} alt="NeuroBeacon Logo" className="welcome-logo" />
-      <h1 className="scenario-text">Welcome to NeuroBeacon</h1>
-      <p className="scenario-text">Train your brain and track your progress!</p>
+      <h1>Welcome to NeuroBeacon</h1>
+      <p>Train your brain and track your progress!</p>
 
       {/* Beta Test Message with Email Link */}
        {/*<div className="elevator-pitch-link">
