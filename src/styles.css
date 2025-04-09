@@ -1434,3 +1434,16 @@ body.dark-mode .footer .btn {
   background-color: #f39c12;
   color: white;
 }
+body.dark-mode .dropdown-menu {
+  background-color: #333;
+  border: 1px solid #555;
+}
+
+body.dark-mode .dropdown-menu button {
+  color: #f5f5f5;
+  background-color: #222;
+  border: none;
+  padding: 8px;
+  width: 100%;
+  text-align: left;
+}
