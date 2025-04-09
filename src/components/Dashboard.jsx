@@ -5,7 +5,7 @@ import UserStatisticsContext from "../context/UserStatisticsContext";
 import Header from "./Header";
 import NavBar from "./NavBar";
 import "../styles.css";
-import {LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
+import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
 import profilePlaceholder from "../assets/profile-placeholder.png";
 import progressChart from "../assets/progress.png";
 
