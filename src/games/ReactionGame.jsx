@@ -572,7 +572,7 @@ setMistakes(prev => {
             <option value="hard">Hard</option>
           </select></div> */}
        {/* Added Rules Section */}
-        <div style={{ color: "white", margin: "16px 0", fontSize: "1.2em" }}>
+        <div className="scenario-text" style={{ margin: "16px 0", fontSize: "1.2em" }}>
         <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
         
           <p>Wait for the box to change color. Exp 3</p>
@@ -581,7 +581,7 @@ setMistakes(prev => {
           <p>Try to achieve a fast reaction to earn more points.</p>
         
       </div>
-          <h2 style={{ color: "white"}}>Select Box Color Scheme</h2>
+          <h2 className="scenario-text">Select Box Color Scheme</h2>
           <div><select
             value={selectedColorScheme}
             onChange={e => setSelectedColorScheme(e.target.value)}
@@ -619,10 +619,10 @@ setMistakes(prev => {
         />
 
           {/* Display only the round number below the canvas */}
-          <p>Round: {round}/{maxRounds}</p>
+          <p className="feedback-info">Round: {round}/{maxRounds}</p>
           {/* Show any warning or mistake messages immediately */}
-          {message && <p className="warning">{message}</p>}
-            <p style={{ color: "white",fontSize: "0.75em", margin: 0 }}>
+          {message && <p className="feedback-info">{message}</p>}
+            <p className="reaction-info" style={{ fontSize: "0.75em", margin: 0 }}>
             Difficulty: <span style={{ color: "white" }}>{difficulty}</span>
             <br />
             Raw Prediction: <span style={{ color: "white" }}>{rawPrediction}</span>{" "}
