@@ -692,6 +692,20 @@ canvas {
   border: 1px solid #ccc;
 }
 
+/* styles.css or a scoped module */
+.dropdown-wrapper {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.dropdown-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
 
 /* Fraction Game */
