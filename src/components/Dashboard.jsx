@@ -1,10 +1,9 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import UserContext from "../context/UserContext";
-import UserStatisticsContext from "../context/UserStatisticsContext";
 import Header from "./Header";
 import NavBar from "./NavBar";
-import "../styles.css";
+import UserContext from "../context/UserContext";
+import UserStatisticsContext from "../context/UserStatisticsContext";
 
 import {
   LineChart,
@@ -16,11 +15,11 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-
+import "../styles.css";
 
 const DashboardPage = () => {
-  const { username, setUsername, logoutUser } = useContext(UserContext);
-  const { userStats, dailyStats, queryStats } = useContext(UserStatisticsContext); // ✅ only here
+  const { username = "User", logoutUser, setUsername } = useContext(UserContext) || {};
+  const { userStats, dailyStats, queryStats } = useContext(UserStatisticsContext) || {};
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -28,34 +27,53 @@ const DashboardPage = () => {
   const [selectedGame, setSelectedGame] = useState("");
   const [message, setMessage] = useState("");
 
+  // ✅ Defensive log
   useEffect(() => {
-    if (location.state?.redirected) {
+    console.log("✅ Dashboard mounted");
+  }, []);
+
+  useEffect(() => {
+    if (location?.state?.redirected) {
       setMessage("⚠️ You must be logged in to access that page.");
     }
 
-    const fetchData = async () => {
-      const result = await queryStats("daily", 5);
-      console.log("📊 Fetched Daily Stats:", result);
-      if (Array.isArray(result)) {
-        setDailyHistory(result);
+    if (!queryStats) {
+      console.warn("queryStats function is undefined!");
+      return;
+    }
+
+    const fetchDaily = async () => {
+      try {
+        const result = await queryStats("daily", 5);
+        if (Array.isArray(result)) {
+          setDailyHistory(result);
+          console.log("✅ Fetched daily stats:", result);
+        } else {
+          console.warn("Unexpected daily stats format:", result);
+        }
+      } catch (error) {
+        console.error("❌ Failed to fetch daily stats:", error);
       }
     };
 
-    fetchData();
-  }, [location, queryStats]); // ✅ safe to leave this here
+    fetchDaily();
+  }, [location, queryStats]);
 
   const handleLogout = async () => {
-    await logoutUser();
-    localStorage.removeItem("currentUser");
-    setUsername("");
-    navigate("/");
+    try {
+      await logoutUser();
+      localStorage.removeItem("currentUser");
+      setUsername("");
+      navigate("/");
+    } catch (e) {
+      console.error("Logout failed", e);
+    }
   };
 
   const handleGameSelection = () => {
     if (!selectedGame) {
       setMessage("❌ Please select a game to play from the list above!");
     } else {
-      setMessage("");
       navigate(`/game/${selectedGame}`);
     }
   };
@@ -65,103 +83,64 @@ const DashboardPage = () => {
       <Header />
       <NavBar />
 
-      <div className="betaMessage">
-        <p><strong>Thank you for joining our Beta Test...<br />
-        <a href="https://docs.google.com/forms/d/1v-kiT9EV2i8t46WY0D_ZecNFgJCokyxXDVir5CrmbAI/viewform?edit_requested=true"
-           target="_blank" rel="noopener noreferrer">
-           Find the Survey Here</a></strong></p>
-        <p><strong>THIS OPEN BETA WILL CLOSE ON FRIDAY, APRIL 4!</strong></p>
-      </div>
-
       <div className="dashboard-container">
-
-        {/* ✅ Profile Section */}
         <div className="panel profile">
-          <h2 className="dboardH2">Welcome</h2>
-          <h3>{username || "Your Profile"}!</h3>
-          {userStats && dailyStats ? (
-            <div className="dashboard-stats">
+          <h2>Welcome, {username}!</h2>
+          {userStats ? (
+            <>
               <p><strong>Total Games Played:</strong> {userStats.total?.total_questions ?? 0}</p>
-              <p><strong>Streak:</strong> {dailyStats.current_streak ?? 0} days 🔥</p>
-              {/* <p><strong>Rank:</strong> {userStats.rank || "Unranked"}</p> */}
-            </div>
+              <p><strong>Streak:</strong> {dailyStats?.current_streak ?? 0} days 🔥</p>
+            </>
           ) : (
-            <p style={{ color: "#2e86c1" }}>Loading stats...</p>
+            <p>Loading stats...</p>
           )}
-          <button className="logout-btn" onClick={handleLogout}>Logout</button>
+          <button onClick={handleLogout}>Logout</button>
         </div>
 
-        {/* ✅ Game Selection */}
         <div className="panel game-selection">
-          <h2 className="dboardH2">Select a Game to Play</h2>
-          {[
-            { label: "🧮 Math", value: "math" },
-            { label: "❓ Trivia", value: "trivia" },
-            { label: "⚡ Reaction", value: "reaction" },
-            { label: "🧠 Memory", value: "memory" },
-            { label: "🔢 Sudoku", value: "sudoku" },
-          ].map(({ label, value }) => (
-            <label className="gameSelect" key={value}>
+          <h3>Select a Game</h3>
+          {["math", "trivia", "reaction", "memory", "sudoku"].map((game) => (
+            <label key={game}>
               <input
                 type="radio"
                 name="game"
-                value={value}
+                value={game}
                 onChange={(e) => setSelectedGame(e.target.value)}
-              />{" "}
-              {label}
+              />
+              {game.toUpperCase()}
             </label>
           ))}
           <br />
-          <button className="nav-btn-select" onClick={handleGameSelection}>
-            Play Now!
-          </button>
+          <button onClick={handleGameSelection}>Play Now</button>
           {message && <p style={{ color: "red" }}>{message}</p>}
         </div>
 
-        {/* ✅ Progress Overview */}
         <div className="panel progress">
-          <h2 className="dboardH2">📊 Progress Overview</h2>
-        
+          <h3>📈 Daily Accuracy</h3>
           {!dailyHistory.length ? (
-            <p style={{ color: "#2e86c1" }}>Loading recent performance data...</p>
+            <p>Loading chart...</p>
           ) : (
-            <>
-              console.log("📈 dailyHistory state:", dailyHistory);
-              <ResponsiveContainer width="100%" height={250}>
-                <LineChart
-                  data={dailyHistory.map((entry) => ({
-                    date: String(entry.sk).replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"),
-                    accuracy: (entry.total?.percent_correct ?? 0) * 100,
-                  }))}
-
-                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis domain={[0, 100]} tickFormatter={(tick) => `${tick}%`} />
-                  <Tooltip formatter={(value) => `${value.toFixed(2)}%`} />
-                  <Line
-                    type="monotone"
-                    dataKey="accuracy"
-                    stroke="#82ca9d"
-                    strokeWidth={3}
-                    dot={{ r: 5 }}
-                    activeDot={{ r: 7 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-              <p style={{ marginTop: "12px" }}>
-                You're improving! Keep pushing forward to increase your streak! 🚀
-              </p>
-            </>
+            <ResponsiveContainer width="100%" height={250}>
+              <LineChart
+                data={dailyHistory.map((entry) => ({
+                  date: String(entry.sk).replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"),
+                  accuracy: (entry.total?.percent_correct ?? 0) * 100,
+                }))}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" />
+                <YAxis domain={[0, 100]} tickFormatter={(tick) => `${tick}%`} />
+                <Tooltip formatter={(value) => `${value.toFixed(2)}%`} />
+                <Line type="monotone" dataKey="accuracy" stroke="#8884d8" />
+              </LineChart>
+            </ResponsiveContainer>
           )}
         </div>
-
-
       </div>
     </div>
   );
 };
 
 export default DashboardPage;
+
 
