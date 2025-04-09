@@ -503,8 +503,8 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
   <div className="modal-overlay">
     <div className="modal-content">
       {/* 🧠 Game Rules */}
-      <div style={{ color: "white", margin: "16px 0", fontSize: "1.2em" }}>
-        <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
+      <div className="scenario-text" style={{ margin: "16px 0", fontSize: "1.2em" }}>
+        <h2 className="scenario-text" style={{ fontSize: "1.4em" }}>Game Rules:</h2>
         <p>Answer trivia questions from your selected decades by clicking on the answer followed by the Submit Answer Button.</p>
         <p>Points are awarded based on difficulty and speed.</p>
         <p>Try to answer quickly to maximize your score!</p>
@@ -569,21 +569,21 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
 
             <div className="scenario-text">{questions[questionIndex]?.question || "⚠️ No More Questions!"}</div>
             {/* 🔍 Debug-only Difficulty Display */}
-            <p style={{ color: "gray", fontSize: "0.9em" }}>
+            <p className="info-paragraph">
               Difficulty: <strong>{currentDifficulty}</strong> | 
               Decade: <strong>{questions[questionIndex]?.decade || "unknown"}</strong>
             </p>
-            <p style={{ color: "gray", fontSize: "0.9em" }}><strong>Raw Prediction:</strong> {userGameState?.predicted_difficulty} | <strong>Mapped Difficulty:</strong> {currentDifficulty}</p>
+            <p className="info-paragraph"><strong>Raw Prediction:</strong> {userGameState?.predicted_difficulty} | <strong>Mapped Difficulty:</strong> {currentDifficulty}</p>
             <div className="multiple-choice-options">
                 {shuffledAnswers.map((option, index) => (
-                    <label key={index}>
+                    <label key={index}className="radio-label">
                         <input type="radio" name="triviaChoice" value={option} checked={selectedAnswer === option} onChange={() => handleAnswerSelection(option)} />
                         <span>{option}</span>
                     </label>
                 ))}
             </div>
 
-            <p className="feedback-info"style={{ color: "black" }}>{message}</p>
+            <p className="feedback-info">{message}</p>
         </div>
     );
     
