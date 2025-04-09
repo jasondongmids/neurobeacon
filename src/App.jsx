@@ -1,3 +1,4 @@
+import { Navigate } from "react-router-dom";
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { UserProvider } from "./context/UserContext";
@@ -23,10 +24,14 @@ function App() {
                 <ScrollToTop />
                 <Redirection>
                     <Routes>
-                        <Route path="/" element={<WelcomePage />} />
-                        <Route path="/game/:gameType" element={<GamePage />} />
-                        <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/test" element={<TestPage />} />
+                      {/* 🔁 Redirect trailing slashes */}
+                      <Route path="/:path*/" element={<Navigate to={`/${window.location.pathname.replace(/\/+$/, "")}`} />} />
+                    
+                      {/* 🔽 Your actual routes */}
+                      <Route path="/" element={<WelcomePage />} />
+                      <Route path="/game/:gameType" element={<GamePage />} />
+                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/test" element={<TestPage />} />
                     </Routes>
                 </Redirection>
             </Router>
