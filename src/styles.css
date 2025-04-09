@@ -1473,3 +1473,12 @@ body.dark-mode {
 body.dark-mode .welcome-container {
   background-color: #111; /* or #000 if you want it pitch black */
 }
+/* Default light mode dashboard background */
+.dashboard-container {
+  background-color: #f9f9f9; /* or whatever your current default is */
+}
+
+/* Dark mode dashboard background override */
+body.dark-mode .dashboard-container {
+  background-color: #111; /* match your dark mode body color */
+}
