@@ -13,17 +13,19 @@ import Header from "./Header";
 import NavBar from "./NavBar";
 import "../styles.css";
 
+// ✅ Utility
+const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+
 
 const DashboardPage = () => {
   const { username, setUsername, logoutUser } = useContext(UserContext);
   const { userStats, dailyStats, queryStats } = useContext(UserStatisticsContext);
-
   const navigate = useNavigate();
   const location = useLocation();
 
   const [selectedGame, setSelectedGame] = useState("");
   const [message, setMessage] = useState("");
-
+  const [selectedGameForStats, setSelectedGameForStats] = useState("all");
   const [chartInstance, setChartInstance] = useState(null);
   const [dailyHistory, setDailyHistory] = useState([]);
   const [range, setRange] = useState("7"); // default to past week
@@ -51,10 +53,20 @@ useEffect(() => {
 useEffect(() => {
   if (!window.Chart || !dailyHistory.length) return;
 
-  const labels = dailyHistory.map(entry =>
+  const filteredHistory = selectedGameForStats === "all"
+    ? dailyHistory
+    : dailyHistory.map((entry) => {
+        const gameStats = entry[selectedGameForStats];
+        return {
+          ...entry,
+          total: gameStats?.total || { percent_correct: 0 }
+        };
+      });
+
+  const labels = filteredHistory.map(entry =>
     String(entry.sk).replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")
   );
-  const dataPoints = dailyHistory.map(entry =>
+  const dataPoints = filteredHistory.map(entry =>
     (entry.total?.percent_correct ?? 0) * 100
   );
 
@@ -68,7 +80,7 @@ useEffect(() => {
     data: {
       labels,
       datasets: [{
-        label: "Accuracy",
+        label: selectedGameForStats === "all" ? "Overall Accuracy" : `Accuracy: ${capitalize(selectedGameForStats)}`,
         data: dataPoints,
         borderColor: "rgb(75, 192, 192)",
         borderWidth: 3,
@@ -99,7 +111,8 @@ useEffect(() => {
   });
 
   setChartInstance(newChart);
-}, [dailyHistory]);
+}, [dailyHistory, selectedGameForStats]);
+
 
 
 
@@ -169,7 +182,7 @@ useEffect(() => {
 
         {/* ✅ Profile Panel */}
         <div className="panel profile">
-          <h2 className="dboardH2">Welcome!3</h2>
+          <h2 className="dboardH2">Welcome!4</h2>
           <h3>{username || "Your Profile"} check out your personal stats below</h3>
           <div className="dashboard-stats">
             <p><strong>Total Games Played:</strong> {totalGames}</p>
@@ -205,7 +218,9 @@ useEffect(() => {
         <div className="panel progress">
           <h2 className="dboardH2">📊 Progress Overview</h2>
           <div className="chart-container" style={{ marginTop: "20px" }}>
-            <h3 style={{ color: "#fff" }}>📈 Chart.js Test Chart</h3>
+            <h3 style={{ color: "black" }}>
+              📊 {selectedGameForStats === "all" ? "Overall Progress" : `${capitalize(selectedGameForStats)} Progress`}
+            </h3>
             <div style={{ marginBottom: "10px", textAlign: "center" }}>
               <label style={{ color: "#fff", marginRight: "10px" }}>View Range:</label>
               <select value={range} onChange={(e) => setRange(e.target.value)}>
@@ -213,10 +228,26 @@ useEffect(() => {
                 <option value="30">📅 Past Month</option>
                 <option value="999">📈 Lifetime</option>
               </select>
+              <span style={{ margin: "0 10px" }}></span>
+              <label style={{ color: "#fff", marginRight: "10px" }}>Game:</label>
+              <select value={selectedGameForStats} onChange={(e) => setSelectedGameForStats(e.target.value)}>
+                <option value="all">🧠 All Games</option>
+                <option value="math">🧮 Math</option>
+                <option value="trivia">❓ Trivia</option>
+                <option value="reaction">⚡ Reaction</option>
+                <option value="memory">🧠 Memory</option>
+                <option value="sudoku">🔢 Sudoku</option>
+              </select>
             </div>
-
+          
             <canvas id="chartjs-canvas" width="400" height="200"></canvas>
+            {dailyHistory.length === 0 && (
+              <p style={{ color: "black", textAlign: "center" }}>
+                Not enough data yet. Keep playing to see your progress!
+              </p>
+            )}
           </div>
+
 
           <p>You're improving! Keep pushing forward to increase your streak! 🚀</p>
           </div>
