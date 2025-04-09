@@ -1455,3 +1455,11 @@ body.dark-mode .rules-box {
 body.dark-mode .game-content {
   background-color: #111;
 }
+/* === Dark Mode: Remove border-radius for game panels === */
+body.dark-mode .fraction-game,
+body.dark-mode .sudoku-container,
+body.dark-mode .memory-wrapper,
+body.dark-mode .reaction-container,
+body.dark-mode .trivia-container {
+  border-radius: 0 !important;
+}
