@@ -634,6 +634,39 @@ p {
   padding: 0;
   box-sizing: border-box;
 }
+
+/*Dashboard Charts */
+.chart-container {
+  width: 100%;
+  max-width: 500px;
+  margin: auto;
+}
+canvas {
+  width: 100% !important;
+  height: auto !important;
+}
+
+.chart-range-selector {
+  padding: 6px 12px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+.chart-title {
+  text-align: center;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 10px;
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+
 /* Fraction Game */
 .fraction-game {
   background-color: white;
@@ -1184,3 +1217,5 @@ select {
     font-size: 20px;
 }
 }
+
+
