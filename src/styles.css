@@ -1464,3 +1464,12 @@ body {
 body.dark-mode {
   background-color: #111; /* or use #000 if you want it pitch black */
 }
+/* Default light mode welcome background */
+.welcome-container {
+  background-color: #3686c5; /* your current blue */
+}
+
+/* Dark mode welcome background override */
+body.dark-mode .welcome-container {
+  background-color: #111; /* or #000 if you want it pitch black */
+}
