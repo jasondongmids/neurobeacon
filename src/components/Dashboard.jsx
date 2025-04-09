@@ -44,7 +44,8 @@ useEffect(() => {
   };
 
   fetchChartData();
-}, [range, queryStats]);
+}, [range]); // ✅ REMOVE queryStats from dependencies!
+
 
 // Update Chart.js graph when dailyHistory changes
 useEffect(() => {
