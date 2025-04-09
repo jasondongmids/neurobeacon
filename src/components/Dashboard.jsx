@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, PureComponent } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useNavigate, useLocation } from "react-router-dom";
 import UserContext from "../context/UserContext";
