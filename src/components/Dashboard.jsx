@@ -234,7 +234,7 @@ useEffect(() => {
             </h3>
             <div className="dropdown-wrapper">
               <div className="dropdown-group">
-                <label>📅 View Range:</label>
+                <label style={{ color: "black" }}>📅 View Range:</label>
                 <select value={range} onChange={(e) => setRange(e.target.value)}>
                   <option value="7">🗓️ Past Week</option>
                   <option value="30">📅 Past Month</option>
@@ -242,7 +242,7 @@ useEffect(() => {
                 </select>
               </div>
               <div className="dropdown-group">
-                <label>🎮 Game:</label>
+                <label style={{ color: "black" }}>🎮 Game:</label>
                 <select value={selectedGameForStats} onChange={(e) => setSelectedGameForStats(e.target.value)}>
                   <option value="all">🧠 All Games</option>
                   <option value="math">🧮 Math</option>
