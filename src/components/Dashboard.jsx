@@ -1,3 +1,23 @@
+import React, { useContext, useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import UserContext from "../context/UserContext";
+import UserStatisticsContext from "../context/UserStatisticsContext";
+import Header from "./Header";
+import NavBar from "./NavBar";
+import "../styles.css";
+
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  ResponsiveContainer,
+} from "recharts";
+
+
+
 const DashboardPage = () => {
   const { username, setUsername, logoutUser } = useContext(UserContext);
   const { userStats, dailyStats, queryStats } = useContext(UserStatisticsContext); // ✅ only here
