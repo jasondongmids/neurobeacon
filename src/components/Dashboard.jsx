@@ -1,31 +1,10 @@
-import React, { useContext, useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import UserContext from "../context/UserContext";
-import UserStatisticsContext from "../context/UserStatisticsContext";
-import Header from "./Header";
-import NavBar from "./NavBar"; 
-import "../styles.css";
-
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-  ResponsiveContainer,
-} from "recharts";
-
-// Images
-import profilePlaceholder from "../assets/profile-placeholder.png";
-import progressChart from "../assets/progress.png";
-
 const DashboardPage = () => {
   const { username, setUsername, logoutUser } = useContext(UserContext);
-  const { userStats, dailyStats } = useContext(UserStatisticsContext);
+  const { userStats, dailyStats, queryStats } = useContext(UserStatisticsContext); // ✅ only here
   const navigate = useNavigate();
   const location = useLocation();
 
+  const [dailyHistory, setDailyHistory] = useState([]);
   const [selectedGame, setSelectedGame] = useState("");
   const [message, setMessage] = useState("");
 
@@ -33,7 +12,16 @@ const DashboardPage = () => {
     if (location.state?.redirected) {
       setMessage("⚠️ You must be logged in to access that page.");
     }
-  }, [location]);
+
+    const fetchData = async () => {
+      const result = await queryStats("daily", 5);
+      if (Array.isArray(result)) {
+        setDailyHistory(result);
+      }
+    };
+
+    fetchData();
+  }, [location, queryStats]); // ✅ safe to leave this here
 
   const handleLogout = async () => {
     await logoutUser();
@@ -113,18 +101,17 @@ const DashboardPage = () => {
         <div className="panel progress">
           <h2 className="dboardH2">📊 Progress Overview</h2>
         
-          {!dailyStats || !dailyStats.sk ? (
+          {!dailyHistory.length ? (
             <p style={{ color: "white" }}>Loading recent performance data...</p>
           ) : (
             <>
               <ResponsiveContainer width="100%" height={250}>
                 <LineChart
-                  data={[
-                    {
-                      date: String(dailyStats.sk).replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"),
-                      accuracy: (dailyStats.total?.percent_correct ?? 0) * 100,
-                    },
-                  ]}
+                  data={dailyHistory.map((entry) => ({
+                    date: String(entry.sk).replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"),
+                    accuracy: (entry.total?.percent_correct ?? 0) * 100,
+                  }))}
+
                   margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" />
