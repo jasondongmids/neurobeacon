@@ -1,11 +1,12 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, PureComponent } from "react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useNavigate, useLocation } from "react-router-dom";
 import UserContext from "../context/UserContext";
 import UserStatisticsContext from "../context/UserStatisticsContext";
 import Header from "./Header";
 import NavBar from "./NavBar";
 import "../styles.css";
-import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
+
 import profilePlaceholder from "../assets/profile-placeholder.png";
 import progressChart from "../assets/progress.png";
 
