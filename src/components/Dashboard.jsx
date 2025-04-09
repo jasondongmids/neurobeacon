@@ -236,12 +236,12 @@ useEffect(() => {
         <div className="panel progress">
           <h2 className="dboardH2">📊 Progress Overview</h2>
           <div className="chart-container" style={{ marginTop: "20px" }}>
-            <h3 style={{ color: "black" }}>
+            <h3>
               📊 {selectedGameForStats === "all" ? "Overall Progress" : `${capitalize(selectedGameForStats)} Progress`}
             </h3>
             <div className="dropdown-wrapper">
               <div className="dropdown-group">
-                <label style={{ color: "black" }}>📅 View Range:</label>
+                <label>📅 View Range:</label>
                 <select
                   value={range}
                   onChange={(e) => {
@@ -255,7 +255,7 @@ useEffect(() => {
                 </select>
               </div>
               <div className="dropdown-group">
-                <label style={{ color: "black" }}>🎮 Game:</label>
+                <label>🎮 Game:</label>
                 <select value={selectedGameForStats}
                     onChange={(e) => {
                       setSelectedGameForStats(e.target.value);
