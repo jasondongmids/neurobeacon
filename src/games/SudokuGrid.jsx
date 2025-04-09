@@ -440,9 +440,9 @@ const SudokuGrid = ({ onUpdateStats }) => {
                 Bonus Awarded: {bonusAward} points
               </p>
             )}
-            <p class="feedback-info">Time Elapsed: {timer} sec</p>
-            <p class="feedback-info">Score: {score}</p>
-            <p class="feedback-info">Mistakes: {mistakes}</p>
+            <p className="feedback-info">Time Elapsed: {timer} sec</p>
+            <p className="feedback-info">Score: {score}</p>
+            <p className="feedback-info">Mistakes: {mistakes}</p>
             <button onClick={() => setGameStarted(false)}>
               Start New Game
             </button>
