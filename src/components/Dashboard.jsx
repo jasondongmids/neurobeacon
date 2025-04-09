@@ -1,67 +1,85 @@
-import React, { useContext, useState, useEffect } from "react";
+const [selectedGame, setSelectedGame] = useState("");
+const [message, setMessage] = useState("");
 
+const [chartInstance, setChartInstance] = useState(null);
+const [dailyHistory, setDailyHistory] = useState([]);
+const [range, setRange] = useState("7"); // default to past week
 
-import { useNavigate, useLocation } from "react-router-dom";
-import UserContext from "../context/UserContext";
-import UserStatisticsContext from "../context/UserStatisticsContext";
-import Header from "./Header";
-import NavBar from "./NavBar";
-import "../styles.css";
+const { queryStats } = useContext(UserStatisticsContext);
 
-import profilePlaceholder from "../assets/profile-placeholder.png";
-import progressChart from "../assets/progress.png";
+useEffect(() => {
+  if (location.state?.redirected) {
+    setMessage("⚠️ You must be logged in to access that page.");
+  }
+}, [location]);
 
-const DashboardPage = () => {
-  const { username, setUsername, logoutUser } = useContext(UserContext);
-  const { userStats, dailyStats } = useContext(UserStatisticsContext);
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const [selectedGame, setSelectedGame] = useState("");
-  const [message, setMessage] = useState("");
-
-  useEffect(() => {
-    if (location.state?.redirected) {
-      setMessage("⚠️ You must be logged in to access that page.");
+// Fetch data whenever range changes
+useEffect(() => {
+  const fetchChartData = async () => {
+    const data = await queryStats("daily", parseInt(range));
+    if (Array.isArray(data)) {
+      setDailyHistory(data);
     }
-  }, [location]);
+  };
 
-  useEffect(() => {
-    if (!window.Chart) {
-      console.warn("Chart.js not loaded");
-      return;
-    }
-  
-    const ctx = document.getElementById("chartjs-canvas")?.getContext("2d");
-    if (!ctx) return;
-  
-    new window.Chart(ctx, {
-      type: "line",
-      data: {
-        labels: ["April 1", "April 2", "April 3"],
-        datasets: [{
-          label: "Accuracy",
-          data: [70, 80, 60],
-          borderColor: "rgb(75, 192, 192)",
-          borderWidth: 3,
-          fill: false,
-          tension: 0.4
-        }]
+  fetchChartData();
+}, [range, queryStats]);
+
+// Update Chart.js graph when dailyHistory changes
+useEffect(() => {
+  if (!window.Chart || !dailyHistory.length) return;
+
+  const labels = dailyHistory.map(entry =>
+    String(entry.sk).replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")
+  );
+  const dataPoints = dailyHistory.map(entry =>
+    (entry.total?.percent_correct ?? 0) * 100
+  );
+
+  const ctx = document.getElementById("chartjs-canvas")?.getContext("2d");
+  if (!ctx) return;
+
+  if (chartInstance) chartInstance.destroy();
+
+  const newChart = new window.Chart(ctx, {
+    type: "line",
+    data: {
+      labels,
+      datasets: [{
+        label: "Accuracy",
+        data: dataPoints,
+        borderColor: "rgb(75, 192, 192)",
+        borderWidth: 3,
+        fill: false,
+        tension: 0.4,
+        pointBackgroundColor: "#fff"
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 100,
+          ticks: {
+            callback: (val) => `${val}%`
+          }
+        }
       },
-      options: {
-        responsive: true,
-        scales: {
-          y: {
-            beginAtZero: true,
-            max: 100,
-            ticks: {
-              callback: (val) => `${val}%`
-            }
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: context => `${context.parsed.y.toFixed(2)}%`
           }
         }
       }
-    });
-  }, []);
+    }
+  });
+
+  setChartInstance(newChart);
+}, [dailyHistory]);
+
+
 
   // TEMP LOGGING TO VALIDATE SAFE CHART INTEGRATION
   useEffect(() => {
@@ -129,7 +147,7 @@ const DashboardPage = () => {
 
         {/* ✅ Profile Panel */}
         <div className="panel profile">
-          <h2 className="dboardH2">Welcome!2</h2>
+          <h2 className="dboardH2">Welcome!3</h2>
           <h3>{username || "Your Profile"} check out your personal stats below</h3>
           <div className="dashboard-stats">
             <p><strong>Total Games Played:</strong> {totalGames}</p>
@@ -164,14 +182,17 @@ const DashboardPage = () => {
         {/* ✅ Progress Overview */}
         <div className="panel progress">
           <h2 className="dboardH2">📊 Progress Overview</h2>
-          <p style={{ color: "red" }}>Placeholder Content</p>
-          <img
-            src={progressChart}
-            alt="User Progress Chart"
-            className="stats-image"
-          />
           <div className="chart-container" style={{ marginTop: "20px" }}>
             <h3 style={{ color: "#fff" }}>📈 Chart.js Test Chart</h3>
+            <div style={{ marginBottom: "10px", textAlign: "center" }}>
+              <label style={{ color: "#fff", marginRight: "10px" }}>View Range:</label>
+              <select value={range} onChange={(e) => setRange(e.target.value)}>
+                <option value="7">🗓️ Past Week</option>
+                <option value="30">📅 Past Month</option>
+                <option value="999">📈 Lifetime</option>
+              </select>
+            </div>
+
             <canvas id="chartjs-canvas" width="400" height="200"></canvas>
           </div>
 
