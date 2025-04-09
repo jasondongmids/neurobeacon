@@ -1,31 +1,13 @@
-// 1. React + Router
 import React, { useContext, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-
-// 2. Contexts
 import UserContext from "../context/UserContext";
 import UserStatisticsContext from "../context/UserStatisticsContext";
-
-// 3. Components + Styles
 import Header from "./Header";
 import NavBar from "./NavBar";
 import "../styles.css";
 
-// 4. Recharts for Visualization
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-  ResponsiveContainer,
-} from "recharts";
-
-// 5. Static Assets
 import profilePlaceholder from "../assets/profile-placeholder.png";
 import progressChart from "../assets/progress.png";
-
 
 const DashboardPage = () => {
   const { username, setUsername, logoutUser } = useContext(UserContext);
@@ -41,6 +23,24 @@ const DashboardPage = () => {
       setMessage("⚠️ You must be logged in to access that page.");
     }
   }, [location]);
+  
+  // TEMP LOGGING TO VALIDATE SAFE CHART INTEGRATION
+  useEffect(() => {
+    console.log("🧠 DashboardPage mounted");
+    console.log("👤 Username:", username);
+    console.log("📊 userStats:", userStats);
+    console.log("📅 dailyStats:", dailyStats);
+  
+    if (dailyStats?.sk && dailyStats?.total?.percent_correct !== undefined) {
+      const fakeChartData = [{
+        date: String(dailyStats.sk).replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"),
+        accuracy: (dailyStats.total.percent_correct ?? 0) * 100
+      }];
+      console.log("📈 Test Chart Data:", fakeChartData);
+    } else {
+      console.log("⚠️ Not enough data to create chart data yet.");
+    }
+  }, [username, userStats, dailyStats]);
 
   const handleLogout = async () => {
     await logoutUser();
