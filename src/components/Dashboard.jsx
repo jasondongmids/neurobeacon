@@ -1,7 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import * as Recharts from "recharts";
 
-console.log("✅ Recharts loaded:", Object.keys(Recharts));
 
 import { useNavigate, useLocation } from "react-router-dom";
 import UserContext from "../context/UserContext";
