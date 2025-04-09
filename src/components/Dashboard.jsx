@@ -1,10 +1,17 @@
+// 1. React + Router
 import React, { useContext, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+
+// 2. Contexts
 import UserContext from "../context/UserContext";
 import UserStatisticsContext from "../context/UserStatisticsContext";
+
+// 3. Components + Styles
 import Header from "./Header";
 import NavBar from "./NavBar";
 import "../styles.css";
+
+// 4. Recharts for Visualization
 import {
   LineChart,
   Line,
@@ -15,8 +22,10 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
+// 5. Static Assets
 import profilePlaceholder from "../assets/profile-placeholder.png";
 import progressChart from "../assets/progress.png";
+
 
 const DashboardPage = () => {
   const { username, setUsername, logoutUser } = useContext(UserContext);
@@ -82,7 +91,7 @@ const DashboardPage = () => {
         {/* ✅ Profile Panel */}
         <div className="panel profile">
           <h2 className="dboardH2">Welcome!</h2>
-          <h3>Glad to have you back, {username || "Your Profile"}. Check out your personal stats below</h3>
+          <h3>{username || "Your Profile"} check out your personal stats below</h3>
           <div className="dashboard-stats">
             <p><strong>Total Games Played:</strong> {totalGames}</p>
             <p><strong>Streak:</strong> {streak} days 🔥</p>
@@ -122,11 +131,6 @@ const DashboardPage = () => {
             alt="User Progress Chart"
             className="stats-image"
           />
-          <div style={{ marginTop: "20px" }}>
-            <h3 style={{ color: "#fff" }}>Test Chart (Static Data)</h3>
-
-          </div>
-
           <p>You're improving! Keep pushing forward to increase your streak! 🚀</p>
         </div>
       </div>
