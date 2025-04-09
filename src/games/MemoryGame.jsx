@@ -538,10 +538,10 @@ import React, {
               placeholderColor="#2e86c1"
               transitionDuration="0.4s"
             />
-            <div style={{ position: "relative", zIndex: 2, textAlign: "center", padding: "20px" }}>
+            <div className="memory-prompt-container" style={{ position: "relative", zIndex: 2, textAlign: "center", padding: "20px" }}>
               
               {/* ⬇️ Always-visible difficulty info */}
-              <div className="reaction-info" style={{ marginTop: "4px", fontSize: "0.75em" }}>
+              <div className="reaction-info" style={{ color:"black", marginTop: "4px", fontSize: "0.75em" }}>
                 Difficulty: <span>{getDiffString(difficulty)}</span>
                 <br />
                 Raw Prediction: <span>{rawPrediction}</span> | Mapped Difficulty: <span>{mappedDifficulty}</span>
