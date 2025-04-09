@@ -503,8 +503,8 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
   <div className="modal-overlay">
     <div className="modal-content">
       {/* 🧠 Game Rules */}
-      <div className="rules-box" style={{ margin: "16px 0", fontSize: "1.2em" }}>
-        <h2 className="scenario-text" style={{ fontSize: "1.4em" }}>Game Rules:</h2>
+      <div className="rules-box" style={{ margin: "16px 0 16px", fontSize: "1.2em" }}>
+        <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
         <p>Answer trivia questions from your selected decades by clicking on the answer followed by the Submit Answer Button.</p>
         <p>Points are awarded based on difficulty and speed.</p>
         <p>Try to answer quickly to maximize your score!</p>
