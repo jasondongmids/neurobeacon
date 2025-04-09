@@ -1259,4 +1259,61 @@ select {
 }
 }
 
+/* === Dark Mode Styles === */
+body.dark-mode {
+  background-color: #121212;
+  color: #f5f5f5;
+}
+
+/* Panels, Cards, and Game Containers */
+body.dark-mode .panel,
+body.dark-mode .fraction-game,
+body.dark-mode .modal-content,
+body.dark-mode .modal-content-elevator {
+  background-color: #1e1e1e !important;
+  color: #f5f5f5;
+  border-color: #555;
+}
+
+/* Buttons */
+body.dark-mode .auth-btn,
+body.dark-mode .logout-btn,
+body.dark-mode .nav-btn,
+body.dark-mode .submit,
+body.dark-mode .next {
+  background-color: #f39c12;
+  color: white;
+}
+
+/* Inputs and Dropdowns */
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode .input-field,
+body.dark-mode .multiple-choice-options label {
+  background-color: #2b2b2b;
+  color: #f5f5f5;
+  border: 1px solid #555;
+}
+
+/* Panel Headers */
+body.dark-mode .panel-header {
+  background-color: #333;
+  color: #fff;
+}
+
+/* Chart titles and dropdowns */
+body.dark-mode .dropdown-group label,
+body.dark-mode .chart-title {
+  color: #f5f5f5;
+}
+
+/* Miscellaneous text elements */
+body.dark-mode p,
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode .greeting,
+body.dark-mode .message {
+  color: #f5f5f5;
+}
 
