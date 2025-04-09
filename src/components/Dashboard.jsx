@@ -47,7 +47,7 @@ const DashboardPage = () => {
       <Header />
       <NavBar />
 
-      <div className="betaMessage">
+     {/* <div className="betaMessage">
         <p>
           <strong>
             Thank you for joining our Beta Test. Current functionality is not final.
@@ -66,13 +66,14 @@ const DashboardPage = () => {
           </strong>
         </p>
         <p><strong>THIS OPEN BETA WILL CLOSE ON FRIDAY, APRIL 4!</strong></p>
-      </div>
+      </div>*/}
 
       <div className="dashboard-container">
 
         {/* ✅ Profile Panel */}
         <div className="panel profile">
-          <h2 className="dboardH2">Welcome</h2><h3>{username || "Your Profile"}!</h3>
+          <h2 className="dboardH2">Welcome!</h2>
+          <h3>{username || "Your Profile"} check out your personal stats below</h3>
           <div className="dashboard-stats">
             <p><strong>Total Games Played:</strong> {totalGames}</p>
             <p><strong>Streak:</strong> {streak} days 🔥</p>
