@@ -32,10 +32,14 @@ const DashboardPage = () => {
 
   const [selectedGame, setSelectedGame] = useState("");
   const [message, setMessage] = useState("");
-  const [selectedGameForStats, setSelectedGameForStats] = useState("all");
+  const [selectedGameForStats, setSelectedGameForStats] = useState(
+  localStorage.getItem("chartGame") || "all"
+  );
   const [chartInstance, setChartInstance] = useState(null);
   const [dailyHistory, setDailyHistory] = useState([]);
-  const [range, setRange] = useState("7"); // default to past week
+  const [range, setRange] = useState(
+  localStorage.getItem("chartRange") || "7"
+  );
 
 useEffect(() => {
   if (location.state?.redirected) {
@@ -235,7 +239,13 @@ useEffect(() => {
             <div className="dropdown-wrapper">
               <div className="dropdown-group">
                 <label style={{ color: "black" }}>📅 View Range:</label>
-                <select value={range} onChange={(e) => setRange(e.target.value)}>
+                <select
+                  value={range}
+                  onChange={(e) => {
+                    setRange(e.target.value);
+                    localStorage.setItem("chartRange", e.target.value);
+                  }}
+                >
                   <option value="7">🗓️ Past Week</option>
                   <option value="30">📅 Past Month</option>
                   <option value="999">📈 Lifetime</option>
@@ -243,7 +253,12 @@ useEffect(() => {
               </div>
               <div className="dropdown-group">
                 <label style={{ color: "black" }}>🎮 Game:</label>
-                <select value={selectedGameForStats} onChange={(e) => setSelectedGameForStats(e.target.value)}>
+                <select value={selectedGameForStats}
+                    onChange={(e) => {
+                      setSelectedGameForStats(e.target.value);
+                      localStorage.setItem("chartGame", e.target.value);
+                    }}
+                  >
                   <option value="all">🧠 All Games</option>
                   <option value="math">🧮 Math</option>
                   <option value="trivia">❓ Trivia</option>
