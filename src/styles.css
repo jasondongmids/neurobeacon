@@ -1265,7 +1265,7 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  background-color: #f0f0f0; /* Light mode fallback */
+ /* background-color: #f0f0f0; /* Light mode fallback */
   color: #000;               /* Default text color */
 }
 
