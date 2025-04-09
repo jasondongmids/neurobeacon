@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "./context/ThemeContext";
 import { UserProvider } from "./context/UserContext";
 import { UserStateProvider } from "./context/UserStateContext";
 import { ModelProvider } from "./context/ModelContext";
@@ -14,6 +15,7 @@ import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
     return (
+        <ThemeProvider>
         <UserProvider>
         <UserStateProvider>
         <UserStatisticsProvider>
@@ -35,6 +37,7 @@ function App() {
         </UserStatisticsProvider>
         </UserStateProvider>
         </UserProvider>
+        </ThemeProvider>
     );
 }
 
