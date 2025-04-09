@@ -35,6 +35,7 @@ const DashboardPage = () => {
 
     const fetchData = async () => {
       const result = await queryStats("daily", 5);
+      console.log("📊 Fetched Daily Stats:", result);
       if (Array.isArray(result)) {
         setDailyHistory(result);
       }
@@ -85,7 +86,7 @@ const DashboardPage = () => {
               {/* <p><strong>Rank:</strong> {userStats.rank || "Unranked"}</p> */}
             </div>
           ) : (
-            <p style={{ color: "#2e86c1;" }}>Loading stats...</p>
+            <p style={{ color: "#2e86c1" }}>Loading stats...</p>
           )}
           <button className="logout-btn" onClick={handleLogout}>Logout</button>
         </div>
@@ -122,9 +123,10 @@ const DashboardPage = () => {
           <h2 className="dboardH2">📊 Progress Overview</h2>
         
           {!dailyHistory.length ? (
-            <p style={{ color: "white" }}>Loading recent performance data...</p>
+            <p style={{ color: "#2e86c1" }}>Loading recent performance data...</p>
           ) : (
             <>
+              console.log("📈 dailyHistory state:", dailyHistory);
               <ResponsiveContainer width="100%" height={250}>
                 <LineChart
                   data={dailyHistory.map((entry) => ({
