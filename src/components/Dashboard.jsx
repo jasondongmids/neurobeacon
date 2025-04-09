@@ -1,11 +1,32 @@
-const [selectedGame, setSelectedGame] = useState("");
-const [message, setMessage] = useState("");
+// ✅ 1. Core React and Hooks
+import React, { useContext, useState, useEffect } from "react";
 
-const [chartInstance, setChartInstance] = useState(null);
-const [dailyHistory, setDailyHistory] = useState([]);
-const [range, setRange] = useState("7"); // default to past week
+// ✅ 2. React Router
+import { useNavigate, useLocation } from "react-router-dom";
 
-const { queryStats } = useContext(UserStatisticsContext);
+// ✅ 3. Context Providers
+import UserContext from "../context/UserContext";
+import UserStatisticsContext from "../context/UserStatisticsContext";
+
+// ✅ 4. Components and Styles
+import Header from "./Header";
+import NavBar from "./NavBar";
+import "../styles.css";
+
+
+const DashboardPage = () => {
+  const { username, setUsername, logoutUser } = useContext(UserContext);
+  const { userStats, dailyStats, queryStats } = useContext(UserStatisticsContext);
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [selectedGame, setSelectedGame] = useState("");
+  const [message, setMessage] = useState("");
+
+  const [chartInstance, setChartInstance] = useState(null);
+  const [dailyHistory, setDailyHistory] = useState([]);
+  const [range, setRange] = useState("7"); // default to past week
 
 useEffect(() => {
   if (location.state?.redirected) {
@@ -197,13 +218,14 @@ useEffect(() => {
           </div>
 
           <p>You're improving! Keep pushing forward to increase your streak! 🚀</p>
-        </div>
+          </div>
       </div>
     </div>
   );
-};
 
+};
 export default DashboardPage;
+
 
 
 
