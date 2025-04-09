@@ -12,7 +12,7 @@ const Header = () => {
       <a href="/dashboard">
         <img src={logo} alt="NeuroBeacon Logo" className="header-logo" />
       </a>
-     <h1 className="header-title scenario-text">
+     <h1 className="header-title">
   Welcome to <span className="break-at-mobile">NeuroBeacon</span>
 </h1>
 
