@@ -15,7 +15,14 @@ import "../styles.css";
 
 // ✅ Utility
 const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
-
+const gameColors = {
+  all: "rgb(75, 192, 192)",
+  math: "#f39c12",       // orange
+  trivia: "#8e44ad",     // purple
+  reaction: "#e74c3c",   // red
+  memory: "#2ecc71",     // green
+  sudoku: "#3498db"      // blue
+};
 
 const DashboardPage = () => {
   const { username, setUsername, logoutUser } = useContext(UserContext);
@@ -41,22 +48,26 @@ useEffect(() => {
   const fetchChartData = async () => {
     const data = await queryStats("daily", parseInt(range));
     if (Array.isArray(data)) {
-      setDailyHistory(data);
+      console.log("🧩 Sample daily entry:", data[0]);
+      const sortedData = data.sort((a, b) => a.sk - b.sk);
+      setDailyHistory(sortedData);
     }
   };
 
   fetchChartData();
-}, [range]); // ✅ REMOVE queryStats from dependencies!
+}, [range]);
 
 
 // Update Chart.js graph when dailyHistory changes
 useEffect(() => {
   if (!window.Chart || !dailyHistory.length) return;
-
   const filteredHistory = selectedGameForStats === "all"
     ? dailyHistory
     : dailyHistory.map((entry) => {
         const gameStats = entry[selectedGameForStats];
+        if (!gameStats) {
+          console.warn(`⚠️ No data found for game: ${selectedGameForStats} on ${entry.sk}`);
+        }
         return {
           ...entry,
           total: gameStats?.total || { percent_correct: 0 }
@@ -82,7 +93,7 @@ useEffect(() => {
       datasets: [{
         label: selectedGameForStats === "all" ? "Overall Accuracy" : `Accuracy: ${capitalize(selectedGameForStats)}`,
         data: dataPoints,
-        borderColor: "rgb(75, 192, 192)",
+        borderColor: gameColors[selectedGameForStats],
         borderWidth: 3,
         fill: false,
         tension: 0.4,
@@ -182,7 +193,7 @@ useEffect(() => {
 
         {/* ✅ Profile Panel */}
         <div className="panel profile">
-          <h2 className="dboardH2">Welcome!4</h2>
+          <h2 className="dboardH2">Welcome!5</h2>
           <h3>{username || "Your Profile"} check out your personal stats below</h3>
           <div className="dashboard-stats">
             <p><strong>Total Games Played:</strong> {totalGames}</p>
@@ -221,23 +232,26 @@ useEffect(() => {
             <h3 style={{ color: "black" }}>
               📊 {selectedGameForStats === "all" ? "Overall Progress" : `${capitalize(selectedGameForStats)} Progress`}
             </h3>
-            <div style={{ marginBottom: "10px", textAlign: "center" }}>
-              <label style={{ color: "#fff", marginRight: "10px" }}>View Range:</label>
-              <select value={range} onChange={(e) => setRange(e.target.value)}>
-                <option value="7">🗓️ Past Week</option>
-                <option value="30">📅 Past Month</option>
-                <option value="999">📈 Lifetime</option>
-              </select>
-              <span style={{ margin: "0 10px" }}></span>
-              <label style={{ color: "#fff", marginRight: "10px" }}>Game:</label>
-              <select value={selectedGameForStats} onChange={(e) => setSelectedGameForStats(e.target.value)}>
-                <option value="all">🧠 All Games</option>
-                <option value="math">🧮 Math</option>
-                <option value="trivia">❓ Trivia</option>
-                <option value="reaction">⚡ Reaction</option>
-                <option value="memory">🧠 Memory</option>
-                <option value="sudoku">🔢 Sudoku</option>
-              </select>
+            <div className="dropdown-wrapper">
+              <div className="dropdown-group">
+                <label>📅 View Range:</label>
+                <select value={range} onChange={(e) => setRange(e.target.value)}>
+                  <option value="7">🗓️ Past Week</option>
+                  <option value="30">📅 Past Month</option>
+                  <option value="999">📈 Lifetime</option>
+                </select>
+              </div>
+              <div className="dropdown-group">
+                <label>🎮 Game:</label>
+                <select value={selectedGameForStats} onChange={(e) => setSelectedGameForStats(e.target.value)}>
+                  <option value="all">🧠 All Games</option>
+                  <option value="math">🧮 Math</option>
+                  <option value="trivia">❓ Trivia</option>
+                  <option value="reaction">⚡ Reaction</option>
+                  <option value="memory">🧠 Memory</option>
+                  <option value="sudoku">🔢 Sudoku</option>
+                </select>
+              </div>
             </div>
           
             <canvas id="chartjs-canvas" width="400" height="200"></canvas>
