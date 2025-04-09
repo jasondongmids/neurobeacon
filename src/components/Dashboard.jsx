@@ -112,16 +112,18 @@ const DashboardPage = () => {
         <div className="panel progress">
           <h2 className="dboardH2">📊 Progress Overview</h2>
         
-          {!dailyStats || !dailyStats.length ? (
+          {!dailyStats || !dailyStats.sk ? (
             <p style={{ color: "white" }}>Loading recent performance data...</p>
           ) : (
             <>
               <ResponsiveContainer width="100%" height={250}>
                 <LineChart
-                  data={dailyStats.map((entry) => ({
-                    date: String(entry.sk).replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"),
-                    accuracy: (entry.total?.percent_correct ?? 0) * 100,
-                  }))}
+                  data={[
+                    {
+                      date: String(dailyStats.sk).replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3"),
+                      accuracy: (dailyStats.total?.percent_correct ?? 0) * 100,
+                    },
+                  ]}
                   margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" />
