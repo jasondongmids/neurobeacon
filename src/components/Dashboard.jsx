@@ -76,13 +76,14 @@ useEffect(() => {
         }
         return {
           ...entry,
-          total: gameStats?.total || { percent_correct: 0 }
+          total: {percent_correct: gameStats?.percent_correct} || { percent_correct: 0 }
         };
       });
 
   const labels = filteredHistory.map(entry =>
     String(entry.sk).replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")
   );
+
   const dataPoints = filteredHistory.map(entry =>
     (entry.total?.percent_correct ?? 0) * 100
   );
@@ -289,7 +290,6 @@ useEffect(() => {
 
 };
 export default DashboardPage;
-
 
 
 

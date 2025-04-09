@@ -3,7 +3,7 @@ import triviaQuestions from "../data/final_trivia_questions.json";
 import UserStateContext from "../context/UserStateContext";
 import GameHxContext from "../context/GameHxContext";
 import UserStatisticsContext from "../context/UserStatisticsContext";
-import { invokeModel, getDiffString } from "../functions/Model";
+import { invokeModel, getDiffString, initiateRetrain } from "../functions/Model";
 
 const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
     const [questionIndex, setQuestionIndex] = useState(0);
@@ -297,6 +297,7 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
         console.log("✅ Setting showSessionSummary to true");
     
         setSessionEndTime(minutes > 0 ? `${minutes} min ${seconds} sec` : `${seconds} sec`);
+        initiateRetrain()
     
         setTimeout(() => {
             console.log("🚀 Showing Session Summary!");

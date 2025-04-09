@@ -80,7 +80,7 @@ function applyMinMaxScaling(data, variable) {
 
 // INVOKE MODEL
 const prepRequest = (data, userFeatures, gameType) => {
-    console.log("PREP STATE")
+    // console.log("PREP STATE")
     const state = [
         Number(data.prev_is_slow),
         Number(data.prev_is_correct),
@@ -101,7 +101,7 @@ const prepRequest = (data, userFeatures, gameType) => {
         user_features: userEmbed,
         game_type: gameTypeInt
     }
-    console.log("FINAL REQUEST", JSON.stringify(modelInput))
+    // console.log("FINAL REQUEST", JSON.stringify(modelInput))
     return JSON.stringify(modelInput)
 
     // return JSON.stringify(modelInput)
@@ -131,29 +131,72 @@ const sendTargetRequest = async (modelInput) => {
     }
 };
 
+// const sendPrimaryRequest = async (modelInput) => {
+//     try {
+//         const invokeModel = post({
+//             apiName: "neurobeaconModel",
+//             path: "test/neurobeaconModel",
+//             region: "us-east-1",
+//             options: {
+//                 body: {
+//                     data: JSON.parse(modelInput)
+//                 }
+//             }
+//         });
+
+//         const { body } = await invokeModel.response;
+//         const response = await body.json();
+//         const prediction = response.body
+//         // console.log("Post succeeded (primary):", response);
+//         console.log("Primary prediction:", prediction)
+//         return prediction
+//     } catch (error) {
+//         console.log("Call failed (primary):", JSON.parse(error.response))
+//     }
+// };
+
 const sendPrimaryRequest = async (modelInput) => {
+    console.log("MODEL INPUT", modelInput)
     try {
-        const invokeModel = post({
-            apiName: "neurobeaconModel",
-            path: "test/neurobeaconModel",
-            region: "us-east-1",
-            options: {
-                body: {
-                    data: JSON.parse(modelInput)
-                }
-            }
+        const response = await fetch("http://13.218.167.179:8000/mod/predict", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: modelInput
         });
 
-        const { body } = await invokeModel.response;
-        const response = await body.json();
-        const prediction = response.body
-        // console.log("Post succeeded (primary):", response);
-        console.log("Primary prediction:", prediction)
-        return prediction
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("Post succeeded (primary):", data);
+
+        return data.prediction;
+
     } catch (error) {
-        console.log("Call failed (primary):", JSON.parse(error.response))
+        console.log("Call failed (primary):", error.message);
+        return null;
     }
 };
+
+export const initiateRetrain = async () => {
+    try {
+        const response = await fetch("http://13.218.167.179:8000/mod/retrain")
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("Initiated Retraining:", data.Retraining)
+
+        return data;
+    } catch (error) {
+        console.log("Retraining failed:", error.message)
+    }
+}
 
 export const invokeModel = async (data, userFeatures, gameType, target) => {
     const modelInput = prepRequest(data, userFeatures, gameType)
@@ -161,13 +204,13 @@ export const invokeModel = async (data, userFeatures, gameType, target) => {
         let prediction
 
         if (target === 'primary') {
-            prediction = await sendPrimaryRequest(modelInput, target)
+            prediction = await sendPrimaryRequest(modelInput)
         } else {
             prediction = await sendTargetRequest(modelInput, target)
         }
         
 
-        console.log("PREDICTION:", prediction)
+        // console.log("PREDICTION:", prediction)
         return parseInt(prediction)
     } catch (error) {
         console.log("Error with invoking model.", error)

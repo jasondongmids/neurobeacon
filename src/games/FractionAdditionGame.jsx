@@ -2,7 +2,7 @@ import { useRef, useEffect, useState, forwardRef, useImperativeHandle, useContex
 import UserStateContext from "../context/UserStateContext";
 import GameHxContext from "../context/GameHxContext";
 import UserStatisticsContext from "../context/UserStatisticsContext";
-import { getDiffString, getDiffInt, invokeModel } from "../functions/Model";
+import { getDiffString, invokeModel, initiateRetrain } from "../functions/Model";
 
 
 
@@ -688,6 +688,7 @@ const handleSubmit = () => {
     setSessionEndTime(
       minutes > 0 ? `${minutes} min ${seconds} sec` : `${seconds} sec`
     );
+    initiateRetrain() // retrain model
     setTimeout(() => {
       setShowSessionSummary(true);
     }, 500);

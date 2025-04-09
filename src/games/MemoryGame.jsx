@@ -10,7 +10,7 @@ import React, {
   import UserStateContext from "../context/UserStateContext";
   import GameHxContext from "../context/GameHxContext";
   import UserStatisticsContext from "../context/UserStatisticsContext";
-  import { invokeModel, getDiffString } from "../functions/Model";
+  import { invokeModel, getDiffString, initiateRetrain } from "../functions/Model";
   
   const possibleIngredients = [
     "Apple",
@@ -277,6 +277,12 @@ import React, {
         prevGameStateRef.current = userGameState;
         prevCategoryStateRef.current = userCategoryState;
     }, [userGameState])
+
+    useEffect(() => {
+      if (gamePhase === "end") {
+        initiateRetrain()
+      }
+    }, [gamePhase])
   
     const correctAnswer = kitchen.includes(target) && fridge.includes(target)
       ? "Both"
@@ -400,8 +406,9 @@ import React, {
       setNumAttempts(0);
       // No call to nextRound here.
   
-      // Database: Create new session id
+      // Database: Create new session id and retrain primary model
       setSessionId(crypto.randomUUID());
+      initiateRetrain()
     };
     
   

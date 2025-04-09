@@ -3,7 +3,7 @@ import React, { useRef, useEffect, useContext, useState } from "react";
 import UserStateContext from "../context/UserStateContext";
 import UserStatisticsContext from "../context/UserStatisticsContext";
 import GameHxContext from "../context/GameHxContext";
-import { invokeModel, getDiffString } from "../functions/Model";
+import { invokeModel, getDiffString, initiateRetrain } from "../functions/Model";
 // import ModelContext from "../context/ModelContext"
 
 // Difficulty configuration remains the same.
@@ -123,6 +123,7 @@ const ReactionGame = ({ onUpdateStats }) => {
     const potentialMaxScore = maxRounds * (reactionTime * 50) * speedFactor;
     setMaxScore(potentialMaxScore);
     updateStats(round);
+    initiateRetrain(); // initiateRetrainingModel
   }
 
 function generateRandomBoxes(count) {
