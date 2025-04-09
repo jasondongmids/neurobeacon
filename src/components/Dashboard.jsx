@@ -82,7 +82,7 @@ const DashboardPage = () => {
         {/* ✅ Profile Panel */}
         <div className="panel profile">
           <h2 className="dboardH2">Welcome!</h2>
-          <h3>Glad to have you back, {username || "Your Profile"}.<br /> Check out your personal stats below</h3>
+          <h3>Glad to have you back, {username || "Your Profile"}. Check out your personal stats below</h3>
           <div className="dashboard-stats">
             <p><strong>Total Games Played:</strong> {totalGames}</p>
             <p><strong>Streak:</strong> {streak} days 🔥</p>
