@@ -751,7 +751,7 @@ const handleSubmit = () => {
       </div>
     )}
       <div className="fraction-game">
-        <div className="scenario-text">{scenarioText}</div>
+        <div className="scenario-text" style={{ color: "#111" }}>{scenarioText}</div>
 
         {inputMode === "input" && currentProblem && currentProblem.type === "fraction" && (
             <>
@@ -827,7 +827,7 @@ const handleSubmit = () => {
               <strong>Mapped Difficulty:</strong> {difficulty}
             </p>
 
-            <p style={{ marginBottom: "8px", color: "#333" }}>
+            <p className="dark-aware-text" style={{ marginBottom: "8px"}}>
               Please choose one answer:
             </p>
             <div className="multiple-choice-options">
