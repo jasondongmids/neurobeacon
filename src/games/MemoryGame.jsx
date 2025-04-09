@@ -541,20 +541,20 @@ import React, {
             <div style={{ position: "relative", zIndex: 2, textAlign: "center", padding: "20px" }}>
               
               {/* ⬇️ Always-visible difficulty info */}
-              <div style={{ marginTop: "4px", color: "black", fontSize: "0.75em" }}>
+              <div className="reaction-info" style={{ marginTop: "4px", fontSize: "0.75em" }}>
                 Difficulty: <span>{getDiffString(difficulty)}</span>
                 <br />
                 Raw Prediction: <span>{rawPrediction}</span> | Mapped Difficulty: <span>{mappedDifficulty}</span>
               </div>
             {gamePhase === "intro" && (
               <div>
-                <div style={{ color: "white", fontSize: "1.2em", margin: "16px 0" }}>
+                <div className="scenario-text" style={{fontSize: "1.2em", margin: "16px 0" }}>
                   <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
                   <p>Memorize the ingredients shown on the screen.</p>
                   <p>You will have a limited time to view them.</p>
                   <p>Afterwards, recall as many ingredients as you can.</p>
                 </div>
-                <h2 style={{ color: "white" }}>
+                <h2 className="scenario-text">
                   Round {round}/{maxRounds}: It's time to see what ingredients you have!
                   Click start when you are ready.
                 </h2>
@@ -580,11 +580,11 @@ import React, {
       
             {gamePhase === "question" && (
               <div>
-                <h2 style={{ color: "white" }}>Where did you see {target}?</h2>
+                <h2 className="scenario-text">Where did you see {target}?</h2>
                 <IngredientItem name={target} />
                 <div className="multiple-choice-options">
                   {["Fridge", "Kitchen", "Both", "Neither"].map((option, index) => (
-                    <label key={index}>
+                    <label className="radio-label" key={index}>
                       <input
                         type="radio"
                         name="memoryChoice"
