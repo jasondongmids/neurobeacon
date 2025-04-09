@@ -411,8 +411,8 @@ const SudokuGrid = ({ onUpdateStats }) => {
   if (!gameStarted) {
     return (
       <div className="sudoku-start-screen">
-      <div style={{ color: "white", margin: "16px 0" }}>
-      <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
+      <div className="scenario-text" style={{ margin: "16px 0" }}>
+      <h2 className="scenario-text" style={{ fontSize: "1.4em" }}>Game Rules:</h2>
         <p>Solve the Sudoku puzzle by filling in the missing numbers.</p>
         <p>Each row, column, and 3x3 block must contain numbers 1 through 9 without repeats.</p>
         <p>Use logic to deduce the correct placement as quickly as possible.</p>
@@ -440,9 +440,9 @@ const SudokuGrid = ({ onUpdateStats }) => {
                 Bonus Awarded: {bonusAward} points
               </p>
             )}
-            <p class="modal">Time Elapsed: {timer} sec</p>
-            <p class="modal">Score: {score}</p>
-            <p class="modal">Mistakes: {mistakes}</p>
+            <p class="feedback-info">Time Elapsed: {timer} sec</p>
+            <p class="feedback-info">Score: {score}</p>
+            <p class="feedback-info">Mistakes: {mistakes}</p>
             <button onClick={() => setGameStarted(false)}>
               Start New Game
             </button>
@@ -510,7 +510,7 @@ const SudokuGrid = ({ onUpdateStats }) => {
 
       {errorMessage && (
   <>
-    <p className="error-message" style={{ marginBottom: "2px", color:"red" }}>
+    <p className="error-message">
       {errorMessage}
       <br />
     </p>
