@@ -25,7 +25,44 @@ const DashboardPage = () => {
       setMessage("⚠️ You must be logged in to access that page.");
     }
   }, [location]);
+
+  useEffect(() => {
+    if (!window.Chart) {
+      console.warn("Chart.js not loaded");
+      return;
+    }
   
+    const ctx = document.getElementById("chartjs-canvas")?.getContext("2d");
+    if (!ctx) return;
+  
+    new window.Chart(ctx, {
+      type: "line",
+      data: {
+        labels: ["April 1", "April 2", "April 3"],
+        datasets: [{
+          label: "Accuracy",
+          data: [70, 80, 60],
+          borderColor: "rgb(75, 192, 192)",
+          borderWidth: 3,
+          fill: false,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            ticks: {
+              callback: (val) => `${val}%`
+            }
+          }
+        }
+      }
+    });
+  }, []);
+
   // TEMP LOGGING TO VALIDATE SAFE CHART INTEGRATION
   useEffect(() => {
     console.log("🧠 DashboardPage mounted");
@@ -133,6 +170,11 @@ const DashboardPage = () => {
             alt="User Progress Chart"
             className="stats-image"
           />
+          <div className="chart-container" style={{ marginTop: "20px" }}>
+            <h3 style={{ color: "#fff" }}>📈 Chart.js Test Chart</h3>
+            <canvas id="chartjs-canvas" width="400" height="200"></canvas>
+          </div>
+
           <p>You're improving! Keep pushing forward to increase your streak! 🚀</p>
         </div>
       </div>
