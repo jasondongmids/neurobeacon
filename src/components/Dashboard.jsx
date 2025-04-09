@@ -113,6 +113,33 @@ const DashboardPage = () => {
             alt="User Progress Chart"
             className="stats-image"
           />
+          <div style={{ marginTop: "20px" }}>
+            <h3 style={{ color: "#fff" }}>Test Chart (Static Data)</h3>
+            <ResponsiveContainer width="100%" height={250}>
+              <LineChart
+                data={[
+                  { date: "2025-04-01", accuracy: 70 },
+                  { date: "2025-04-02", accuracy: 80 },
+                  { date: "2025-04-03", accuracy: 60 },
+                ]}
+                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" />
+                <YAxis domain={[0, 100]} tickFormatter={(tick) => `${tick}%`} />
+                <Tooltip formatter={(value) => `${value.toFixed(2)}%`} />
+                <Line
+                  type="monotone"
+                  dataKey="accuracy"
+                  stroke="#82ca9d"
+                  strokeWidth={3}
+                  dot={{ r: 5 }}
+                  activeDot={{ r: 7 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
           <p>You're improving! Keep pushing forward to increase your streak! 🚀</p>
         </div>
       </div>
