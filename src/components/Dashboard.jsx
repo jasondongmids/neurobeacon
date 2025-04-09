@@ -1,5 +1,8 @@
 import React, { useContext, useState, useEffect } from "react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import * as Recharts from "recharts";
+
+console.log("✅ Recharts loaded:", Object.keys(Recharts));
+
 import { useNavigate, useLocation } from "react-router-dom";
 import UserContext from "../context/UserContext";
 import UserStatisticsContext from "../context/UserStatisticsContext";
