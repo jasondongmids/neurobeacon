@@ -131,55 +131,55 @@ const sendTargetRequest = async (modelInput) => {
     }
 };
 
-// const sendPrimaryRequest = async (modelInput) => {
-//     try {
-//         const invokeModel = post({
-//             apiName: "neurobeaconModel",
-//             path: "test/neurobeaconModel",
-//             region: "us-east-1",
-//             options: {
-//                 body: {
-//                     data: JSON.parse(modelInput)
-//                 }
-//             }
-//         });
-
-//         const { body } = await invokeModel.response;
-//         const response = await body.json();
-//         const prediction = response.body
-//         // console.log("Post succeeded (primary):", response);
-//         console.log("Primary prediction:", prediction)
-//         return prediction
-//     } catch (error) {
-//         console.log("Call failed (primary):", JSON.parse(error.response))
-//     }
-// };
-
 const sendPrimaryRequest = async (modelInput) => {
-    console.log("MODEL INPUT", modelInput)
     try {
-        const response = await fetch("http://13.218.167.179:8000/mod/predict", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: modelInput
+        const invokeModel = post({
+            apiName: "neurobeaconModel",
+            path: "test/neurobeaconModel",
+            region: "us-east-1",
+            options: {
+                body: {
+                    data: JSON.parse(modelInput)
+                }
+            }
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log("Post succeeded (primary):", data);
-
-        return data.prediction;
-
+        const { body } = await invokeModel.response;
+        const response = await body.json();
+        const prediction = response.body
+        // console.log("Post succeeded (primary):", response);
+        console.log("Primary prediction:", prediction)
+        return prediction
     } catch (error) {
-        console.log("Call failed (primary):", error.message);
-        return null;
+        console.log("Call failed (primary):", JSON.parse(error.response))
     }
 };
+
+// const sendPrimaryRequest = async (modelInput) => {
+//     console.log("MODEL INPUT", modelInput)
+//     try {
+//         const response = await fetch("http://13.218.167.179:8000/mod/predict", {
+//             method: "POST",
+//             headers: {
+//                 "Content-Type": "application/json"
+//             },
+//             body: modelInput
+//         });
+
+//         if (!response.ok) {
+//             throw new Error(`HTTP error! status: ${response.status}`);
+//         }
+
+//         const data = await response.json();
+//         console.log("Post succeeded (primary):", data);
+
+//         return data.prediction;
+
+//     } catch (error) {
+//         console.log("Call failed (primary):", error.message);
+//         return null;
+//     }
+// };
 
 export const initiateRetrain = async () => {
     try {
@@ -206,7 +206,7 @@ export const invokeModel = async (data, userFeatures, gameType, target) => {
         if (target === 'primary') {
             prediction = await sendPrimaryRequest(modelInput)
         } else {
-            prediction = await sendTargetRequest(modelInput, target)
+            prediction = await sendTargetRequest(modelInput)
         }
         
 
