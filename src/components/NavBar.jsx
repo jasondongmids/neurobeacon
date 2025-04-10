@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import UserContext from "../context/UserContext";
+import ThemeContext from "../context/ThemeContext"; 
 import "../styles.css";
 
 const NavBar = () => {
@@ -9,7 +10,7 @@ const NavBar = () => {
   const { username, logoutUser } = useContext(UserContext);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
-
+  const { isDark, setIsDark } = useContext(ThemeContext);
   // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -53,7 +54,10 @@ const NavBar = () => {
           <button onClick={handleLogout}>
           🔓 Logout
           </button>
-
+         {/* ✅ Dark mode toggle */}
+          <button onClick={() => setIsDark((prev) => !prev)}>
+            {isDark ? "☀ Light Mode" : "🌙 Dark Mode"}
+          </button>
         </div>
       )}
     </div>
