@@ -541,8 +541,9 @@ import React, {
                 backgroundRepeat: "no-repeat",
                 zIndex: 0,
               }}
-              placeholderColor="#2e86c1"
-              transitionDuration="0.4s"
+              transitionDuration="0.4s",
+             
+
             />
             <div /*className="memory-prompt-container" */style={{ position: "relative", zIndex: 2, textAlign: "center", padding: "20px" }}>
               
