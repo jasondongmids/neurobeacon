@@ -527,7 +527,7 @@ import React, {
     let overallAvg = flatTimes.length > 0 ? (flatTimes.reduce((a, b) => a + b, 0) / flatTimes.length).toFixed(2) : "0.00";
   
         return (
-          <div style={{ position: "relative", minHeight: "100%", height: "auto" }}>
+          <div className="memory-background" style={{ position: "relative", minHeight: "100%", height: "auto" }}>
             <LazyBackground
               src={getBackgroundImage()}
               style={{
@@ -554,7 +554,7 @@ import React, {
               </div>
             {gamePhase === "intro" && (
               <div>
-                <div className="scenario-text" style={{fontSize: "1.2em", margin: "16px 0" }}>
+                <div className="scenario-text" style={{fontSize: "1.2em", margin: "16px 0", borderradius: "5px:" }}>
                   <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
                   <p>Memorize the ingredients shown on the screen.</p>
                   <p>You will have a limited time to view them.</p>
