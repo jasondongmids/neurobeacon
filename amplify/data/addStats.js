@@ -40,13 +40,13 @@ export function request(ctx) {
             current_correct: data.math.current_correct,
             current_percent: data.math.current_percent, 
         },
-        visual: {
-            total_questions: data.visual.total_questions,
-            total_correct: data.visual.total_correct,
-            percent_correct: data.visual.percent_correct,
-            current_total: data.visual.current_total,
-            current_correct: data.visual.current_correct,
-            current_percent: data.visual.current_percent, 
+        sudoku: {
+            total_questions: data.sudoku.total_questions,
+            total_correct: data.sudoku.total_correct,
+            percent_correct: data.sudoku.percent_correct,
+            current_total: data.sudoku.current_total,
+            current_correct: data.sudoku.current_correct,
+            current_percent: data.sudoku.current_percent, 
         },
         reaction: {
             total_questions: data.reaction.total_questions,

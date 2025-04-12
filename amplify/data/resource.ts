@@ -72,7 +72,7 @@ const schema = a.schema({
     // total_sessions: a.integer(),
     total: a.json(),
     math: a.json(),
-    visual: a.json(),
+    sudoku: a.json(),
     reaction: a.json(),
     memory: a.json(),
     trivia: a.json(),

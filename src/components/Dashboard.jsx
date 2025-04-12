@@ -163,8 +163,6 @@ useEffect(() => {
     }
   })
 
-  console.log("DISPLAY NAME", displayName)
-
   const handleLogout = async () => {
     await logoutUser();
     localStorage.removeItem("currentUser");

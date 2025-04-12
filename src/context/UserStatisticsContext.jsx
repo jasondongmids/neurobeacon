@@ -112,7 +112,7 @@ export const UserStatisticsProvider = ({children}) => {
             current_correct: 0,
             current_percent: 0.0, 
         },
-        visual: {
+        sudoku: {
             total_questions: 0,
             total_correct: 0,
             percent_correct: 0.0,
@@ -290,8 +290,10 @@ export const UserStatisticsProvider = ({children}) => {
             current_streak: 1,
             total: resetCurrent(inputData.total),
             math: resetCurrent(inputData.math),
-            visual: resetCurrent(inputData.visual),
+            sudoku: resetCurrent(inputData.visual),
             reaction: resetCurrent(inputData.reaction),
+            trivia: resetCurrent(inputData.trivia),
+            memory: resetCurrent(inputData.memory),
             easy: resetCurrent(inputData.easy),
             medium: resetCurrent(inputData.medium),
             hard: resetCurrent(inputData.hard),
