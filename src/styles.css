@@ -1312,7 +1312,7 @@ body.dark-mode .greeting {
 }
 
 /* Utility text classes */
-.scenario-text {
+.body.dark-mode scenario-text {
   color: #111;
   background-color: #2B2B2B;
 }
