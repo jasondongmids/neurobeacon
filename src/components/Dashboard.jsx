@@ -211,7 +211,7 @@ useEffect(() => {
 
         {/* ✅ Profile Panel */}
         <div className="panel profile">
-          <h2 className="dboardH2">Welcome!7</h2>
+          <h2 className="dboardH2">Welcome!</h2>
           <h3>{displayName} check out your personal stats below</h3>
           <div className="dashboard-stats">
             <p><strong>Total Games Played:</strong> {totalGames}</p>
