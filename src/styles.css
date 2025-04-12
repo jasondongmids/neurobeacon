@@ -1012,20 +1012,7 @@ color: black;
     z-index: 10000;
   }
   
-  
-  .paused-message {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  }
 
-  .paused-message button {
-    /* Ensure button is clickable */
-    cursor: pointer;
-    z-index: 10000;
-  }
-  
 .reaction-game {
     display: flex;
     flex-direction: column;
@@ -1440,6 +1427,14 @@ body.dark-mode .modal-content p {
   background-color: #eaeaea; /* Light mode */
   border-radius: 8px;
 }
+
+  body.dark-mode .paused-message {
+    background: black;
+  }
+  
+body.dark-mode .paused-overlay{
+    background: #222;
+  }
 
 body.dark-mode .memory-prompt-container {
   background-color: #222; /* Dark mode override */
