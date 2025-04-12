@@ -1289,6 +1289,10 @@ body.dark-mode .dashboard-container {
   background-color: #111;
 }
 
+body.dark-mode .main-container{
+  background-color: #111;
+}
+
 body.dark-mode .panel,
 body.dark-mode .fraction-game,
 body.dark-mode .modal-content,
