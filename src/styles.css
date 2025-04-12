@@ -1312,7 +1312,7 @@ body.dark-mode .greeting {
 }
 
 /* Utility text classes */
-.body.dark-mode scenario-text {
+.body.dark-mode fraction-game .scenario-tex {
   color: #111;
   background-color: #2B2B2B;
 }
