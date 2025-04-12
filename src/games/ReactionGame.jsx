@@ -123,7 +123,7 @@ const ReactionGame = ({ onUpdateStats }) => {
     const potentialMaxScore = maxRounds * (reactionTime * 50) * speedFactor;
     setMaxScore(potentialMaxScore);
     updateStats(round);
-    // initiateRetrain(); // initiateRetrainingModel
+    initiateRetrain(); // initiateRetrainingModel
   }
 
 function generateRandomBoxes(count) {

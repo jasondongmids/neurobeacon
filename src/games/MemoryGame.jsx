@@ -280,7 +280,7 @@ import React, {
 
     useEffect(() => {
       if (gamePhase === "end") {
-        // initiateRetrain()
+        initiateRetrain()
       }
     }, [gamePhase])
   
@@ -408,7 +408,6 @@ import React, {
   
       // Database: Create new session id and retrain primary model
       setSessionId(crypto.randomUUID());
-      initiateRetrain()
     };
     
   
