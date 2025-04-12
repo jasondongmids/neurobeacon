@@ -688,7 +688,7 @@ const handleSubmit = () => {
     setSessionEndTime(
       minutes > 0 ? `${minutes} min ${seconds} sec` : `${seconds} sec`
     );
-    initiateRetrain() // retrain model
+    // initiateRetrain() // retrain model
     setTimeout(() => {
       setShowSessionSummary(true);
     }, 500);
