@@ -541,7 +541,7 @@ import React, {
                 backgroundRepeat: "no-repeat",
                 zIndex: 0,
               }}
-              transitionDuration="0.4s",
+              transitionDuration="0.4s"
              
 
             />
