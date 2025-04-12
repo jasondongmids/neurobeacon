@@ -752,7 +752,7 @@ const handleSubmit = () => {
       </div>
     )}
       <div className="fraction-game">
-        <div className="scenario-text" style={{ color: "#111" }}>{scenarioText}</div>
+        <div className="scenario-text">{scenarioText}</div>
 
         {inputMode === "input" && currentProblem && currentProblem.type === "fraction" && (
             <>
