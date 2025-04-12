@@ -280,7 +280,7 @@ import React, {
 
     useEffect(() => {
       if (gamePhase === "end") {
-        // initiateRetrain()
+        initiateRetrain()
       }
     }, [gamePhase])
   
