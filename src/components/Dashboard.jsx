@@ -2,7 +2,7 @@
 import React, { useContext, useState, useEffect } from "react";
 
 // ✅ 2. React Router
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, data } from "react-router-dom";
 
 // ✅ 3. Context Providers
 import ThemeContext from "../context/ThemeContext";
@@ -27,7 +27,7 @@ const gameColors = {
 
 const DashboardPage = () => {
   const { username, setUsername, logoutUser } = useContext(UserContext);
-  const { userStats, dailyStats, queryStats } = useContext(UserStatisticsContext);
+  const { userStats, dailyStats, queryStats, getUserAttributes } = useContext(UserStatisticsContext);
   const navigate = useNavigate();
   const location = useLocation();
   const { isDark, setIsDark } = useContext(ThemeContext);
@@ -42,6 +42,7 @@ const DashboardPage = () => {
   const [range, setRange] = useState(
   localStorage.getItem("chartRange") || "7"
   );
+  const [displayName, setDisplayName] = useState(null)
 
 useEffect(() => {
   if (location.state?.redirected) {
@@ -152,6 +153,18 @@ useEffect(() => {
     }
   }, [username, userStats, dailyStats]);
 
+  getUserAttributes().then((result) => {
+    if (result) {
+      setDisplayName(result.nickname)
+    } else if (username) {
+      setDisplayName(username)
+    } else {
+      setDisplayName("Your Profile")
+    }
+  })
+
+  console.log("DISPLAY NAME", displayName)
+
   const handleLogout = async () => {
     await logoutUser();
     localStorage.removeItem("currentUser");
@@ -201,7 +214,7 @@ useEffect(() => {
         {/* ✅ Profile Panel */}
         <div className="panel profile">
           <h2 className="dboardH2">Welcome!7</h2>
-          <h3>{username || "Your Profile"} check out your personal stats below</h3>
+          <h3>{displayName} check out your personal stats below</h3>
           <div className="dashboard-stats">
             <p><strong>Total Games Played:</strong> {totalGames}</p>
             <p><strong>Streak:</strong> {streak} days 🔥</p>
@@ -290,6 +303,3 @@ useEffect(() => {
 
 };
 export default DashboardPage;
-
-
-

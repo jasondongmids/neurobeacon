@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
-import { signUp, signIn, signOut, getCurrentUser, confirmSignUp } from "aws-amplify/auth";
+import { signUp, signIn, signOut, getCurrentUser, fetchAuthSession, confirmSignUp } from "aws-amplify/auth";
 
 const UserContext = createContext();
 
@@ -8,6 +8,7 @@ export const UserProvider = ({ children }) => {
     const [username, setUsername] = useState(localStorage.getItem("currentUser") || "");
     const [users, setUsers] = useState(JSON.parse(localStorage.getItem("users")) || {});
     const [rememberMe, setRememberMe] = useState(localStorage.getItem("rememberMe") === "true");
+    const [preferredName, setPreferredName] = useState("")
 
     // ✅ Save user data whenever it changes
     useEffect(() => {
@@ -102,7 +103,9 @@ export const UserProvider = ({ children }) => {
     const checkAuth = async () => {
         try {
             const user = await getCurrentUser();
-            // console.log("Current user", user)
+            const user2 = await fetchAuthSession();
+            console.log("Current user", user)
+            console.log("Current user2", user2)
 
             if (user) {
                 setUsername(user.signInDetails?.loginId)

@@ -130,6 +130,41 @@ const schema = a.schema({
       })
     ),
 
+  // ✅ UserAttributes schema, mutations, and queries; uses userStats
+  UserAttributes: a.customType({
+    user_stats_pk: a.string().required(),
+    sk: a.string().required(),
+    nickname: a.string(),
+    created_at: a.integer(),
+    updated_at: a.integer(),
+  }),
+
+  addUserAttributes: a
+    .mutation()
+    .arguments({
+      yyyymmdd: a.string(),
+      data: a.json(),
+    })
+    .returns(a.ref("UserAttributes"))
+    .authorization(allow => [allow.authenticated()])
+    .handler(
+      a.handler.custom({
+        dataSource: "UserTable",
+        entry: "./addUserAttributes.js",
+      })
+    ),
+
+  getUserAttributes: a
+    .query()
+    .returns(a.ref("UserAttributes").array())
+    .authorization(allow => [allow.authenticated()])
+    .handler(
+      a.handler.custom({
+        dataSource: "UserTable",
+        entry: "./getUserAttributes.js",
+      })
+    ),
+
   // ✅ UserGameHx schema, mutations, and queries
   UserGameHx: a.customType({
     user_game_pk: a.string().required(),

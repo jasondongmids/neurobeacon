@@ -10,6 +10,7 @@ import ModelContext from "../context/ModelContext"
 import UserStateContext from "../context/UserStateContext"
 import UserStatisticsContext from "../context/UserStatisticsContext"
 import GameHxContext from "../context/GameHxContext"
+import { events } from "aws-amplify/api";
 
 // How is everything related?
 // Step 1: amplify/resource.ts: define schema customType for external ddb data model. This is used for type checking for the mutations/queries for returns(a.ref()) 
@@ -37,8 +38,9 @@ const TestPage = () => {
     const [gameHxType, setGameHxType] = useState('');
     const { userGameState, userCategoryState, queryStates, addUserState, queryUserStates, transactGameData } = useContext(UserStateContext);
     const { modelPrediction, setModelPrediction, modelInput, setModelInput, sendModelRequest } = useContext(ModelContext);
-    const { queryStatistics, queryStats, addStats, updateStats } = useContext(UserStatisticsContext);
+    const { queryStatistics, queryStats, addStats, updateStats, addUserAttributes } = useContext(UserStatisticsContext);
     const { addGameHx } = useContext(GameHxContext);
+    const [displayName, setDisplayName] = useState('')
     const initStateRef = useRef(true)
     const prevGameStateRef = useRef(userGameState)
     const prevCategoryStateRef = useRef(userCategoryState)
@@ -224,6 +226,19 @@ const TestPage = () => {
             await addGameHx(data)
         } catch (error) {
             console.error("Error adding GameHx:", error)
+        }
+    }
+
+    const handleAddUserAttributes = async(event, value) => {
+        console.log("VALUE", value)
+        try {
+            event.preventDefault()
+            const data = {
+                nickname: value
+            }
+            await addUserAttributes(JSON.stringify(data))
+        } catch (error) {
+            console.error("Error adding nickname:", error)
         }
     }
 
@@ -416,6 +431,19 @@ const TestPage = () => {
                     <button className="nav-btn" onClick={() => handleTransactGameData(transactType, transactCategory)} disabled={!transactType}>
                         Test Transact Function
                     </button> 
+                    {/* ✅ Test Add Nickname */}
+                    <h3>Add Nickname</h3>
+                    <form onSubmit={(e) => handleAddUserAttributes(e, displayName)} className="flex space-x-2">
+                        <input
+                            type="text"
+                            value={displayName}
+                            onChange={(e) => setDisplayName(e.target.value)}
+                            placeholder="Type nickname"
+                        />
+                        <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">
+                        Add Nickname
+                        </button>
+                    </form>
                 </div>
                 <Panel title="Hints/Feedback Panel" position="right" />
             </div>

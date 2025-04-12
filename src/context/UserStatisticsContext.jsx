@@ -168,28 +168,28 @@ export const UserStatisticsProvider = ({children}) => {
             current_correct: 0,
             current_percent: 0.0, 
         },
-    }
+    };
 
     const userSchema = {
         ...schema,
         yyyymmdd: getYearMonthDate(""),
         current_streak: 0,
         longest_streak: 0,
-    }
+    };
 
     const dailySchema = {
         ...schema,
         yyyymmdd: getYearMonthDate("daily"),
         current_streak: 1,
         longest_streak: 1,        
-    }
+    };
 
     const weeklySchema = {
         ...schema,
         yyyymmdd: getYearMonthDate("weekly"),
         current_streak: 1,
         longest_streak: 1,           
-    }
+    };
 
     // ✅ Update React state
     const updateStatsState = (frequency, gameType, difficulty, newStatistics) => {
@@ -248,7 +248,7 @@ export const UserStatisticsProvider = ({children}) => {
             current_streak: newStreak,
             longest_streak: newStreak > longestStreak ? newStreak : longestStreak,
         }
-    }
+    };
 
     // Update totals after game is answered
     const updateTotals = (inputData, isCorrect, game, difficulty) => {
@@ -265,7 +265,7 @@ export const UserStatisticsProvider = ({children}) => {
             [game]: gameData,
             [diffStr]: difficultyData
         };
-    }
+    };
 
     const incrementCorrect = (inputData, isCorrect) => {
         const totalQuestions = inputData.total_questions + 1;
@@ -282,7 +282,7 @@ export const UserStatisticsProvider = ({children}) => {
             current_correct: currentCorrect,
             current_percent: parseFloat((currentCorrect / currentQuestions).toFixed(3))
         }
-    }
+    };
 
     const resetTotals = (inputData) => {
         return {
@@ -296,7 +296,7 @@ export const UserStatisticsProvider = ({children}) => {
             medium: resetCurrent(inputData.medium),
             hard: resetCurrent(inputData.hard),
         };
-    }
+    };
 
     const resetCurrent = (inputData) => {
         return {
@@ -305,7 +305,7 @@ export const UserStatisticsProvider = ({children}) => {
             current_correct: 0,
             current_percent: 0.0
         }
-    }
+    };
 
     // Handle first login
     const handleLoginStats = async () => {
@@ -352,7 +352,7 @@ export const UserStatisticsProvider = ({children}) => {
             addStats("weekly", JSON.stringify(weeklySchema))
             setWeeklyStats(weeklySchema)
         }; 
-    }
+    };
 
     // ✅ Add statistics
     const addStats = async (frequency, inputData) => {
@@ -373,7 +373,7 @@ export const UserStatisticsProvider = ({children}) => {
         } catch (error) {
             console.error('Error with function in UserStatisticsContext.jsx', error)
         }
-    }
+    };
 
     // ✅ Query statistics
     const getStats = async (frequency) => {
@@ -395,7 +395,7 @@ export const UserStatisticsProvider = ({children}) => {
         } catch (error) {
             console.error('Error with function in UserStatisticsContext.jsx', error);
         }
-    }
+    };
 
     const queryStats = async(frequency, queryLimit) => {
         try {
@@ -416,7 +416,7 @@ export const UserStatisticsProvider = ({children}) => {
         } catch (error) {
             console.error('Error with function in UserStateContext.jsx:', error)
         }
-    }
+    };
 
     const updateStats = async(frequency, inputData) => {
         try {
@@ -436,7 +436,7 @@ export const UserStatisticsProvider = ({children}) => {
         } catch (error) {
             console.error('Error with function in UserStatisticsContext.jsx', error)
         }
-    }
+    };
 
     const transactStatsData = async(userStatsData, dailyStatsData, weeklyStatsData) => {
         try {
@@ -452,7 +452,45 @@ export const UserStatisticsProvider = ({children}) => {
         } catch (error) {
             console.log("Error with function in UserStatisticsContext.jsx")
         }
-    }
+    };
+
+    // ✅ User Attributes
+    const addUserAttributes = async (inputData) => {
+        try {
+            const yyyymmdd = getYearMonthDate('daily')
+
+            const { data, errors } = await dataClient.mutations.addUserAttributes({
+                yyyymmdd: yyyymmdd,
+                data: inputData,
+            });
+
+            if (errors) {
+                console.error('Check inputs or CloudWatch logs:', errors);
+            } else {
+                console.log(`Successful user attribute add`, data);
+            }
+        } catch (error) {
+            console.error('Error with function in UserStatisticsContext.jsx', error)
+        }
+    };
+
+    const getUserAttributes = async () => {
+        try {
+            const { data, errors } = await dataClient.queries.getUserAttributes();
+
+            if (errors) {
+                console.error('Check inputs or CloudWatch logs:', errors);
+                return;
+            } else if (!data) {
+                return null
+            } else {
+                console.log(`Successful user attributes query`, data)
+                return data[0]
+            }
+        } catch (error) {
+            console.error('Error with function in UserStatisticsContext.jsx', error);
+        }
+    };
 
     return (
         <UserStatisticsContext.Provider value ={{
@@ -474,6 +512,8 @@ export const UserStatisticsProvider = ({children}) => {
             handleLoginStats,
             updateTotals,
             transactStatsData,
+            addUserAttributes,
+            getUserAttributes
         }}>
             { children }
         </UserStatisticsContext.Provider>
