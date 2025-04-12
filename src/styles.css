@@ -1368,6 +1368,13 @@ body.dark-mode .multiple-choice-options label {
   color: #f5f5f5;
   border: 1px solid #555;
 }
+body.dark-mode .fraction-game input[type="number"] {
+  background-color: #2b2b2b;
+}
+
+.fraction-game input[type="number"]:focus {
+    background-color: #2b2b2b;
+}
 
 /* === BUTTONS === */
 body.dark-mode .auth-btn,
