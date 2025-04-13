@@ -11,7 +11,6 @@ import React, {
   import GameHxContext from "../context/GameHxContext";
   import UserStatisticsContext from "../context/UserStatisticsContext";
   import { invokeModel, getDiffString, initiateRetrain } from "../functions/Model";
-  import { invokeModel, getDiffString, initiateRetrain } from "../functions/Model";
   
   const possibleIngredients = [
     "Apple",

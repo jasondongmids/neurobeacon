@@ -4,7 +4,6 @@ import UserStateContext from "../context/UserStateContext";
 import UserStatisticsContext from "../context/UserStatisticsContext";
 import GameHxContext from "../context/GameHxContext";
 import { invokeModel, getDiffString, initiateRetrain } from "../functions/Model";
-import { invokeModel, getDiffString, initiateRetrain } from "../functions/Model";
 // import ModelContext from "../context/ModelContext"
 
 // Difficulty configuration remains the same.
