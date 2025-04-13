@@ -453,11 +453,20 @@ function handlePointerUp(event) {
 function processClick(offsetX, offsetY) {
   if (!waitingForGreen || !startTime) return;
 
+  const canvas = gameCanvas.current;
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  
+  const normX = offsetX * scaleX;
+  const normY = offsetY * scaleY;
+  
   const isCorrectClick =
-    offsetX >= targetBox.x &&
-    offsetX <= targetBox.x + targetBox.width &&
-    offsetY >= targetBox.y &&
-    offsetY <= targetBox.y + targetBox.height;
+    normX >= targetBox.x &&
+    normX <= targetBox.x + targetBox.width &&
+    normY >= targetBox.y &&
+    normY <= targetBox.y + targetBox.height;
+
   const reaction = (Date.now() - startTime) / 1000;
 
   // Database: variables for database updates remain unchanged
