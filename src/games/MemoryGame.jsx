@@ -611,7 +611,7 @@ import React, {
                 </div>
                 {message && (
                   <div>
-                    <p className="feedback-info">{message}</p>
+                    <p className="feedback-info" style={{ color: "white" }}>{message}</p>
                   </div>
                 )}
               </div>
