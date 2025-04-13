@@ -217,7 +217,7 @@ import React, {
       const [mappedDifficulty, setMappedDifficulty] = useState("");
 
       const { isDark } = useContext(ThemeContext);
-      const placeholderColor = isDark ? "#000000" : "#2e86c1";
+      const placeholderColor = isDark ? "#2b2b2b" : "#2e86c1";
 
   
   
