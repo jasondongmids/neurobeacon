@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useParams } from "react-router-dom";  // ✅ Import useParams to get game type
 import UserContext from "../context/UserContext";
 import Header from "./Header";
@@ -6,6 +6,7 @@ import NavBar from "./NavBar";
 import Panel from "./Panel";
 import GameArea from "./GameArea";
 import Footer from "./Footer";
+import UserStatisticsContext from "../context/UserStatisticsContext";
 import imageList from "../data/data"; // ✅ Correct path to `data.js`
 import "../styles.css";
 
@@ -19,6 +20,19 @@ const GamePage = () => {
         questionsAnswered: 0,
         accuracy: "0.00"
     });
+const { getUserAttributes } = useContext(UserStatisticsContext);
+
+useEffect(() => {
+  getUserAttributes().then((result) => {
+    if (result?.nickname) {
+      setDisplayName(result.nickname);
+    } else if (username) {
+      setDisplayName(username);
+    } else {
+      setDisplayName("Player");
+    }
+  });
+}, [username]);
 
     // ✅ Function to update stats (passed to GameArea)
     const handleUpdateStats = (newStats) => {
