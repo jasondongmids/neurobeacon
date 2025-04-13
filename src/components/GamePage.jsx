@@ -12,7 +12,6 @@ import "../styles.css";
 const GamePage = () => {
     const { username } = useContext(UserContext);
     const { gameType } = useParams(); // ✅ Get the game type from the URL
-    const [displayName, setDisplayName] = useState(null)
     const [sessionStats, setSessionStats] = useState({
         score: 0,
         correctAnswers: 0,
@@ -44,7 +43,7 @@ const GamePage = () => {
             <Header />
             <NavBar />
             <h2 className="greeting">
-              Hello, {displayName || "Player"}! {gameGreeting}
+              Hello, {username || "Player"}! {gameGreeting}
             </h2>
  {/*<p>This open beta will close on Friday, April 4!<br />Before you leave, please fill out our <a href="https://docs.google.com/forms/d/1v-kiT9EV2i8t46WY0D_ZecNFgJCokyxXDVir5CrmbAI/viewform?edit_requested=true"target="_blank"
         rel="noopener noreferrer">User Survey</a> so we can make NeuroBeacon even better!</p> */}
@@ -69,9 +68,6 @@ const GamePage = () => {
 };
 
 export default GamePage;
-
-
-
 
 
 
