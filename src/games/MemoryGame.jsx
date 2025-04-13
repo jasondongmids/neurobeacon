@@ -280,7 +280,11 @@ import React, {
 
     useEffect(() => {
       if (gamePhase === "end") {
+<<<<<<< Updated upstream
         // initiateRetrain()
+=======
+        initiateRetrain()
+>>>>>>> Stashed changes
       }
     }, [gamePhase])
   
@@ -408,6 +412,7 @@ import React, {
   
       // Database: Create new session id and retrain primary model
       setSessionId(crypto.randomUUID());
+      initiateRetrain()
     };
     
   

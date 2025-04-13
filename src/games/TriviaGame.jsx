@@ -297,7 +297,11 @@ const TriviaGame = forwardRef(({ onUpdateStats }, ref) => {
         console.log("✅ Setting showSessionSummary to true");
     
         setSessionEndTime(minutes > 0 ? `${minutes} min ${seconds} sec` : `${seconds} sec`);
+<<<<<<< Updated upstream
         // initiateRetrain()
+=======
+        initiateRetrain()
+>>>>>>> Stashed changes
     
         setTimeout(() => {
             console.log("🚀 Showing Session Summary!");

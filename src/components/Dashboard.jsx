@@ -2,7 +2,11 @@
 import React, { useContext, useState, useEffect } from "react";
 
 // ✅ 2. React Router
+<<<<<<< Updated upstream
 import { useNavigate, useLocation, data } from "react-router-dom";
+=======
+import { useNavigate, useLocation } from "react-router-dom";
+>>>>>>> Stashed changes
 
 // ✅ 3. Context Providers
 import ThemeContext from "../context/ThemeContext";
@@ -27,7 +31,11 @@ const gameColors = {
 
 const DashboardPage = () => {
   const { username, setUsername, logoutUser } = useContext(UserContext);
+<<<<<<< Updated upstream
   const { userStats, dailyStats, queryStats, getUserAttributes } = useContext(UserStatisticsContext);
+=======
+  const { userStats, dailyStats, queryStats } = useContext(UserStatisticsContext);
+>>>>>>> Stashed changes
   const navigate = useNavigate();
   const location = useLocation();
   const { isDark, setIsDark } = useContext(ThemeContext);
@@ -42,7 +50,10 @@ const DashboardPage = () => {
   const [range, setRange] = useState(
   localStorage.getItem("chartRange") || "7"
   );
+<<<<<<< Updated upstream
   const [displayName, setDisplayName] = useState(null)
+=======
+>>>>>>> Stashed changes
 
 useEffect(() => {
   if (location.state?.redirected) {
@@ -84,7 +95,6 @@ useEffect(() => {
   const labels = filteredHistory.map(entry =>
     String(entry.sk).replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")
   );
-
   const dataPoints = filteredHistory.map(entry =>
     (entry.total?.percent_correct ?? 0) * 100
   );
