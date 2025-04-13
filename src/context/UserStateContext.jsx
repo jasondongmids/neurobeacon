@@ -273,10 +273,10 @@ export const UserStateProvider = ({ children }) => {
     };
 
     // ✅ Update both GAME# and GAME#CATEGORY# react states
-    const updateStates = (newUserState) => {
-        updateUserCategoryState(newUserState)
-        updateUserGameState(newUserState, userCategoryState)
-    }
+    // const updateStates = (newUserState) => {
+    //     updateUserCategoryState(newUserState)
+    //     updateUserGameState(newUserState, userCategoryState)
+    // }
 
     // ✅ Add GAME#, GAME#CATEGORY#, GAME#STAT, GAMEHX# dynamodb tables
     const transactGameData = async (gameType, category, gameStateData, categoryStateData) => {
@@ -309,7 +309,7 @@ export const UserStateProvider = ({ children }) => {
             prepareUserGameState,
             updateUserGameState,
             updateUserCategoryState,
-            updateStates,
+            // updateStates,
             transactGameData,
         }}>
             { children }
