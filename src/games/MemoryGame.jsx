@@ -593,7 +593,7 @@ import React, {
       
             {gamePhase === "question" && (
               <div>
-                <h2 className="scenario-text">Where did you see {target}?</h2>
+                <h2 className="scenario-text" style={{ color: "white" }}>Where did you see {target}?</h2>
                 <IngredientItem name={target} />
                 <div className="multiple-choice-options">
                   {["Fridge", "Kitchen", "Both", "Neither"].map((option, index) => (
