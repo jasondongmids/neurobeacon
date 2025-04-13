@@ -8,7 +8,7 @@ import GameArea from "./GameArea";
 import Footer from "./Footer";
 import imageList from "../data/data"; // ✅ Correct path to `data.js`
 import "../styles.css";
-
+const [displayName, setDisplayName] = useState(null)
 const GamePage = () => {
     const { username } = useContext(UserContext);
     const { gameType } = useParams(); // ✅ Get the game type from the URL
