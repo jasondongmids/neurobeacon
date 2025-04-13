@@ -82,6 +82,7 @@ function applyMinMaxScaling(data, variable) {
 const prepRequest = (data, userFeatures, gameType) => {
     // console.log("PREP STATE")
     // console.log("PREP STATE")
+    // console.log("PREP STATE")
     const state = [
         Number(data.prev_is_slow),
         Number(data.prev_is_correct),
@@ -102,7 +103,6 @@ const prepRequest = (data, userFeatures, gameType) => {
         user_features: userEmbed,
         game_type: gameTypeInt
     }
-    // console.log("FINAL REQUEST", JSON.stringify(modelInput))
     // console.log("FINAL REQUEST", JSON.stringify(modelInput))
     return JSON.stringify(modelInput)
 
@@ -133,50 +133,25 @@ const sendTargetRequest = async (modelInput) => {
     }
 };
 
-// const sendPrimaryRequest = async (modelInput) => {
-//     try {
-//         const invokeModel = post({
-//             apiName: "neurobeaconModel",
-//             path: "test/neurobeaconModel",
-//             region: "us-east-1",
-//             options: {
-//                 body: {
-//                     data: JSON.parse(modelInput)
-//                 }
-//             }
-//         });
-
-//         const { body } = await invokeModel.response;
-//         const response = await body.json();
-//         const prediction = response.body
-//         // console.log("Post succeeded (primary):", response);
-//         console.log("Primary prediction:", prediction)
-//         return prediction
-//     } catch (error) {
-//         console.log("Call failed (primary):", JSON.parse(error.response))
-//     }
-// };
-
 const sendPrimaryRequest = async (modelInput) => {
-    console.log("MODEL INPUT", modelInput)
     try {
-        const response = await fetch("http://13.218.167.179:8000/mod/predict", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: modelInput
+        const invokeModel = post({
+            apiName: "neurobeaconModel",
+            path: "test/neurobeaconModel",
+            region: "us-east-1",
+            options: {
+                body: {
+                    data: JSON.parse(modelInput)
+                }
+            }
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log("Post succeeded (primary):", data);
-
-        return data.prediction;
-
+        const { body } = await invokeModel.response;
+        const response = await body.json();
+        const prediction = response.body
+        // console.log("Post succeeded (primary):", response);
+        console.log("Primary prediction:", prediction)
+        return prediction
     } catch (error) {
         console.log("Call failed (primary):", JSON.parse(error.response))
     }
@@ -231,7 +206,6 @@ export const invokeModel = async (data, userFeatures, gameType, target) => {
         let prediction
 
         if (target === 'primary') {
-            prediction = await sendPrimaryRequest(modelInput)
             prediction = await sendPrimaryRequest(modelInput)
         } else {
             prediction = await sendTargetRequest(modelInput)

@@ -11,6 +11,7 @@ import React, {
   import GameHxContext from "../context/GameHxContext";
   import UserStatisticsContext from "../context/UserStatisticsContext";
   import { invokeModel, getDiffString, initiateRetrain } from "../functions/Model";
+  import { invokeModel, getDiffString, initiateRetrain } from "../functions/Model";
   
   const possibleIngredients = [
     "Apple",
@@ -280,11 +281,7 @@ import React, {
 
     useEffect(() => {
       if (gamePhase === "end") {
-<<<<<<< Updated upstream
         // initiateRetrain()
-=======
-        initiateRetrain()
->>>>>>> Stashed changes
       }
     }, [gamePhase])
   
@@ -412,7 +409,6 @@ import React, {
   
       // Database: Create new session id and retrain primary model
       setSessionId(crypto.randomUUID());
-      initiateRetrain()
     };
     
   
