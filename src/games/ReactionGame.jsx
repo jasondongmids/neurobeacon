@@ -604,21 +604,30 @@ setMistakes(prev => {
           </button>
         </div>
       ) : (
-        <div>
-        <canvas
-          ref={gameCanvas}
-          width={canvasWidth}
-          height={canvasHeight}
-          onPointerDown={handlePointerDown}
-          onPointerUp={handlePointerUp}
-          onPointerMove={handlePointerMove}
+        <div  
           style={{
-            border: "2px solid black",
-            width: `${canvasWidth}px`,
-            height: `${canvasHeight}px`
+            position: "relative",
+            width: "100%",
+            maxWidth: "700px",
+            margin: "0 auto",
+            padding: "0 8px"
           }}
-        />
-
+        >
+          <canvas
+            ref={gameCanvas}
+            width={canvasWidth}
+            height={canvasHeight}
+            onPointerDown={handlePointerDown}
+            onPointerUp={handlePointerUp}
+            onPointerMove={handlePointerMove}
+            style={{
+              width: "100%",
+              height: "auto",
+              display: "block",
+              border: "2px solid black",
+              touchAction: "none", // prevent double-tap zoom
+            }}
+          />
           {/* Display only the round number below the canvas */}
           <p className="feedback-info">Round: {round}/{maxRounds}</p>
           {/* Show any warning or mistake messages immediately */}
