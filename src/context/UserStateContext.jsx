@@ -274,8 +274,8 @@ export const UserStateProvider = ({ children }) => {
 
     // ✅ Update both GAME# and GAME#CATEGORY# react states
     const updateStates = (newUserState) => {
-        updateUserCategoryState = (newUserState)
-        updateUserGameState = (newUserState, userCategoryState)
+        updateUserCategoryState(newUserState)
+        updateUserGameState(newUserState, userCategoryState)
     }
 
     // ✅ Add GAME#, GAME#CATEGORY#, GAME#STAT, GAMEHX# dynamodb tables
