@@ -11,6 +11,8 @@ import React, {
   import GameHxContext from "../context/GameHxContext";
   import UserStatisticsContext from "../context/UserStatisticsContext";
   import { invokeModel, getDiffString, initiateRetrain } from "../functions/Model";
+  import ThemeContext from "../context/ThemeContext";
+
   
   const possibleIngredients = [
     "Apple",
@@ -213,6 +215,10 @@ import React, {
       const prevCategoryStateRef = useRef(userCategoryState)
       const [rawPrediction, setRawPrediction] = useState("");
       const [mappedDifficulty, setMappedDifficulty] = useState("");
+
+      const { isDark } = useContext(ThemeContext);
+      const placeholderColor = isDark ? "#000000" : "#2e86c1";
+
   
   
     // Database: Functions and effects:
@@ -542,8 +548,8 @@ import React, {
                 zIndex: 0,
               }}
               transitionDuration="0.4s"
+              placeholderColor={placeholderColor}
              
-
             />
             <div /*className="memory-prompt-container" */style={{ position: "relative", zIndex: 2, textAlign: "center", padding: "20px" }}>
               
