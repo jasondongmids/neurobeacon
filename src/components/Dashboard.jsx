@@ -212,14 +212,14 @@ useEffect(() => {
       <div className="dashboard-container">
 
         {/* ✅ Profile Panel */}
-        <div className="panel profile">
+        {/*  <div className="panel profile">
           <h2 className="dboardH2">{displayName}'s Current Streak</h2>
           <div className="dashboard-stats">
             <p><strong>Total Games Played:</strong> {totalGames}</p>
             <p><strong>Streak:</strong> {streak} days 🔥</p>
           </div>
           <button className="nav-btn-select" onClick={() => setIsDark((prev) => !prev)}> {isDark ? "☀ Light Mode" : "🌙 Dark Mode"}</button>
-        </div>
+        </div>*/}
 
         {/* ✅ Game Selection Panel */}
         <div className="panel game-selection">
@@ -242,6 +242,11 @@ useEffect(() => {
           <br />
           <button className="nav-btn-select" onClick={handleGameSelection}>Play Now!</button>
           {message && <p style={{ color: "red" }}>{message}</p>}
+                    <h2 className="dboardH2">{displayName}'s Current Streak</h2>
+          <div className="dashboard-stats">
+            <p><strong>Total Games Played:</strong> {totalGames}</p>
+            <p><strong>Streak:</strong> {streak} days 🔥</p>
+          </div>
         </div>
 
         {/* ✅ Progress Overview */}
