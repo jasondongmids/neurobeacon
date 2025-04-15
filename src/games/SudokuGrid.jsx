@@ -412,7 +412,7 @@ const SudokuGrid = ({ onUpdateStats }) => {
     return (
       <div className="sudoku-start-screen">
       <div className="scenario-text" style={{ margin: "16px 0" }}>
-      <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
+      <h2 style={{ color: "white", fontSize: "1.4em" }}>Game Rules:</h2>
         <p>Solve the Sudoku puzzle by filling in the missing numbers.</p>
         <p>Each row, column, and 3x3 block must contain numbers 1 through 9 without repeats.</p>
         <p>Use logic to deduce the correct placement as quickly as possible.</p>
