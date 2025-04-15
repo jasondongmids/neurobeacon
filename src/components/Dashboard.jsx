@@ -292,6 +292,7 @@ useEffect(() => {
           <div className="dashboard-stats">
             <p><strong>Total Games Played:</strong> {totalGames}</p>
             <p><strong>Streak:</strong> {streak} days 🔥</p>
+            </div>
             <canvas id="chartjs-canvas" width="400" height="200"></canvas>
             {dailyHistory.length === 0 && (
               <p style={{ color: "black", textAlign: "center" }}>
