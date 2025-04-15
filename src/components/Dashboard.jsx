@@ -239,11 +239,10 @@ useEffect(() => {
         {/* ✅ Progress Overview */}
         <div className="panel progress">
           <h2 className="dboardH2">📊 {displayName}'s Progress Overview</h2>
-                    <div className="dashboard-stats">
+
              <h3>Check out your streak numbers below</h3>
             <p><strong>Total Games Played:</strong> {totalGames}</p>
             <p><strong>Streak:</strong> {streak} days 🔥</p>
-            </div>
           <div className="chart-container" style={{ marginTop: "20px" }}>
             <h3>
               📊 {selectedGameForStats === "all" ? "Overall Progress" : `${capitalize(selectedGameForStats)} Progress`}
