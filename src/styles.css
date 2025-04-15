@@ -93,6 +93,10 @@ body {
     padding: 0px;
     margin: 0px;
 }
+.panel.game-selection,
+.panel.progress {
+  width: 45%;
+}
 .panel p {
     color:black;
 }
