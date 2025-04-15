@@ -206,7 +206,7 @@ useEffect(() => {
         </p>
         <p><strong>THIS OPEN BETA WILL CLOSE ON FRIDAY, APRIL 4!</strong></p>
       </div>*/}
-           { <div className="dashboard-container">
+           { <div className="header">
  <h2 className="dboardH2"style={{ color: "white" }}>Hello {displayName}! Ready to Train?</h2>
       </div>}
 
