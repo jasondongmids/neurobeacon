@@ -583,7 +583,7 @@ setMistakes(prev => {
           </select></div> */}
        {/* Added Rules Section */}
         <div className="scenario-text" style={{ margin: "16px 0", fontSize: "1.2em" }}>
-        <h2 style={{ fontSize: "1.4em" }}>Game Rules:</h2>
+        <h2 style={{ fontSize: "1.4em",color:"white" }}>Game Rules:</h2>
         
           <p>Wait for the box to change color. Exp 3</p>
           <p>Click as quickly as possible once the box changes color.</p>
@@ -591,7 +591,7 @@ setMistakes(prev => {
           <p>Try to achieve a fast reaction to earn more points.</p>
         
       </div>
-          <h2 className="scenario-text">Select Box Color Scheme</h2>
+          <h2 className="scenario-text" style={{ color: "white" }}">Select Box Color Scheme</h2>
           <div><select
             value={selectedColorScheme}
             onChange={e => setSelectedColorScheme(e.target.value)}
