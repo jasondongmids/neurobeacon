@@ -211,8 +211,8 @@ useEffect(() => {
 
         {/* ✅ Profile Panel */}
         <div className="panel profile">
-          <h2 className="dboardH2">Welcome!</h2>
-          <h3>{displayName} check out your personal stats below</h3>
+          <h2 className="dboardH2">Hello {displayName}!</h2>
+          <h3>Check out your streak numbers below</h3>
           <div className="dashboard-stats">
             <p><strong>Total Games Played:</strong> {totalGames}</p>
             <p><strong>Streak:</strong> {streak} days 🔥</p>
@@ -246,7 +246,7 @@ useEffect(() => {
 
         {/* ✅ Progress Overview */}
         <div className="panel progress">
-          <h2 className="dboardH2">📊 Progress Overview</h2>
+          <h2 className="dboardH2">📊 {displayName}'s Progress Overview</h2>
           <div className="chart-container" style={{ marginTop: "20px" }}>
             <h3>
               📊 {selectedGameForStats === "all" ? "Overall Progress" : `${capitalize(selectedGameForStats)} Progress`}
