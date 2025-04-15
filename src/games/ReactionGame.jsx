@@ -591,7 +591,7 @@ setMistakes(prev => {
           <p>Try to achieve a fast reaction to earn more points.</p>
         
       </div>
-          <h2 className="scenario-text" style={{ color: "white" }}">Select Box Color Scheme</h2>
+          <h2 className="scenario-text" style={{ color: "white" }}>Select Box Color Scheme</h2>
           <div><select
             value={selectedColorScheme}
             onChange={e => setSelectedColorScheme(e.target.value)}
