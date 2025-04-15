@@ -206,6 +206,11 @@ useEffect(() => {
         </p>
         <p><strong>THIS OPEN BETA WILL CLOSE ON FRIDAY, APRIL 4!</strong></p>
       </div>*/}
+           { <div className="betaMessage">
+ <h2 className="dboardH2">Hello {displayName}!</h2>
+             <h3>Ready to Train?</h3>
+      </div>}
+
 
       <div className="dashboard-container">
 
@@ -283,7 +288,10 @@ useEffect(() => {
                 </select>
               </div>
             </div>
-          
+                    <h3>Check out your streak numbers below</h3>
+          <div className="dashboard-stats">
+            <p><strong>Total Games Played:</strong> {totalGames}</p>
+            <p><strong>Streak:</strong> {streak} days 🔥</p>
             <canvas id="chartjs-canvas" width="400" height="200"></canvas>
             {dailyHistory.length === 0 && (
               <p style={{ color: "black", textAlign: "center" }}>
