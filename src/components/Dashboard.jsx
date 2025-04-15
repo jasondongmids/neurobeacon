@@ -207,8 +207,7 @@ useEffect(() => {
         <p><strong>THIS OPEN BETA WILL CLOSE ON FRIDAY, APRIL 4!</strong></p>
       </div>*/}
            { <div className="dashboard-container">
- <h2 className="dboardH2">Hello {displayName}!</h2>
-             <h3>Ready to Train?</h3>
+ <h2 className="dboardH2"style={{ color: "white" }}>Hello {displayName}! Ready to Train?</h2>
       </div>}
 
 
@@ -235,8 +234,6 @@ useEffect(() => {
           <br />
           <button className="nav-btn-select" onClick={handleGameSelection}>Play Now!</button>
           {message && <p style={{ color: "red" }}>{message}</p>}
-                    <button className="logout-btn" onClick={handleLogout}>Logout</button>
-          <button className="auth-btn" onClick={() => setIsDark((prev) => !prev)}> {isDark ? "☀ Light Mode" : "🌙 Dark Mode"}</button>
         </div>
 
         {/* ✅ Progress Overview */}
