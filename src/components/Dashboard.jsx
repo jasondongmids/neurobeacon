@@ -206,25 +206,13 @@ useEffect(() => {
         </p>
         <p><strong>THIS OPEN BETA WILL CLOSE ON FRIDAY, APRIL 4!</strong></p>
       </div>*/}
-           { <div className="betaMessage">
+           { <div className="dashboard-container">
  <h2 className="dboardH2">Hello {displayName}!</h2>
              <h3>Ready to Train?</h3>
       </div>}
 
 
       <div className="dashboard-container">
-
-        {/* ✅ Profile Panel */}
-        <div className="panel profile">
-          <h2 className="dboardH2">Hello {displayName}!</h2>
-          <h3>Check out your streak numbers below</h3>
-          <div className="dashboard-stats">
-            <p><strong>Total Games Played:</strong> {totalGames}</p>
-            <p><strong>Streak:</strong> {streak} days 🔥</p>
-          </div>
-          <button className="logout-btn" onClick={handleLogout}>Logout</button>
-          <button className="auth-btn" onClick={() => setIsDark((prev) => !prev)}> {isDark ? "☀ Light Mode" : "🌙 Dark Mode"}</button>
-        </div>
 
         {/* ✅ Game Selection Panel */}
         <div className="panel game-selection">
