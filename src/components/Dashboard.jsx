@@ -213,13 +213,11 @@ useEffect(() => {
 
         {/* ✅ Profile Panel */}
         <div className="panel profile">
-          <h2 className="dboardH2">Hello {displayName}!</h2>
-          <h3>Check out your streak numbers below</h3>
+          <h2 className="dboardH2">Check out your streak numbers below</h2>
           <div className="dashboard-stats">
             <p><strong>Total Games Played:</strong> {totalGames}</p>
             <p><strong>Streak:</strong> {streak} days 🔥</p>
           </div>
-          <button className="logout-btn" onClick={handleLogout}>Logout</button>
           <button className="auth-btn" onClick={() => setIsDark((prev) => !prev)}> {isDark ? "☀ Light Mode" : "🌙 Dark Mode"}</button>
         </div>
 
@@ -248,8 +246,8 @@ useEffect(() => {
 
         {/* ✅ Progress Overview */}
         <div className="panel progress">
-          <h2 className="dboardH2">📊 {displayName}'s Progress Overview</h2>
-          <div className="chart-container" style={{ marginTop: "20px" }}>
+          <h2 className="dboardH2">{displayName}'s Progress Overview</h2>
+          <div className="chart-container">
             <h3>
               📊 {selectedGameForStats === "all" ? "Overall Progress" : `${capitalize(selectedGameForStats)} Progress`}
             </h3>
