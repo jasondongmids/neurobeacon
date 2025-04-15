@@ -247,11 +247,18 @@ useEffect(() => {
           <br />
           <button className="nav-btn-select" onClick={handleGameSelection}>Play Now!</button>
           {message && <p style={{ color: "red" }}>{message}</p>}
+                    <button className="logout-btn" onClick={handleLogout}>Logout</button>
+          <button className="auth-btn" onClick={() => setIsDark((prev) => !prev)}> {isDark ? "☀ Light Mode" : "🌙 Dark Mode"}</button>
         </div>
 
         {/* ✅ Progress Overview */}
         <div className="panel progress">
           <h2 className="dboardH2">📊 {displayName}'s Progress Overview</h2>
+                    <div className="dashboard-stats">
+             <h3>Check out your streak numbers below</h3>
+            <p><strong>Total Games Played:</strong> {totalGames}</p>
+            <p><strong>Streak:</strong> {streak} days 🔥</p>
+            </div>
           <div className="chart-container" style={{ marginTop: "20px" }}>
             <h3>
               📊 {selectedGameForStats === "all" ? "Overall Progress" : `${capitalize(selectedGameForStats)} Progress`}
@@ -287,11 +294,6 @@ useEffect(() => {
                   <option value="sudoku">🔢 Sudoku</option>
                 </select>
               </div>
-            </div>
-                    <h3>Check out your streak numbers below</h3>
-          <div className="dashboard-stats">
-            <p><strong>Total Games Played:</strong> {totalGames}</p>
-            <p><strong>Streak:</strong> {streak} days 🔥</p>
             </div>
             <canvas id="chartjs-canvas" width="400" height="200"></canvas>
             {dailyHistory.length === 0 && (
