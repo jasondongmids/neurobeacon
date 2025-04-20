@@ -1370,9 +1370,9 @@ body.dark-mode .fraction-game input[type="number"] {
   background-color: #2b2b2b;
 }
 
-.fraction-game input[type="number"]:focus {
+/* .fraction-game input[type="number"]:focus {
     background-color: #2b2b2b;
-}
+} */
 
 /* === BUTTONS === */
 body.dark-mode .auth-btn,
