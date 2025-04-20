@@ -1162,6 +1162,10 @@ button {
     width: 90%;
     margin: 10px 0;
   }
+  .panel.game-selection, .panel.progress {
+    width: 90%;
+    margin: 10px 0;
+  }      
 }
 
 /* --- Media Query for screens up to 600px --- */
